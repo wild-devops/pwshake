@@ -55,7 +55,7 @@ PS>./pwshake.ps1 ./my_pwshake.yaml
 ```
 This installs all required components from the `PSGallery` and invokes scripts according to the configuration file (`my_pwshake.yaml` in the current directory)
 
-[See more about bootstrapper `pwshake.ps1` script](../doc/bootstrapper.md)
+[See more about bootstrapper `pwshake.ps1` script](/doc/bootstrapper.md)
 
 
 The result looks like the followed output including information about:
@@ -104,14 +104,14 @@ PS>./pwshake.ps1
 And it runs various tests included in this repo.
 
 ## See more about:
-* [bootstrapper `pwshake.ps1` script](../doc/bootstrapper.md)
-* [`pwshake.yaml` configuration file structure](../doc/config.md)
-  * [`attributes:` element](../doc/attributes.md)
-  * [`attributes_overrides:` element](../doc/attributes_overrides.md)
-  * [`includes:` element](../doc/includes.md)
-  * [`invoke_tasks:` element](../doc/invoke_tasks.md)
-  * [`tasks:` element](../doc/tasks.md)
-    * [implicit `[step]:` element](../doc/step.md)
-  * [`scripts_directories:` element](../doc/scripts_directories.md)
+* [bootstrapper `pwshake.ps1` script](/doc/bootstrapper.md)
+* [`pwshake.yaml` configuration file structure](/doc/config.md)
+  * [`attributes:` element](/doc/attributes.md)
+  * [`attributes_overrides:` element](/doc/attributes_overrides.md)
+  * [`includes:` element](/doc/includes.md)
+  * [`invoke_tasks:` element](/doc/invoke_tasks.md)
+  * [`tasks:` element](/doc/tasks.md)
+    * [implicit `[step]:` element](/doc/step.md)
+  * [`scripts_directories:` element](/doc/scripts_directories.md)
 
 ## Happy **PWSHAKE**-ing!

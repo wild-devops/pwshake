@@ -152,7 +152,7 @@ Every named element of the `tasks:` can contain some definitions to provide more
             targets: TransformConfigs
             properties: Configuration=Debug
     ```
-    [See more about `[step]:` element](../doc/step.md)
+    [See more about `[step]:` element](/doc/step.md)
 
 * ### `depends_on:` **element**
 

@@ -80,4 +80,4 @@ attributes:
 ...
 ```
 
-[See more about the `-MetaData` parameter of  bootstrapper `pwshake.ps1` script](../doc/bootstrapper.md)
+[See more about the `-MetaData` parameter of  bootstrapper `pwshake.ps1` script](/doc/bootstrapper.md)

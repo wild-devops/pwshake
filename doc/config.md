@@ -29,7 +29,7 @@
       }
     }
     ```
-    [See more about `attributes:`](../doc/attributes.md)
+    [See more about `attributes:`](/doc/attributes.md)
 
 * ### **`includes:` element**
     Optional
@@ -41,7 +41,7 @@
     ```
     Contains list of file paths relational to the main `pwshake.yaml` that will be merged into the main config before **PWSHAKE** engine starts execution. It's useful for splitting long configurations to several meaningful parts.
 
-    [See more about `includes:`](../doc/includes.md)
+    [See more about `includes:`](/doc/includes.md)
     
 
 * ### **`tasks:` element**
@@ -67,7 +67,7 @@
   ```
   Contains definition of composed and interdependent tasks that will be performed by **PWSHAKE** engine by executing `steps:` defined as `tasks:` items.
 
-  [See more about `tasks:`](../doc/tasks.md)
+  [See more about `tasks:`](/doc/tasks.md)
 
 * ### **`invoke_tasks:` element**
 
@@ -84,7 +84,7 @@
   ```
   Tells to **PWSHAKE** engine about consist and order of execution items defined in the `tasks:` element.
 
-  [See more about `invoke_tasks:`](../doc/invoke_tasks.md)
+  [See more about `invoke_tasks:`](/doc/invoke_tasks.md)
 
 * ### **`scripts_directories:` element**
     Optional
@@ -97,7 +97,7 @@
     ```
     Tells to **PWSHAKE** engine where to find scripts defined as items of the `tasks:` element.
 
-    [See more about `scripts_directories:`](../doc/scripts_directories.md)
+    [See more about `scripts_directories:`](/doc/scripts_directories.md)
 
 * ### **`attributes_overrides:` element**
     Optional
@@ -111,4 +111,4 @@
     ```
     Tells to **PWSHAKE** engine about list of `metadata` files and order of overriding `attributes:` in the main `pwshake.yaml` config file before the actual execution.
     
-    [See more about `attributes_overrides:`](../doc/attributes_overrides.md)
+    [See more about `attributes_overrides:`](/doc/attributes_overrides.md)

@@ -42,6 +42,6 @@ invoke_tasks:
 - publish
 ```
 
-[See more about `tasks:`](../doc/tasks.md)
+[See more about `tasks:`](/doc/tasks.md)
 
-[See more about the `-Tasks` parameter of  bootstrapper `pwshake.ps1` script](../doc/bootstrapper.md)
+[See more about the `-Tasks` parameter of  bootstrapper `pwshake.ps1` script](/doc/bootstrapper.md)

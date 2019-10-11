@@ -11,4 +11,4 @@ scripts_directories:
 ```
 This element can be totally omitted, in that case all `scripts:` will be looked for in the `pwshake_path:` directory.
 
-[See more about `tasks:`](../doc/tasks.md)
+[See more about `tasks:`](/doc/tasks.md)

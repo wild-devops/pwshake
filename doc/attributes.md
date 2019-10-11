@@ -42,7 +42,7 @@ This parameter should be of type **Powershell** `[hashtable]` that allows to **m
     pwshake_path: /absolute/path/to/your/working/directory/MyRepo
   ...
   ```
-  [See more about the `-MetaData` parameter of  bootstrapper `pwshake.ps1` script](../doc/bootstrapper.md)
+  [See more about the `-MetaData` parameter of  bootstrapper `pwshake.ps1` script](/doc/bootstrapper.md)
 
 * ## `attributes:` **interpolation**
   
@@ -129,5 +129,5 @@ This parameter should be of type **Powershell** `[hashtable]` that allows to **m
   ```
   
 * ## `attributes:` **overriding**
-  [See more about `attributes_overrides:`](../doc/attributes_overrides.md) element
+  [See more about `attributes_overrides:`](/doc/attributes_overrides.md) element
 
