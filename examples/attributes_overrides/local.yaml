@@ -1,0 +1,13 @@
+sql_server: "localhost"
+sql_user: "ShakeUser"
+root_folder: "C:\\shake"
+sql_databases:
+  - shake:
+      user: admin
+      password: pass
+  - api:
+      user: api_admin
+      password: api_pass
+  - payments:
+      user: jew
+      password: dollars

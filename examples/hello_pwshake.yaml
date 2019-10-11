@@ -1,0 +1,20 @@
+attributes:
+  name: PWSHAKE
+  hello: 'Hello {{name}}!'
+  pwsh1: "{{$('{{hello}}'.Replace('PWSHAKE','powershell'))}}"
+  pwsh2: "{{$($config.attributes.name.Replace('PWSHAKE','pw-shake'))}}"
+
+# List of directories relative to this file location where executable scripts are looking for (can be omitted)
+scripts_directories:
+  - .
+  
+# Declaration of run lists that compose and determine order of executing for scripts
+tasks:
+  hello:
+  - pwsh: |
+      Write-Host "{{pwsh1}}"
+      Write-Host "{{pwsh2}}"
+
+# Run lists to current execute
+invoke_tasks:
+- hello

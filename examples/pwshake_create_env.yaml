@@ -1,0 +1,38 @@
+# Run lists declared
+roles:
+  update_chef:
+    - powershell: Write-Host "Here chef step."
+  deploy_role:    
+    - powershell: Write-Host "Deploy role $($env:shake_application_role)"
+    - powershell: Write-Host "Here firewall rules for $($env:shake_application_role)"
+  role_webui:
+    - powershell: $env:shake_application_role = 'webui'
+    - invoke_tasks:
+      - deploy_role
+  role_api:
+    - powershell: $env:shake_application_role = 'api'
+    - invoke_tasks:
+      - deploy_role
+  role_static:
+    scripts:
+    - powershell: $env:shake_application_role = 'static'
+    - in: attributes_overrides
+      pwsh: |
+        Get-Location
+        (Get-ChildItem . -File -Filter local.yaml).FullName
+    - invoke_tasks:
+      - deploy_role
+    - shell: echo test cmd alias
+  create_environment:
+    depends_on:
+      - update_chef
+    steps:
+      - apply_roles:
+        - role_webui
+        - role_api
+        - role_static
+      - pwsh: Write-Host "{{$([System.Guid]::Empty)}}"
+
+# Run lists to execute
+invoke_tasks:
+  - create_environment

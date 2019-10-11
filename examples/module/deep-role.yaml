@@ -1,0 +1,5 @@
+roles:
+  deep:
+    name: Deep buried role
+    steps:
+    - pwsh: Write-Host "Hello from '{{role}}'"

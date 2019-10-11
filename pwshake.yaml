@@ -1,0 +1,21 @@
+# Attributes are used as a common parameters source for executable scripts
+attributes:
+  api_token: "{{$env:PSGALLERY_API_TOKEN}}"
+
+# List of directories relative to this file location where executable scripts are looking for
+scripts_directories:
+  - tests
+
+# Declaration of tasks that compose and determine order of executing for scripts
+tasks:
+  test:
+  - pwshake.Tests
+  publish:
+    depends_on:
+    - test
+    scripts:
+    - publish
+
+# Tasks to current execute
+invoke_tasks:
+- test

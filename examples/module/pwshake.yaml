@@ -1,0 +1,33 @@
+attributes:
+  py_arg: 0
+
+includes:
+- module.json
+
+tasks:
+  errors:
+  - name: skip errors1
+    on_error: continue
+    cmd: "echo simulate error1 && exit 1"
+  - name: skip errors2
+    on_error: continue
+    pwsh: python -c "import sys; print('simulate error2', file=sys.stderr, flush=True); exit(0)"
+  - name: skip errors3
+    on_error: continue
+    pwsh: python -c "import sys; print('simulate error3', file=sys.stderr, flush=True); exit(1)"
+  - name: skip errors4
+    on_error: continue
+    pwsh: throw 'simulate error4'
+  - name: pwsh errors
+    pwsh: |
+      python {{pwshake_path}}/errs.py {{py_arg}} 2>&1
+  - name: call remote powershell with errors
+    pwsh: |
+      Invoke-Command -ScriptBlock {
+        if ($true) {
+          & '{{pwshake_path}}/call_throw.ps1' 'pwshake{{py_arg}}'
+        }
+      } -InformationAction Ignore -ErrorAction Stop
+
+invoke_tasks:
+- errors

@@ -1,0 +1,9 @@
+sql_server: "shake.sql.stage.consul"
+sql_user: "shake_stage_admin"
+sql_databases:
+  - shake:
+      user: admin
+      password: H&*)OJIO*()U*O
+  - api:
+      user: api_admin
+      password: H*)&HUHIOU*

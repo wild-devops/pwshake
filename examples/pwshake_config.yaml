@@ -1,0 +1,80 @@
+# Includes
+includes:
+  - attributes.json
+  - hello_pwshake.yaml
+  - empty_tasks_pwshake.yaml
+
+# Attributes overrides
+attributes_overrides:
+  - local
+  - test
+  - stage
+  - prod
+
+# Scripts directories
+scripts_directories:
+  - shake_deployment_scripts
+  - pwshake_scripts
+
+# Run lists declared
+tasks:
+  nested_runlist1:
+    - download_artifact
+    - multiline_script:
+        when: $true
+        powershell: |-
+          write-host "hello multiline script 1"
+          write-host "hello multiline script 2"
+          write-host "hello multiline script 3"
+          write-host "hello multiline script 4"
+  nested_runlist3:
+    depends_on:
+    - nested_runlist2
+    scripts:
+    - create_symlinks
+    - step:
+        name: nested_runlist3
+        powershell: write-host "hello nested_runlist3"
+    - name: bash_test
+      only: ${is-Linux}
+      cmd: ls .
+    - name: cmd_test
+      only: ${is-Windows}
+      cmd: dir . /b
+    - name: eval_test
+      powershell: |
+        '{{$($env:PATH)}}' -split ';'
+  nested_runlist2:
+    - extract_archive
+    - powershell: write-host "hello nested_runlist2"
+  composed_runlist:
+    depends_on:
+    - nested_runlist1
+    - nested_runlist3
+  create_windows_instance:
+  - create_windows
+  deploy_shake:
+    depends_on:
+    - create_windows_instance
+    - composed_runlist
+    scripts:
+    - download_artifact
+    - script: extract_archive
+      skip_on: $true
+    - create_symlinks
+  create_linux_istance:
+    name: Create Linux
+    except: '{{artifact_id}} -eq 42'
+    scripts:
+    - create_linux
+    - update_linux
+    - name: Check msbuild step parsing relative to pwshake_path
+      msbuild: build.properties
+      when: $false
+    - name: Check msbuild step parsing relative to work_dir
+      msbuild: build.properties
+      when: $false
+
+# Run lists to execute
+invoke_tasks:
+  - create_linux_istance

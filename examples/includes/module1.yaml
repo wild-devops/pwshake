@@ -1,0 +1,10 @@
+scripts_directories:
+  - module1
+attributes_overrides:
+  - stage
+  - prod
+tasks:
+  role1: role3
+apply_roles:
+  - role1
+  - role2

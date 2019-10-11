@@ -1,0 +1,5 @@
+tasks:
+  clean:
+  build:
+  test:
+  publish:

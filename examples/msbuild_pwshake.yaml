@@ -1,0 +1,19 @@
+attributes:
+  configuration: Release
+
+# List of directories relative to this file location where executable scripts are looking for (can be omitted)
+scripts_directories:
+  - .
+
+# Declaration of run lists that compose and determine order of executing for scripts
+tasks:
+  msbuild:
+  - msbuild: '{{pwshake_path}}\example.msbuild.proj'
+  - msbuild:
+      project: '{{pwshake_path}}\example.msbuild.proj'
+      targets: Build
+      properties: Configuration={{configuration}}
+
+# Run lists to current execute
+invoke_tasks:
+- msbuild

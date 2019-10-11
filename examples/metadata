@@ -1,0 +1,4 @@
+# should not be parsed
+override_to=prod
+artifact_id=42
+base_path=c:\qwe\rty\u\n#escaped

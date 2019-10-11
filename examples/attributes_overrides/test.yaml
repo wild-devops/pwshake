@@ -1,0 +1,7 @@
+sql_server: "{{env_name}}-windows.shake.test:1334"
+sql_user: "sa"
+root_folder: "C:\\shake"
+shake:
+  - configs:
+      connection_strings:
+        shake: "Data Source={{sql_server}};Connection TimeOut=60;initial catalog=SHAKE;user id={{sql_databases.shake.user}};password=pass;Pooling=True;MultipleActiveResultSets=True;MultiSubnetFailover=True;Max Pool Size=100;Min Pool Size=0"

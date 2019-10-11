@@ -1,0 +1,6 @@
+{
+    "override_to": "unknown",
+    "env_name": "undefined",
+    "env_path": "{{$env:PATH}}",
+    "artifact_id": "0"
+}

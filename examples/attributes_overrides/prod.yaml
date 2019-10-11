@@ -1,0 +1,8 @@
+sql_server: "shake.sql.prod.consul"
+sql_databases:
+  - shake:
+      user: DerAdministrator
+      password: '*)*H*&*UHOU*(J)'
+  - api:
+      user: HerAdministrator  
+      password: 'HIHYG&^G^%F$%'

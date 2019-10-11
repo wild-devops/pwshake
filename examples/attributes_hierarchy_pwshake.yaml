@@ -1,0 +1,6 @@
+attributes:
+  a:
+    b:
+      c: d
+  e: "{{a.b.c}}"
+  win_fqdn: "{{env_name}}-windows.shake.{{override_to}}"

@@ -1,0 +1,20 @@
+{
+    "includes": [
+        "module4.json"
+    ],
+    "scripts_directories": [
+        "module2"
+    ],
+    "invoke_tasks": [
+        "run_list3",
+        "run_list4"
+    ],
+    "attributes_overrides": [
+        "test",
+        "stage"
+    ],
+    "tasks": {
+        "role1": "role1",
+        "role2": "role3"
+    }
+}
