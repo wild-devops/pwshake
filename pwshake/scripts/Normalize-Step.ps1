@@ -34,7 +34,7 @@ function Normalize-Step {
             cmd = Coalesce $item.cmd, $item.shell, '';
             msbuild = (Normalize-MsBuild $item.msbuild $config);
             when = (Normalize-When $item);
-            invoke_tasks = Coalesce $item.invoke_tasks, $item.apply_roles, $item.invoke_tasks, @();
+            invoke_tasks = Coalesce $item.invoke_tasks, $item.apply_roles, $item.invoke_run_lists, @();
             work_dir = Coalesce $item.work_dir, $item.in, '';
             on_error = Coalesce $item.on_error, 'throw';
         }

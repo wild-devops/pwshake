@@ -48,7 +48,7 @@ invoke_tasks:
 
 ```
 
-* Start the bootstrapper `pwshake.ps1` script passing the file name as first arguments:
+* Start the bootstrapper `pwshake.ps1` script passing the file name as first argument:
 
 ```
 PS>./pwshake.ps1 ./my_pwshake.yaml
@@ -60,8 +60,8 @@ This installs all required components from the `PSGallery` and invokes scripts a
 
 The result looks like the followed output including information about:
 *  `PWSHAKE config:` - loaded config file content (may be rearranged)
-*  `Arranged tasks:` - run lists to be executed in order
-*  `Invoke task:` - invoked run list names
+*  `Arranged tasks:` - tasks to be executed in order
+*  `Invoke task:` - invoked task names
 *  `Execute <step|powershell|cmd|msbuild>:` - invoked script info
 *  Everything else - invoked scripts outputs
 
@@ -80,7 +80,7 @@ attributes:
   pwshake_version: <current.pwshake.version>
   work_dir: /absolute/path/to/process/working/directory
   hello: Hello PWSHAKE!
-  pwshake_log_path: /absolute/path/to/your/working/directory/hello_pwshake.log
+  pwshake_log_path: /absolute/path/to/your/working/directory/my_pwshake.log
 
 Arranged tasks:
 - when: $true
@@ -111,7 +111,7 @@ And it runs various tests included in this repo.
   * [`includes:` element](/doc/includes.md)
   * [`invoke_tasks:` element](/doc/invoke_tasks.md)
   * [`tasks:` element](/doc/tasks.md)
-    * [implicit `[step]:` element](/doc/step.md)
+  * [implicit `[step]:` element](/doc/step.md)
   * [`scripts_directories:` element](/doc/scripts_directories.md)
 
 ## Happy **PWSHAKE**-ing!

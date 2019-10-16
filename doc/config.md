@@ -71,7 +71,7 @@
 
 * ### **`invoke_tasks:` element**
 
-  Aliases: **`invoke_tasks:`**, **`apply_roles:`**
+  Aliases: **`invoke_run_lists:`**, **`apply_roles:`**
 
   Required
 
