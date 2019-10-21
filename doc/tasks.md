@@ -1,6 +1,6 @@
 ## `tasks:` **element**
 
-Aliases: **`tasks:`**, **`roles:`**
+Aliases: **`run_lists:`**, **`roles:`**
 
 Contains named items that used by **PWSHAKE** engine as definitions of complex, composed and interdependent tasks.
 
