@@ -1,6 +1,6 @@
 ## - `[step]:` **element**
 
-Contains definition of the full explicitly described structure that **PWSHAKE** engine uses to find, distict, execute and log during the `pwshake.yaml` config processing.
+Contains definition of the full explicitly described structure that **PWSHAKE** engine uses to find, distinct, execute and log during the `pwshake.yaml` config processing.
 
 The internal representation of a single **step** looks like a following **Powershell** `[hashtable]`:
 ```
