@@ -22,10 +22,10 @@ mkdir MyDir
 cd MyDir
 ```
 
-* Clone this repo
+* Download a bootstrapper script `pwshake.ps1` from the root of this repo
 
 ```
-git clone https://github.com/wild-devops/pwshake.git .
+curl -O https://raw.githubusercontent.com/wild-devops/pwshake/master/pwshake.ps1
 ```
   
 * Create a new file with name `my_pwshake.yaml`

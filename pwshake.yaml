@@ -4,7 +4,8 @@ attributes:
 
 # List of directories relative to this file location where executable scripts are looking for
 scripts_directories:
-  - tests
+- tests
+- tools
 
 # Declaration of tasks that compose and determine order of executing for scripts
 tasks:
