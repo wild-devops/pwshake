@@ -11,7 +11,7 @@ This is definitely not a piece of computer state\configuration management (aka *
 
 # Why is this needed?
 This is a try to implement [Protected variations principle](https://en.wikipedia.org/wiki/GRASP_(object-oriented_design)#Protected_variations) in the CI/CD world.
-Since every CI-server (**GitLab**, **TeamCity**, **Circle**, **Travis**, etc) has its own definition for jobs, build configurations, dependencies, resources and artifacts, it makes sense to have some independent way doing the same in your own repository and using CI-servers only as entry points (starters) to Your project's delivery pipeline.
+Since every CI-server (**GitLab**, **TeamCity**, **Circle**, **Travis**, etc) has its own definition for jobs, build configurations, dependencies, resources and artifacts, it makes sense to have some independent way doing the same in your own repository and using CI-servers only as entry points (starters) to your project's delivery pipeline.
 
 # How to prepare **PWSHAKE** usage on Windows or Linux
 
