@@ -66,11 +66,11 @@ This installs all required components from the `PSGallery` and invokes scripts a
 
 
 The result looks like the followed output including information about:
-*  `PWSHAKE config:` - loaded config file content (may be rearranged)
-*  `Arranged tasks:` - tasks to be executed in order
-*  `Invoke task:` - invoked task names
-*  `Execute <step|powershell|cmd|msbuild>:` - invoked script info
-*  Everything else - invoked scripts outputs
+*  `PWSHAKE config:` - loaded config file content (may be rearranged due to overriding, interpolation, and merging metadata)
+*  `Arranged tasks:` - tasks to be executed in actual order
+*  `Invoke task:` - invoked tasks name
+*  `Execute <step|powershell|cmd|msbuild>:` - invoked steps caption
+*  Everything else - invoked scripts output
 
 ```
 PWSHAKE config:
