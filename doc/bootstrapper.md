@@ -1,21 +1,21 @@
 ## `pwshake.ps1` **bootstrapper**
 
-The `pwshake.ps1` bootstrapper script contains commands to load all required parts to install the **PWSHAKE** engine from the source of `PSGallery`
+The `pwshake.ps1` bootstrapper script contains commands to load all required parts to install the **PWSHAKE** engine from the source of `PSGallery`.
 
-It imports **PWSHAKE** engine as a **Powershell** module (named `pwshake`, surprisingly) that exports a single function `Invoke-pwshake` and its alias `pwshake` as well
+It imports **PWSHAKE** engine as a **Powershell** module (named `pwshake`, surprisingly) that exports a single function `Invoke-pwshake` and its alias `pwshake` as well.
 
-Then it calls `Invoke-pwshake` command with all parameters passed to bootstrapper
+Then it calls `Invoke-pwshake` command with all parameters passed to the bootstrapper.
 
 ## `pwshake.ps1` and `Invoke-pwshake` **parameters**
-All parameters are optional since they all have a conventional default values
+All parameters are optional since they all have conventional default values:
 
 * ### **`-ConfigPath`**
 
   Alias: **`-Path`**
 
-  Default is: `[string]"$PSScriptRoot\pwshake.yaml"` - i.e. `pwshake.yaml` from the same directory as the bootstrapper
+  Default is: `[string]"$PSScriptRoot\pwshake.yaml"` - i.e. `pwshake.yaml` from the same directory as the bootstrapper.
   
-  Tells to **PWSHAKE** engine where to find a `yaml` config file that contains all data for execution
+  Tells to **PWSHAKE** engine where to find a `yaml` config file that contains all data for execution.
 
   Example:
   ```
@@ -31,19 +31,19 @@ All parameters are optional since they all have a conventional default values
   ```
   
 * ### **`-Tasks`**
-  Aliases: **`-RunLists`**, **`-Roles`**.
+  Aliases: **`-RunLists`**, **`-Roles`**
 
-  Default is: `@()` - an empty array, i.e. nothing to override in `yaml` config's `invoke_tasks:` element
+  Default is: `@()` - an empty array, i.e. nothing to override in `yaml` config's `invoke_tasks:` element.
 
-  Tells to **PWSHAKE** engine which `tasks:` from a given `yaml` config must be executed
+  Tells to **PWSHAKE** engine which `tasks:` from a given `yaml` config must be executed.
   
-  Actually, strongly overrides the content of the `yaml` config's `invoke_tasks:` element
+  Actually if it's not an empty array, strongly overrides the content of the `yaml` config's `invoke_tasks:` element.
 
-  Example (invokes only the `publish` run list):
+  Example (invokes the only `publish` task):
   ```
   PS>./pwshake.ps1 -Tasks publish
   ```
-  Or (invokes in sequence `clean`, `build` and `test` run lists):
+  Or (invokes in sequence `clean`, `build` and `test` tasks):
   ```
   PS>Invoke-pwshake -Roles @("clean", "build", "test")
   ```
@@ -53,24 +53,24 @@ All parameters are optional since they all have a conventional default values
   ```
 
 * ### **`-MetaData`**
-  Default is: `$null` - i.e. nothing to merge into the `yaml` config's `attributes:` element
+  Default is: `$null` - i.e. nothing to merge into the `yaml` config's `attributes:` element.
 
-  Gives **PWSHAKE** engine an ability to populate the `yaml` config's `attributes:` element with external data (**metadata** as a term) passed from the outside world (CI server, cloud provider agent, canny developer, etc)
+  Gives **PWSHAKE** engine an ability to populate the `yaml` config's `attributes:` element with an external data (**metadata** as a term) passed from the outside world (CI server, cloud provider agent, canny developer, etc).
 
   The `-MetaData` parameter can accept:
-  * raw json string
+  * raw json string:
     ```
     PS>./pwshake.ps1 -MetaData '{"env_name":"shake42","override_to":"test"}'
     ```
-  * multiline string
+  * multiline string:
     ```
     PS>./pwshake.ps1 -MetaData "env_name=shake42`noverride_to=test"
     ```
-  * Powershell `[hashtable]` literal
+  * Powershell `[hashtable]` literal:
     ```
     PS>./pwshake.ps1 -MetaData @{env_name="shake42";override_to="test"}
     ```
-  * path to the `metadata` file which contains simple key value pairs in each row
+  * path to the `metadata` file which contains simple key value pairs in each row:
     ```
     PS>cat ./metadata
     env_name=shake42
@@ -79,7 +79,7 @@ All parameters are optional since they all have a conventional default values
     PS>./pwshake.ps1 -MetaData ./metadata
     ...
     ```
-  * path to the `metadata.json` file which contains `json` object literal
+  * path to the `metadata.json` file which contains `json` object literal:
     ```
     PS>cat ./metadata.json
     {
@@ -90,7 +90,7 @@ All parameters are optional since they all have a conventional default values
     PS>Invoke-pwshake -MetaData ./metadata.json
     ...
     ```
-  * path to the `metadata.yaml` file which contains `yaml` representation of the `attributes:` element content
+  * path to the `metadata.yaml` file which contains `yaml` representation of the `attributes:` element content:
     ```
     PS>cat ./metadata.yaml
     env_name: shake42
@@ -113,9 +113,9 @@ All parameters are optional since they all have a conventional default values
 
   Aliases: **`-WhatIf`**, **`-Noop`**
 
-  Default is: `$false` - i.e. normal execution
+  Default is: `$false` - i.e. normal execution.
 
-  If it passed as flag (`[switch]` in **Powershell** terms) the **PWSHAKE** engine does not execute any actual `steps:` listed in `pwshake.yaml` config, rather it only:
+  If it's passed as flag (`[switch]` in **Powershell** terms) the **PWSHAKE** engine does not execute any actual `steps:` listed in `pwshake.yaml` config, rather it only:
   * **includes** config data from files listed in `includes:`
   * **merges** `attributes:` with `metadata`
   * **overrides** `attributes:` with data listed in `attributes_overrides:`

@@ -4,9 +4,16 @@ Yet another maker based on modern **Powershell** (aka `pwsh` in `Linux` world) a
 # What's this?
 Technically it's a movable **Powershell** module that helps to perform various operations for build, make, deploy, etc.
 
-As well as it's a simple script executor based on **Powershell**.
+As well it's a simple script executor based on **Powershell**.
 
-## How to prepare **PWSHAKE** usage on Windows or Linux
+# What's this NOT?
+This is definitely not a piece of computer state\configuration management (aka **DSC**, **CM**, etc), despite it has basic concepts inspired by **Chef** (attributes, overrides, run lists\roles) and **Ansible** (`yaml` config).
+
+# Why is this needed?
+This is a try to implement [Protected variations principle](https://en.wikipedia.org/wiki/GRASP_(object-oriented_design)#Protected_variations) in the CI/CD world.
+Since every CI-server (**GitLab**, **TeamCity**, **Circle**, **Travis**, etc) has its own definition for jobs, build configurations, dependencies, resources and artifacts, it makes sense to have some independent way doing the same in your own repository and using CI-servers only as entry points (starters) to Your project's delivery pipeline.
+
+# How to prepare **PWSHAKE** usage on Windows or Linux
 
 * Create a new working directory
 
@@ -101,7 +108,7 @@ Start the bootstrapper `pwshake.ps1` script without any arguments passed:
 ```
 PS>./pwshake.ps1
 ```
-And it runs various tests included in this repo.
+And it runs various tests and examples included in this repo.
 
 ## See more about:
 * [bootstrapper `pwshake.ps1` script](/doc/bootstrapper.md)

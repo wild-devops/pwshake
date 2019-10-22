@@ -1,4 +1,4 @@
-## Main elements of **PWSHAKE** configuration file
+# Main elements of **PWSHAKE** configuration file
 
 * ### **`attributes:` element**
     Required
@@ -46,7 +46,7 @@
 
 * ### **`tasks:` element**
 
-  Aliases: **`tasks:`**, **`roles:`**
+  Aliases: **`run_lists:`**, **`roles:`**
 
   Required
 
@@ -65,7 +65,7 @@
       --list of --options that --doesnt feet ^
       --to single_line
   ```
-  Contains definition of composed and interdependent tasks that will be performed by **PWSHAKE** engine by executing `steps:` defined as `tasks:` items.
+  Contains definition of composed and interdependent tasks that will be performed by **PWSHAKE** engine by executing `steps:` which are defined as `tasks:` items.
 
   [See more about `tasks:`](/doc/tasks.md)
 
