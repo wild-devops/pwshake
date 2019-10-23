@@ -2,6 +2,11 @@ attributes:
   configuration: Release
 
 templates:
+  dotnet:
+    parameters:
+      command:
+      options: --version
+    cmd: dotnet [[command]] [[options]]
   msbuild:
     parameters:
       project: '{{pwshake_path}}/example.msbuild.proj'
@@ -16,9 +21,11 @@ tasks:
   msbuild:
   - template: msbuild
   - template: msbuild
+    on_error: continue
     parameters:
       targets: Build
       properties: Configuration={{configuration}}
+  - template: dotnet
 
 invoke_tasks:
 - msbuild

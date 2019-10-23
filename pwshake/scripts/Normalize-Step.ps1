@@ -29,15 +29,15 @@ function Normalize-Step {
 
         return @{
             name = Coalesce $item.name, "step_$([Math]::Abs($item.GetHashCode()))";
-            script = $item.script;
-            powershell = Coalesce $item.powershell, $item.pwsh, '';
-            cmd = Coalesce $item.cmd, $item.shell, '';
-            template = Coalesce $item.template, @{};
-            parameters = Coalesce $item.parameters, @{};
             when = (Normalize-When $item);
-            invoke_tasks = Coalesce $item.invoke_tasks, $item.apply_roles, $item.invoke_run_lists, @();
-            work_dir = Coalesce $item.work_dir, $item.in, '';
+            work_dir = Coalesce $item.work_dir, $item.in;
             on_error = Coalesce $item.on_error, 'throw';
+            script = $item.script;
+            powershell = Coalesce $item.powershell, $item.pwsh;
+            cmd = Coalesce $item.cmd, $item.shell;
+            invoke_tasks = Coalesce $item.invoke_tasks, $item.apply_roles, $item.invoke_run_lists, @();
+            template = $item.template;
+            parameters = Coalesce $item.parameters, @{};
         }
     }
 }
