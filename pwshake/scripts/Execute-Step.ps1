@@ -15,7 +15,9 @@ function Execute-Step {
             return;
         }
 
-        if ($step.script) {
+        if ($step.template) {
+            Execute-Step $config (Normalize-Template $step $config)
+        } elseif ($step.script) {
             $paths = $config.scripts_directories | ForEach-Object { Join-Path $config.attributes.pwshake_path -ChildPath $_ }
             $script_path = Get-ChildItem $paths -File `
                 | Where-Object BaseName -eq $step.script `
@@ -32,13 +34,6 @@ function Execute-Step {
                 $cmd += $item
             }
             Cmd-Shell $cmd -errorMessage "$($step.name) failed."
-        } elseif ($step.msbuild) {
-            $msbuild = "msbuild"
-            if (${is-Linux}) { $msbuild = "dotnet msbuild" }
-            $msbuild += " $($step.msbuild.project)"
-            if ($step.msbuild.targets) { $msbuild += " /t:$($step.msbuild.targets)" }
-            if ($step.msbuild.properties) { $msbuild += " /p:$($step.msbuild.properties)" }
-            Cmd-Shell $msbuild -errorMessage "$($step.name) failed."
         } elseif ($step.invoke_tasks) {
             $tasks = Arrange-Tasks $config $step.invoke_tasks
             foreach ($task in $tasks) {

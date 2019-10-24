@@ -1,19 +1,40 @@
 attributes:
   configuration: Release
 
-# List of directories relative to this file location where executable scripts are looking for (can be omitted)
-scripts_directories:
-  - .
+templates:
+  doitall:
+    parameters:
+      payload:
+    cmd: >
+      [[payload]]
+  dotnet:
+    template: doitall
+    parameters:
+      payload: dotnet [[command]] [[options]]
+      command:
+      options: --version
+  msbuild:
+    template: dotnet
+    parameters:
+      command: msbuild
+      options: >
+        [[project]]
+        /t:[[targets]]
+        /p:[[properties]]
+      project: '{{pwshake_path}}/example.msbuild.proj'
+      targets: Hello
+      properties: Configuration=Debug
 
-# Declaration of run lists that compose and determine order of executing for scripts
 tasks:
   msbuild:
-  - msbuild: '{{pwshake_path}}\example.msbuild.proj'
-  - msbuild:
-      project: '{{pwshake_path}}\example.msbuild.proj'
+  - template: msbuild
+  - template: msbuild
+    on_error: continue
+    parameters:
       targets: Build
       properties: Configuration={{configuration}}
+  - pwsh: Write-Host '<<something>>'
+  - template: dotnet
 
-# Run lists to current execute
 invoke_tasks:
 - msbuild

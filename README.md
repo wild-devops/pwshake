@@ -69,7 +69,7 @@ The result looks like the followed output including information about:
 *  `PWSHAKE config:` - loaded config file content (may be rearranged due to overriding, interpolation, and merging metadata)
 *  `Arranged tasks:` - tasks to be executed in actual order
 *  `Invoke task:` - invoked tasks name
-*  `Execute <step|powershell|cmd|msbuild>:` - invoked steps caption
+*  `Execute <step|powershell|cmd>:` - invoked steps caption
 *  Everything else - invoked scripts output
 
 ```

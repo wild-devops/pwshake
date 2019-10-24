@@ -11,7 +11,7 @@ function global:Invoke-Task {
         [bool]$dryRun = $false
     )
     process {
-        Log-Output "Invoke task: $($task.name)" $config 6>&1
+        Log-Output "Invoke task: $($task.name)" $config
 
         if (-not (Invoke-Expression $task.when)) {
             Log-Output "`t`tBypassed because of when: [$($task.when)] = $(Invoke-Expression $task.when)" $config

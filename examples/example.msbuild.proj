@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
-		 ToolsVersion="4.0"
+     ToolsVersion="4.0"
      DefaultTargets="Hello">
 
-	<PropertyGroup>
-		<Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
-	</PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+  </PropertyGroup>
 
   <Target Name="Hello">
-    <Message Text="Hello from MSBuild with $(Configuration) mode." />
+    <Message Text="Hello from MSBuild with $(Configuration) mode." Importance="High" />
   </Target>
 
   <Target Name="Build">
-    <Message Text="Building in $(Configuration) mode." />
+    <Message Text="Building in $(Configuration) mode." Importance="High" />
     <Error Text="Something went wrong." />
   </Target>
 

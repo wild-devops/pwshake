@@ -120,19 +120,6 @@ Every named element of the `tasks:` can contain some definitions to provide more
           -multiline -code -with -long ^
           -list -of -fake -parameters
     ```
-  * `- msbuild:` - element to run **MSBuild** with particular settings
-
-    Example:
-    ```
-    tasks:
-      build:
-      - msbuild: .\MySolution.sln
-      - msbuild:
-          project: .\MyProject.csproj
-          targets: TransformConfigs
-          properties: Configuration=Debug
-    ```
-    The above are 2 calls to **MSBuild**: the first is in shortened form and just uses default target (`Build`) and default options, the second uses given parameters `targets:` and `properties:` passed from `pwshake.yaml` config.
 
   * `- [step]:` - an implicit element to fulfill the particular step settings in explicit way
 
@@ -147,7 +134,8 @@ Every named element of the `tasks:` can contain some definitions to provide more
         cmd: echo 'step2'
       - step3:
           name: Do msbuild task
-          msbuild:
+          template: msbuild
+          parameters:
             project: .\MyProject.csproj
             targets: TransformConfigs
             properties: Configuration=Debug
