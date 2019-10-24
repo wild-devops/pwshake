@@ -68,11 +68,11 @@ tasks:
     scripts:
     - create_linux
     - update_linux
-    - name: Check msbuild step parsing relative to pwshake_path
-      msbuild: build.properties
+    - name: Check the step parsing relative to pwshake_path
+      cmd: build.properties
       when: $false
-    - name: Check msbuild step parsing relative to work_dir
-      msbuild: build.properties
+    - name: Check the step parsing relative to work_dir
+      cmd: build.properties
       when: $false
 
 # Run lists to execute

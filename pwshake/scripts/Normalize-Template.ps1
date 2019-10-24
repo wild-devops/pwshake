@@ -14,7 +14,7 @@ function Normalize-Template {
         $ErrorActionPreference = "Stop"
 
         if ($depth -gt 100) {
-            throw "Circular reference detected for templates in:`n$(cfy $item)"
+            throw "Circular reference detected for templates in:`n$(ConvertFrom-Yaml $item)"
         }
 
         if (-not $item) { return $null }
@@ -23,7 +23,7 @@ function Normalize-Template {
         $step.parameters = Merge-Hashtables $step.parameters $item.parameters
         $parameters = $step.parameters.Clone()
         foreach ($param in $parameters.Keys) {
-            $step = ($step | cty).Replace("[[$param]]", $parameters[$param]) | cfy
+            $step = ($step | ConvertTo-Yaml).Replace("[[$param]]", $parameters[$param]) | ConvertFrom-Yaml
         }
 
         if ($step.template) {
