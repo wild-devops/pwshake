@@ -26,7 +26,7 @@ function Invoke-Step {
       }
       Push-Location (Normalize-Path "$($step.work_dir)" $config)
 
-      Log-Output "Execute step: $($step.name)" $config 6>&1
+      Log-Output "Execute step: $($step.name)" $config
       $logOut = @()
       $global:LASTEXITCODE = 0
       Execute-Step $config $step *>&1 | Tee-Object -Variable logOut | Log-Output -config $config

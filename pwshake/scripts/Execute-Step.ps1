@@ -16,14 +16,7 @@ function Execute-Step {
         }
 
         if ($step.template) {
-            $template = $config.templates[$step.template]
-            $template.parameters = Merge-Hashtables $template.parameters $step.parameters
-            Write-Host "Template [$($step.template)]:`n$(cty $template)"
-            $parameters = $template.parameters.Clone()
-            foreach ($param in $parameters.Keys) {
-                $template = ($template | cty).Replace("[[$param]]", $parameters[$param]) | cfy
-            }
-            Invoke-Step $config $template
+            Execute-Step $config (Normalize-Template $step $config)
         } elseif ($step.script) {
             $paths = $config.scripts_directories | ForEach-Object { Join-Path $config.attributes.pwshake_path -ChildPath $_ }
             $script_path = Get-ChildItem $paths -File `
