@@ -1,0 +1,22 @@
+includes:
+- templates.yaml
+
+tasks:
+  transform_xml_file:
+  - template: transform_xml_file
+    in: examples/templates
+    parameters:
+      path: test.xml
+      appends:
+        '/xml': '<five six="seven" />'
+        '/xml/five[1]': '<eight nine="ten" />'
+      updates:
+        '/xml/two/@three': 'four'
+      removes:
+        '/xml/six[@seven="wrong"]':
+  - pwsh: 
+      Get-Content test.xml -Raw
+    in: examples/templates
+
+invoke_tasks:
+- transform_xml_file
