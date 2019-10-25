@@ -1,39 +1,20 @@
+includes:
+- templates/templates.yaml
+
 attributes:
   configuration: Release
-
-templates:
-  doitall:
-    parameters:
-      payload:
-    cmd: >
-      [[payload]]
-  dotnet:
-    template: doitall
-    parameters:
-      payload: dotnet [[command]] [[options]]
-      command:
-      options: --version
-  msbuild:
-    template: dotnet
-    parameters:
-      command: msbuild
-      options: >
-        [[project]]
-        /t:[[targets]]
-        /p:[[properties]]
-      project: '{{pwshake_path}}/example.msbuild.proj'
-      targets: Hello
-      properties: Configuration=Debug
 
 tasks:
   msbuild:
   - template: msbuild
+    parameters:
+      project: '{{pwshake_path}}/example.msbuild.proj'
   - template: msbuild
     on_error: continue
     parameters:
+      project: '{{pwshake_path}}/example.msbuild.proj'
       targets: Build
       properties: Configuration={{configuration}}
-  - pwsh: Write-Host '<<something>>'
   - template: dotnet
 
 invoke_tasks:
