@@ -11,7 +11,17 @@ This is definitely not a piece of computer state\configuration management (aka *
 
 # Why is this needed?
 This is a try to implement [Protected variations principle](https://en.wikipedia.org/wiki/GRASP_(object-oriented_design)#Protected_variations) in the CI/CD world.
+
 Since every CI-server (**GitLab**, **TeamCity**, **Circle**, **Travis**, etc) has its own definition for jobs, build configurations, dependencies, resources and artifacts, it makes sense to have some independent way doing the same in your own repository and using CI-servers only as entry points (starters) to your project's delivery pipeline.
+
+# How do we use it in the real world?
+We have to instantiate and provision lots of Windows hosts in the **AWS** cloud.
+
+There are many roles that these hosts are performed (static\dynamic web sites, api hosts, windows services hosts, databases, etc).
+
+Average time to live for most of them is during from 30 minutes (for auto-testing) to 1 week (for weekly production release, that recreates all prod instances from scratch).
+
+So, we do not need to manage a big **snowflake** infrastructure and to care about managed **state** of it (say hello to **Chef** and **DSC**). Rather we need to organize a simple and robust way to make the full initial configuration of our hosts (quite complex in some cases) and to perform it only once per each host instantiation.
 
 # How to prepare **PWSHAKE** usage on Windows or Linux
 
