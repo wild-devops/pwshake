@@ -23,18 +23,22 @@ function Normalize-Step {
         if ($item -is [string]) {
             $step = Merge-Hashtables $step @{ name = $item; script = $item }
         } elseif ($item -is [Hashtable]) {
-            $step = Merge-Hashtables $step $item
-<#
-            $reserved_keys = $step.Keys + $config.templates.Keys + ${pwshake-context}.templates.Keys
-            if ($item.Keys.Length -eq 1) {
-                $key = $item.Keys | Select-Object -First 1
-                if (-not ($key -in $reserved_keys)) {
-                    $step = Normalize-Step (Merge-Hashtables $step $item) $config
+            if ($item.Keys.Count -eq 1) {
+                $key = $item.Keys[0]
+                $content = $item[$key][0]
+                if ($content -is [string]) {
+                    $step = Merge-Hashtables $step @{ $($key) = $content }
+                } elseif ($content -is [Hashtable]) {
+                    $step = Merge-Hashtables $step $content
+                    $step.$($key) = $null
+                } elseif (-not ($content)) {
+                    $step.$($key) = $null
+                } else {
+                    throw "Unknown Task item: $(ConvertTo-Yaml $content)"
                 }
             } else {
-
+                $step = Merge-Hashtables $step $item
             }
-#>
         } else {
             throw "Unknown Task item type: $($item.GetType().Name)"
         }
@@ -43,7 +47,6 @@ function Normalize-Step {
             if ($step.Keys -contains $key) {
                 $step = Merge-Hashtables ${pwshake-context}.templates[$key] $step
                 $step.powershell = ${pwshake-context}.templates[$key].powershell
-                #Write-Host "<<step>>:`n$(cty $step)"
                 break;
             }
         }

@@ -39,12 +39,12 @@ templates:
     updates:
     removes:
     powershell: |
-      $path = $step.path
+      $path = Normalize-Path (Coalesce $step.transform_xml_file, $step.path) $config
       $appends = $step.appends
       $updates = $step.updates
       $removes = $step.removes
-      Write-Host "Transforming file '$(Resolve-Path $path)'"
-      $xml = [xml](Get-Content (Resolve-Path $path) -Raw)
+      Write-Host "Transforming file '$path'"
+      $xml = [xml](Get-Content $path -Raw)
       if ($appends) {
         foreach ($key in $appends.Keys) {
           foreach ($node in $xml.SelectNodes($key)) {
@@ -73,4 +73,4 @@ templates:
           }
         }
       }
-      $xml.Save((Resolve-Path $path))
+      $xml.Save($path)

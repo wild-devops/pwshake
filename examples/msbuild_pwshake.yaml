@@ -9,11 +9,16 @@ tasks:
   - msbuild:
   - msbuild: '{{pwshake_path}}/example.msbuild.proj'
   - msbuild:
-    on_error: continue
-    project: '{{pwshake_path}}/example.msbuild.proj'
-    targets: Build
-    properties: Configuration={{configuration}}
+      name: Build all
+      on_error: continue
+      project: '{{pwshake_path}}/example.msbuild.proj'
+      targets: Build
+      properties: Configuration={{configuration}}
   - dotnet:
+  - dotnet:
+      name: Build again
+      command: msbuild
+      options: '{{pwshake_path}}/example.msbuild.proj'
 
 invoke_tasks:
 - msbuild
