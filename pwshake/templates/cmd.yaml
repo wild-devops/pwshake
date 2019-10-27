@@ -1,0 +1,8 @@
+templates:
+  cmd:
+    powershell: |
+      $cmd = ""
+      foreach ($line in ($step.cmd -split '\^\s*\n')) {
+          $cmd += $line
+      }
+      Cmd-Shell $cmd

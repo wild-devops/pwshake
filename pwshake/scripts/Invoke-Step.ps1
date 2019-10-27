@@ -29,8 +29,8 @@ function Invoke-Step {
       Log-Output "Execute step: $($step.name)" $config
       $logOut = @()
       $global:LASTEXITCODE = 0
-      Execute-Step $config $step *>&1 | Tee-Object -Variable logOut | Log-Output -config $config
-      if (($LASTEXITCODE -ne 0) -and ($throwOn)) { 
+      Invoke-Expression $step.powershell *>&1 | Tee-Object -Variable logOut | Log-Output -config $config
+      if ((($LASTEXITCODE -ne 0) -or (-not $?)) -and ($throwOn)) { 
         $lastErr = $logOut | Where-Object {$_ -is [Management.Automation.ErrorRecord]} | Select-Object -Last 1
         if (-not $lastErr) {
             $lastErr = "$($step.name) failed."

@@ -1,55 +1,48 @@
 templates:
-  python:
-    parameters:
-      file:
-      options:
-    cmd: |
-      python [[file]] [[options]]
   dotnet:
-    parameters:
-      command:
-      options: --version
-    cmd: |
-      dotnet [[command]] [[options]]
+    command:
+    options: --version
+    powershell: |
+      "dotnet $($step.command) $($step.options)" | Cmd-Shell
   msbuild:
-    parameters:
-      project: /version
-      targets:
-      properties:
-      options:
-    pwsh: |
+    project: /version
+    targets:
+    properties:
+    options:
+    powershell: |
       $cmd = if (${is-Linux}) {'dotnet msbuild'} else {'msbuild'}
-      if ($step.parameters.project) {
-        $cmd += " $($step.parameters.project)"
+      if ($step.msbuild) {
+        $cmd += " $($step.msbuild)"
+      } elseif ($step.project) {
+        $cmd += " $($step.project)"
       }
-      if ($step.parameters.targets) {
-        foreach ($target in $step.parameters.targets) {
+      if ($step.targets) {
+        foreach ($target in $step.targets) {
           $cmd += " /t:$target"
         }
       }
-      if ($step.parameters.properties) {
-        foreach ($property in $step.parameters.properties) {
+      if ($step.properties) {
+        foreach ($property in $step.properties) {
           $cmd += " /p:$property"
         }
       }
-      if ($step.parameters.options) {
-        foreach ($option in $step.parameters.options) {
+      if ($step.options) {
+        foreach ($option in $step.options) {
           $cmd += " $option"
         }
       }
       $cmd | Cmd-Shell
 
   transform_xml_file:
-    parameters:
-      path:
-      appends:
-      updates:
-      removes:
-    pwsh: |
-      $path = $step.parameters.path
-      $appends = $step.parameters.appends
-      $updates = $step.parameters.updates
-      $removes = $step.parameters.removes
+    path:
+    appends:
+    updates:
+    removes:
+    powershell: |
+      $path = $step.path
+      $appends = $step.appends
+      $updates = $step.updates
+      $removes = $step.removes
       Write-Host "Transforming file '$(Resolve-Path $path)'"
       $xml = [xml](Get-Content (Resolve-Path $path) -Raw)
       if ($appends) {

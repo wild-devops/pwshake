@@ -1,0 +1,7 @@
+templates:
+  invoke_tasks:
+    powershell: |
+      $tasks = Arrange-Tasks $config $step.invoke_tasks
+      foreach ($task in $tasks) {
+          Invoke-Task $task $config
+      }

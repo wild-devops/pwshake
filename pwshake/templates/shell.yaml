@@ -1,0 +1,4 @@
+templates:
+  shell:
+    powershell: |
+      Cmd-Shell $step.shell
