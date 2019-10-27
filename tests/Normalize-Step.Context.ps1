@@ -12,16 +12,15 @@ Context "Normalize-Step" {
 
         $actual | Should -BeOfType System.Collections.Hashtable
         $actual.Keys | Should -Contain "name"
-        $actual.Keys | Should -Contain "script"
+        $actual.Keys | Should -Contain "when"
+        $actual.Keys | Should -Contain "work_dir"
+        $actual.Keys | Should -Contain "on_error"
         $actual.Keys | Should -Contain "powershell"
-        $actual.Keys | Should -Contain "cmd"
-        $actual.Keys | Should -Contain "template"
-        $actual.Keys | Should -Contain "parameters"
         $actual.name | Should -BeLike "step_*"
-        $actual.script | Should -BeNullOrEmpty
+        $actual.when | Should -Be '$true'
+        $actual.work_dir | Should -BeNullOrEmpty
+        $actual.on_error | Should -Be 'throw'
         $actual.powershell | Should -BeNullOrEmpty
-        $actual.cmd | Should -BeNullOrEmpty
-        $actual.template | Should -BeNullOrEmpty
     }
 
     It "Should return $scriptPath in 'script' key" {
@@ -55,16 +54,12 @@ Context "Normalize-Step" {
     It "Should normalize a full structure" {
         $mock = @"
 name: Mock
-script: $scriptPath
 powershell: pwsh
-cmd: python.exe
 "@ | ConvertFrom-Yaml
         $actual = Normalize-Step $mock
         
         $actual.name | Should -Be "Mock"
-        $actual.script | Should -Be $scriptPath
         $actual.powershell | Should -Be "pwsh"
-        $actual.cmd | Should -Be "python.exe"
     }
 
     It "Should normalize a single string as 'script' and 'name' keys" {
@@ -76,8 +71,7 @@ run_list:
         
         $actual.name | Should -Be "Mock"
         $actual.script | Should -Be "Mock"
-        $actual.powershell | Should -BeNullOrEmpty
-        $actual.cmd | Should -BeNullOrEmpty
+        $actual.powershell | Should -Not -BeNullOrEmpty
     }
 
     It "Should normalize a 'powershell' key with default 'name'" {
@@ -88,9 +82,7 @@ run_list:
         $actual = Normalize-Step $mock
         
         $actual.name | Should -BeLike "step_*"
-        $actual.script | Should -BeNullOrEmpty
         $actual.powershell | Should -Be "Mock"
-        $actual.cmd | Should -BeNullOrEmpty
     }
 
     It "Should normalize a 'cmd' key with default 'name'" {
@@ -101,8 +93,7 @@ run_list:
         $actual = Normalize-Step $mock
         
         $actual.name | Should -BeLike "step_*"
-        $actual.script | Should -BeNullOrEmpty
-        $actual.powershell | Should -BeNullOrEmpty
+        $actual.powershell | Should -Not -BeNullOrEmpty
         $actual.cmd | Should -Be "Mock"
     }
 
