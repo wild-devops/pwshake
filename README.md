@@ -79,7 +79,7 @@ The result looks like the followed output including information about:
 *  `PWSHAKE config:` - loaded config file content (may be rearranged due to overriding, interpolation, and merging metadata)
 *  `Arranged tasks:` - tasks to be executed in actual order
 *  `Invoke task:` - invoked tasks name
-*  `Execute <step|powershell|cmd>:` - invoked steps caption
+*  `Execute step:` - invoked steps caption
 *  Everything else - invoked scripts output
 
 ```
@@ -128,6 +128,7 @@ And it runs various tests and examples included in this repo.
   * [`includes:` element](/doc/includes.md)
   * [`invoke_tasks:` element](/doc/invoke_tasks.md)
   * [`tasks:` element](/doc/tasks.md)
+  * [`templates:` element](/doc/templates.md)
   * [implicit `[step]:` element](/doc/step.md)
   * [`scripts_directories:` element](/doc/scripts_directories.md)
 

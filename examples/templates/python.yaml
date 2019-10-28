@@ -1,0 +1,14 @@
+templates:
+  python:
+    file:
+    inline:
+    powershell: |
+      if ($step.python) {
+        "python $($step.python)" | Cmd-Shell
+      } elseif ($step.file) {
+        "python $($step.file)" | Cmd-Shell
+      } elseif ($step.inline) {
+        python -c $step.inline
+      } else {
+        python --version
+      }
