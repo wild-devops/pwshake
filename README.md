@@ -114,6 +114,8 @@ Hello PWSHAKE!
 ```
 ## Test **PWSHAKE** by itself
 
+Clone this repo, change current directory to the repo root folder.
+
 Start the bootstrapper `pwshake.ps1` script without any arguments passed:
 ```
 PS>./pwshake.ps1
