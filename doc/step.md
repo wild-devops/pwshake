@@ -159,7 +159,12 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
     
   Example:
   ```
-  - step:
+  tasks:
+    clean:
+    build:
+    test:
+    deploy:
+    task1:
       name: Do all stuff if solution file is present
       scripts:
       - powershell: $script:skip_it_all = -not (Test-Path MySolution.sln)
