@@ -16,6 +16,11 @@ function Invoke-Step {
     $step = Normalize-Step $step $config
     $throwOn = ($step.on_error -eq 'throw')
 
+    if (-not (Invoke-Expression $step.when)) {
+      Log-Output "`t`tBypassed because of: [$($step.when)] = $(Invoke-Expression $step.when)" $config
+      continue;
+    }
+
     try {
       if ($work_dir) {
         # Since actual execution is performed in the $step that can contain it's own .work_dir property
@@ -29,8 +34,8 @@ function Invoke-Step {
       Log-Output "Execute step: $($step.name)" $config
       $logOut = @()
       $global:LASTEXITCODE = 0
-      Execute-Step $config $step *>&1 | Tee-Object -Variable logOut | Log-Output -config $config
-      if (($LASTEXITCODE -ne 0) -and ($throwOn)) { 
+      Invoke-Expression $step.powershell *>&1 | Tee-Object -Variable logOut | Log-Output -config $config
+      if ((($LASTEXITCODE -ne 0) -or (-not $?)) -and ($throwOn)) { 
         $lastErr = $logOut | Where-Object {$_ -is [Management.Automation.ErrorRecord]} | Select-Object -Last 1
         if (-not $lastErr) {
             $lastErr = "$($step.name) failed."

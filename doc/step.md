@@ -9,12 +9,7 @@ The internal representation of a single **step** looks like a following **Powers
   when = "`$true";
   work_dir = $null;
   on_error = "throw";
-  script = $null;
   powershell = $null;
-  cmd = $null;
-  invoke_tasks = $null;
-  template = $null;
-  parameters = @{};
 }
 ```
 
@@ -29,6 +24,10 @@ will be transformed into the following structure:
 ```
 @{
   name = "step name";
+  when = "`$true";
+  work_dir = $null;
+  on_error = "throw";
+  powershell = $null;
   script = "script_name";
 }
 ```
@@ -40,19 +39,7 @@ Pay attention that the `step1` identifier itself does not bring any actual value
 ```
 In this case the `-` sign means that subsequent items in `yaml` hierarchy are keys of the same **Powershell** `[hashtable]`.
 
-So, the full allowed form of the `- [step]:` element could be the following:
-```
-- name: step name
-  script: script_name
-  powershell: "some inline powershell code"
-  cmd: "other inline cmd.exe commands"
-  template: my_template
-  when: $true
-...
-```
-But **PWSHAKE** engine take pecedence over the given structure items and executes only the first non empty item, in this case `script:` item with '`script_name`' value, all others (`powershell:`, `cmd:`, `template:`) are ignored.
-
-* ### - `[step]:` element implicit shortenings
+* ## - `[step]:` element implicit shortenings
   Since the actual payload in the executed structure have only the two elements:
   * `name:`
   * first non empty of `[script: | powershell: | cmd:]`
@@ -105,8 +92,26 @@ But **PWSHAKE** engine take pecedence over the given structure items and execute
   ```
   This is the same as:
   ```
-  - name: pwshake_2122574676
+  - name: step_2122574676
     powershell: rm ./ -recurse -force
+  ```
+
+* ### - `[msbuild]:` element implicit shortenings
+  All things described above are eligible for the `msbuild:` element.
+
+
+  Since the actual payload of this element is the **MSBuild** project file name, so the shortening syntax use this value as a `project:` element value.
+
+  Example:
+  ```
+  - name: Build
+    msbuild: some_project_file_name
+  ```
+  This is actually the same as:
+  ```
+  - name: Build
+    msbuild:
+      project: some_project_file_name
   ```
 
 * ### - `[when|only|except|skip_on]:` element implicit shortenings
@@ -157,7 +162,7 @@ But **PWSHAKE** engine take pecedence over the given structure items and execute
   - step:
       name: Do all stuff if solution file is present
       scripts:
-      - powershell: $skip_it_all = -not (Test-Path MySolution.sln)
+      - powershell: $script:skip_it_all = -not (Test-Path MySolution.sln)
       - skip: $skip_it_all
         invoke_tasks:
         - clean

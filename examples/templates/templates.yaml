@@ -1,57 +1,22 @@
 templates:
-  python:
-    parameters:
-      file:
-      options:
-    cmd: |
-      python [[file]] [[options]]
   dotnet:
-    parameters:
-      command:
-      options: --version
-    cmd: |
-      dotnet [[command]] [[options]]
-  msbuild:
-    parameters:
-      project: /version
-      targets:
-      properties:
-      options:
-    pwsh: |
-      $cmd = if (${is-Linux}) {'dotnet msbuild'} else {'msbuild'}
-      if ($step.parameters.project) {
-        $cmd += " $($step.parameters.project)"
-      }
-      if ($step.parameters.targets) {
-        foreach ($target in $step.parameters.targets) {
-          $cmd += " /t:$target"
-        }
-      }
-      if ($step.parameters.properties) {
-        foreach ($property in $step.parameters.properties) {
-          $cmd += " /p:$property"
-        }
-      }
-      if ($step.parameters.options) {
-        foreach ($option in $step.parameters.options) {
-          $cmd += " $option"
-        }
-      }
-      $cmd | Cmd-Shell
+    command:
+    options: --version
+    powershell: |
+      "dotnet $($step.command) $($step.options)" | Cmd-Shell
 
   transform_xml_file:
-    parameters:
-      path:
-      appends:
-      updates:
-      removes:
-    pwsh: |
-      $path = $step.parameters.path
-      $appends = $step.parameters.appends
-      $updates = $step.parameters.updates
-      $removes = $step.parameters.removes
-      Write-Host "Transforming file '$(Resolve-Path $path)'"
-      $xml = [xml](Get-Content (Resolve-Path $path) -Raw)
+    path:
+    appends:
+    updates:
+    removes:
+    powershell: |
+      $path = Normalize-Path (Coalesce $step.transform_xml_file, $step.path) $config
+      $appends = $step.appends
+      $updates = $step.updates
+      $removes = $step.removes
+      Write-Host "Transforming file '$path'"
+      $xml = [xml](Get-Content $path -Raw)
       if ($appends) {
         foreach ($key in $appends.Keys) {
           foreach ($node in $xml.SelectNodes($key)) {
@@ -80,4 +45,4 @@ templates:
           }
         }
       }
-      $xml.Save((Resolve-Path $path))
+      $xml.Save($path)

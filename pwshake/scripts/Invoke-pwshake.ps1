@@ -2,7 +2,7 @@ function Invoke-pwshake {
     [CmdletBinding()]
     param (
         [Parameter(Position = 0, Mandatory = $false)]
-        [string]$ConfigPath = ".\pwshake.yaml",
+        [string]$ConfigPath = "./pwshake.yaml",
     
         [Parameter(Position = 1, Mandatory = $false)]
         [Alias("RunLists", "Roles")]

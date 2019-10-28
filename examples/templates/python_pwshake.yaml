@@ -1,0 +1,16 @@
+includes:
+- python.yaml
+
+tasks:
+  test_python_template:
+  - python:
+  - python: --version
+  - python:
+      inline: print('Hello pwshake!');
+  - python:
+      file: |
+        {{pwshake_path}}/hello.py again
+  - python: '{{pwshake_path}}/hello.py twice'
+
+invoke_tasks:
+- test_python_template

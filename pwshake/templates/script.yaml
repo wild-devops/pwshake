@@ -1,0 +1,10 @@
+templates:
+  script:
+    powershell: |
+      $paths = $config.scripts_directories | ForEach-Object { Join-Path $config.attributes.pwshake_path -ChildPath $_ }
+      $script_path = Get-ChildItem $paths -File `
+          | Where-Object BaseName -eq $step.script `
+          | Select-Object -ExpandProperty FullName
+      Write-Host "Script file: $script_path"
+      if (-not $script_path) { throw "Script file: $($step.script).ps1 not found." }
+      & $script_path -attributes $config.attributes

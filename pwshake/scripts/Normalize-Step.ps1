@@ -12,32 +12,49 @@ function Normalize-Step {
 
         if (-not $item) { return $null }
 
+        $step = @{
+            name = Coalesce $item.name, "step_$([Math]::Abs($item.GetHashCode()))";
+            when = (Normalize-When $item);
+            work_dir = Coalesce $item.work_dir, $item.in;
+            on_error = Coalesce $item.on_error, 'throw';
+            powershell = Coalesce $item.powershell, $item.pwsh;
+        }
+
         if ($item -is [string]) {
-            $item = @{ name = $item; script = $item }
+            $step = Merge-Hashtables $step @{ name = $item; script = $item }
         } elseif ($item -is [Hashtable]) {
-            if ($item.Keys.Length) {
-                $key = $item.Keys | Select-Object -First 1
-                $reserved_keys = @('name','script','powershell','cmd','template', 'parameters','when','invoke_tasks','work_dir','on_error')
-                if ((-not ($key -in $reserved_keys)) -and ($item[$key] -is [hashtable])) {
-                    $item = $item[$key]
-                    $item.name = Coalesce $item.name, $key
+            if ($item.Keys.Count -eq 1) {
+                $key = $item.Keys[0]
+                $content = $item[$key][0]
+                $reserved_keys = $step.Keys + ${pwshake-context}.templates.Keys
+                if (-not ($reserved_keys -contains $key)) {
+                    $step.name = $key
                 }
+                if ($content -is [string]) {
+                    $step = Merge-Hashtables $step @{ $($key) = $content }
+                } elseif ($content -is [Hashtable]) {
+                    $step = Merge-Hashtables $step $content
+                    $step.$($key) = $null
+                } elseif (-not ($content)) {
+                    $step.$($key) = $null
+                } else {
+                    $step.$($key) = $content
+                }
+            } else {
+                $step = Merge-Hashtables $step $item
             }
         } else {
             throw "Unknown Task item type: $($item.GetType().Name)"
         }
 
-        return @{
-            name = Coalesce $item.name, "step_$([Math]::Abs($item.GetHashCode()))";
-            when = (Normalize-When $item);
-            work_dir = Coalesce $item.work_dir, $item.in;
-            on_error = Coalesce $item.on_error, 'throw';
-            script = $item.script;
-            powershell = Coalesce $item.powershell, $item.pwsh;
-            cmd = Coalesce $item.cmd, $item.shell;
-            invoke_tasks = Coalesce $item.invoke_tasks, $item.apply_roles, $item.invoke_run_lists, @();
-            template = $item.template;
-            parameters = Coalesce $item.parameters, @{};
+        foreach ($key in ${pwshake-context}.templates.Keys) {
+            if ($step.Keys -contains $key) {
+                $step = Merge-Hashtables ${pwshake-context}.templates[$key] $step
+                $step.powershell = ${pwshake-context}.templates[$key].powershell
+                break;
+            }
         }
+
+        return $step
     }
 }

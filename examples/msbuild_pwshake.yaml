@@ -6,16 +6,19 @@ attributes:
 
 tasks:
   msbuild:
-  - template: msbuild
-    parameters:
-      project: '{{pwshake_path}}/example.msbuild.proj'
-  - template: msbuild
-    on_error: continue
-    parameters:
+  - msbuild:
+  - msbuild: '{{pwshake_path}}/example.msbuild.proj'
+  - msbuild:
+      name: Build all
+      on_error: continue
       project: '{{pwshake_path}}/example.msbuild.proj'
       targets: Build
       properties: Configuration={{configuration}}
-  - template: dotnet
+  - dotnet:
+  - dotnet:
+      name: Build again
+      command: msbuild
+      options: '{{pwshake_path}}/example.msbuild.proj'
 
 invoke_tasks:
 - msbuild
