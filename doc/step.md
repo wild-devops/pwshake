@@ -123,7 +123,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   ```
   This is the same as:
   ```
-  - name: pwshake_2122574676
+  - name: step_2122574676
     powershell: rm ./ -recurse -force
     when: $true
   ```
@@ -137,7 +137,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   ```
   This is the same as:
   ```
-  - name: pwshake_2122574676
+  - name: step_2122574676
     powershell: rm ./ -recurse -force
     when: -not ($env:SOME_VALUE -eq '42')
   ```
