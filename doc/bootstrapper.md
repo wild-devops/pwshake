@@ -121,9 +121,9 @@ All parameters are optional since they all have conventional default values:
   * **overrides** `attributes:` with data listed in `attributes_overrides:`
   * **interpolates** `attributes:` with substitutions like `{{blah-blah}}`
   * **arranges** `tasks:` according to their dependencies and order in `pwshake.yaml` config  
-  * **invokes** `invoke_tasks:` without actual `steps:` execution
+  * **invokes** `invoke_tasks:` items without actual `steps:` execution
 
-  This option is useful for developing complex `pwshake.yaml` configs with many interdependent `tasks:` and/or long chains of `{{}}` substitutions and `attributes_overrides:`
+  This option is useful for developing complex `pwshake.yaml` configs with many interdependent `tasks:`, several `includes:` items and/or long chains of `{{}}` substitutions and `attributes_overrides:`
   ```
   PS>./pwshake.ps1 ./my_complex_pwshake.yaml -DryRun
   ```

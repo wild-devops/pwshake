@@ -1,6 +1,6 @@
 ## `includes:` **element**
 
-Optional
+**Optional**
 
 Contains list of file paths relational to the main `pwshake.yaml` that will be merged into the main config before **PWSHAKE** engine starts execution. It's useful for splitting long configurations to several meaningful parts.
 
@@ -91,3 +91,6 @@ scripts_directories:
  - dir5
 ...
 ```
+Every included file can contain its own list of `includes:`, so nested inclusion is allowed.
+
+Each item in `includes:` will be looked for in folders relative to the `yaml` file that contains current `includes:` element.

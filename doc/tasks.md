@@ -1,10 +1,12 @@
 ## `tasks:` **element**
 
+**Required**
+
 Aliases: **`run_lists:`**, **`roles:`**
 
 Contains named items that used by **PWSHAKE** engine as definitions of complex, composed and interdependent tasks.
 
-The first level of items are task **names**, that can be used in other items and\or elements to reference a particular task for **reuse**, **compose** and **invoke**
+The first level of items are task **names** (actually `keys` of `[hashtable]`), that can be used in other items and\or elements to reference a particular task for **reuse**, **compose** and **invoke**
 
 Example:
 ```
@@ -228,8 +230,6 @@ Every named element of the `tasks:` can contain some definitions to provide more
     publish:
       depends_on:
       - complex_task
-      - build
-      - test
       steps:
       - do_publish
     ```

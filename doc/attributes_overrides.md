@@ -1,5 +1,7 @@
 ## `attributes_overrides:` **element**
 
+**Optional**
+
 Contains list of named items which determine order and content of **metadata** that will be merged into the `attributes:` element before **PWSHAKE** engine starts execution of the `invoke_tasks:` element content.
 
 Example:

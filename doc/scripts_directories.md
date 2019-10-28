@@ -1,5 +1,7 @@
 ## `scripts_directories:` **element**
 
+**Optional**
+
 Contains list of directories relative to the `pwshake.yaml` config file location (which is also the `pwshake_path:` attribute value) where **PWSHAKE** engine looks for `scripts:` defined as items of the `tasks:` element.
 
 Example:

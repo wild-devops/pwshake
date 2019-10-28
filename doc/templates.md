@@ -1,5 +1,8 @@
 ## `templates:` **element**
-Contains definitions of `step:` elements structure for reusing and syntax shortenings in the whole `pwshake.yaml` config.
+
+**Optional**
+
+Contains definitions of `[step:]` elements structure for reusing and syntax shortenings in the whole `pwshake.yaml` config.
 
 This tells to **PWSHAKE** engine how to substitute any structured `yaml` input in step definitions into an executable **Powershell** command.
 
@@ -34,7 +37,8 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     tasks:
       test_python_template:
       - python:
-      - python: --version
+      - 'Run python':
+          python: --version
       - python:
           inline: print('Hello pwshake!');
       - python:
@@ -52,7 +56,7 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     Invoke task: test_python_template
     Execute step: step_25540982
     Python 3.6.8
-    Execute step: step_8493528
+    Execute step: Run python
     bash: python --version
     Python 3.6.8
     Execute step: step_46664441

@@ -1,4 +1,7 @@
 ## `attributes:` **element**
+
+**Required**
+
 Contains definition of data that passed into executable scripts as a single parameter.
 
 This is the single source of true for **PWSHAKE** engine about all inputs used by the `pwshake.yaml` config processing.

@@ -44,6 +44,24 @@
     [See more about `includes:`](/doc/includes.md)
     
 
+* ### **`templates:` element**
+    Optional
+    ```
+    templates:
+      cmd:
+        cmd: echo do_nothing
+        powershell: |
+          if (${is-Windows}) {
+            cmd /c "$($step.cmd)" *>&1
+          } else {
+            bash -c "$($step.cmd)" *>&1
+          }
+    ```
+    Contains named `yaml` structures that **PWSHAKE** engine substitutes in `[step:]` elements to short steps definitions or to reuse in frequent cases.
+
+    [See more about `templates:`](/doc/templates.md)
+    
+
 * ### **`tasks:` element**
 
   Aliases: **`run_lists:`**, **`roles:`**

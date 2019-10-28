@@ -1,5 +1,7 @@
 ## - `[step]:` **element**
 
+**Optional**
+
 Contains definition of the full explicitly described structure that **PWSHAKE** engine uses to find, distinct, execute and log during the `pwshake.yaml` config processing.
 
 The internal representation of a single **step** looks like a following **Powershell** `[hashtable]`:
@@ -66,7 +68,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   - my_beauty_named_step:
       script: your_ugly_named_script
   ```
-  This is the same as:
+  Above is the same as:
   ```
   - name: my_beauty_named_step
     script: your_ugly_named_script
@@ -75,16 +77,16 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
 
   Example:
   ```
-  - name: Get dependencies
-    cmd: npm i
-  - name: Run tests
-    cmd: npm run coverage
-  - name: Deploy package
-    cmd: npm publish
+  - 'Get dependencies':
+      cmd: npm i
+  - 'Run tests':
+      cmd: npm run coverage
+  - 'Deploy package':
+      cmd: npm publish
   ```
 
-* ### - `[powershell|cmd]:` element implicit shortenings
-  Since the `[powershell|cmd]:` elements contain inline code that can be too long and\or complex to use it as the meaningful name, so the `name:` property for these shortenings is generated from the `.GetHashCode()` method of the supplied inline string to distinct each other inline step  in the **PWSHAKE** engine log.
+* ### - `powershell:` element implicit shortenings
+  Since the `powershell:` element contains inline code that can be too long and\or complex to use it as the meaningful name, so the `name:` property for these shortenings is generated from the `.GetHashCode()` method of the supplied inline string to distinct each other inline step  in the **PWSHAKE** engine log.
 
   Example:
   ```
@@ -96,7 +98,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
     powershell: rm ./ -recurse -force
   ```
 
-* ### - `[msbuild]:` element implicit shortenings
+* ### - `msbuild:` element implicit shortenings
   All things described above are eligible for the `msbuild:` element.
 
 
@@ -104,8 +106,8 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
 
   Example:
   ```
-  - name: Build
-    msbuild: some_project_file_name
+  - Build:
+      msbuild: some_project_file_name
   ```
   This is actually the same as:
   ```
@@ -142,9 +144,9 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
     when: -not ($env:SOME_VALUE -eq '42')
   ```
 
-* ### - `[invoke_tasks]:` element explicit content
+* ### - `invoke_tasks:` element explicit content
   
-  Since the `[invoke_tasks]:` element contains a list of items from the `tasks:` element it has not shortening syntax and should be populated as a regular `yaml` list of strings.
+  Since the `invoke_tasks:` element contains a list of items from the `tasks:` element it has not shortening syntax and should be populated as a regular `yaml` list of strings.
   
   Example:
   ```
@@ -164,8 +166,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
     build:
     test:
     deploy:
-    task1:
-      name: Do all stuff if solution file is present
+    'Do all stuff if solution file is present':
       scripts:
       - powershell: $script:skip_it_all = -not (Test-Path MySolution.sln)
       - skip: $skip_it_all

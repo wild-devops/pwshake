@@ -4,7 +4,8 @@ includes:
 tasks:
   test_python_template:
   - python:
-  - python: --version
+  - 'Give me a version please':
+      python: --version
   - python:
       inline: print('Hello pwshake!');
   - python:
