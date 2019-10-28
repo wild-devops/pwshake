@@ -1,4 +1,4 @@
-function global:Invoke-Task {
+function Invoke-Task {
     [CmdletBinding()]
     param (
         [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]

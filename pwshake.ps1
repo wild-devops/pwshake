@@ -1,14 +1,14 @@
 # Bootstrapper script for those who wants to run pwshake without prior importing the module.
-# examples run from PowerShell:
-# .\pwshake.ps1 ./examples/pwshake_config.yaml @("create_linux_istance","deploy_shake") @{override_to="local";artifact_id="42"}
+# Example run from PowerShell:
+# PS>./pwshake.ps1 ./examples/pwshake_config.yaml @("create_linux_istance","deploy_shake") @{override_to="local";artifact_id="42"}
 
-# Must match parameter definitions for pwshake.psm1/invoke-pwshake
+# Must match parameter definitions for pwshake.psm1/Invoke-pwshake function
 # otherwise named parameter binding fails
 [CmdletBinding()]
 param(
   [Alias("Path")]
   [Parameter(Position = 0, Mandatory = $false)]
-  [string]$ConfigPath = "$PSScriptRoot\pwshake.yaml",
+  [string]$ConfigPath = "$PSScriptRoot/pwshake.yaml",
 
   [Alias("RunLists", "Roles")]
   [Parameter(Position = 1, Mandatory = $false)]
