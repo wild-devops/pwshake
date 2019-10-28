@@ -16,6 +16,11 @@ function Invoke-Step {
     $step = Normalize-Step $step $config
     $throwOn = ($step.on_error -eq 'throw')
 
+    if (-not (Invoke-Expression $step.when)) {
+      Log-Output "`t`tBypassed because of: [$($step.when)] = $(Invoke-Expression $step.when)" $config
+      continue;
+    }
+
     try {
       if ($work_dir) {
         # Since actual execution is performed in the $step that can contain it's own .work_dir property

@@ -4,34 +4,6 @@ templates:
     options: --version
     powershell: |
       "dotnet $($step.command) $($step.options)" | Cmd-Shell
-  msbuild:
-    project: /version
-    targets:
-    properties:
-    options:
-    powershell: |
-      $cmd = if (${is-Linux}) {'dotnet msbuild'} else {'msbuild'}
-      if ($step.msbuild) {
-        $cmd += " $($step.msbuild)"
-      } elseif ($step.project) {
-        $cmd += " $($step.project)"
-      }
-      if ($step.targets) {
-        foreach ($target in $step.targets) {
-          $cmd += " /t:$target"
-        }
-      }
-      if ($step.properties) {
-        foreach ($property in $step.properties) {
-          $cmd += " /p:$property"
-        }
-      }
-      if ($step.options) {
-        foreach ($option in $step.options) {
-          $cmd += " $option"
-        }
-      }
-      $cmd | Cmd-Shell
 
   transform_xml_file:
     path:

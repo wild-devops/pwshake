@@ -106,9 +106,7 @@ run_list:
         $actual = Normalize-Step $mock
         
         $actual.name | Should -Be "mock"
-        $actual.script | Should -BeNullOrEmpty
         $actual.powershell | Should -Be "Mock"
-        $actual.cmd | Should -BeNullOrEmpty
     }
 
     It "Should normalize full step with an explicit 'name'" {
@@ -121,9 +119,7 @@ run_list:
         $actual = Normalize-Step $mock
         
         $actual.name | Should -Be "mock"
-        $actual.script | Should -BeNullOrEmpty
         $actual.powershell | Should -Be "Mock"
-        $actual.cmd | Should -BeNullOrEmpty
     }
 
     It "Should normalize implicit step with an explicit 'name'" {
@@ -135,8 +131,6 @@ run_list:
         $actual = Normalize-Step $mock
         
         $actual.name | Should -Be "mock"
-        $actual.script | Should -BeNullOrEmpty
         $actual.powershell | Should -Be "Mock"
-        $actual.cmd | Should -BeNullOrEmpty
     }
 }

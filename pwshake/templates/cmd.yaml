@@ -6,3 +6,6 @@ templates:
           $cmd += $line
       }
       Cmd-Shell $cmd
+  shell:
+    powershell: |
+      Cmd-Shell $step.shell

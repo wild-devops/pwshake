@@ -14,7 +14,7 @@ function global:Invoke-Task {
         Log-Output "Invoke task: $($task.name)" $config
 
         if (-not (Invoke-Expression $task.when)) {
-            Log-Output "`t`tBypassed because of when: [$($task.when)] = $(Invoke-Expression $task.when)" $config
+            Log-Output "`t`tBypassed because of: [$($task.when)] = $(Invoke-Expression $task.when)" $config
             continue;
         }
         try {

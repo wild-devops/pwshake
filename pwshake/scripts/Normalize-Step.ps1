@@ -26,6 +26,10 @@ function Normalize-Step {
             if ($item.Keys.Count -eq 1) {
                 $key = $item.Keys[0]
                 $content = $item[$key][0]
+                $reserved_keys = $step.Keys + ${pwshake-context}.templates.Keys
+                if (-not ($reserved_keys -contains $key)) {
+                    $step.name = $key
+                }
                 if ($content -is [string]) {
                     $step = Merge-Hashtables $step @{ $($key) = $content }
                 } elseif ($content -is [Hashtable]) {
@@ -34,7 +38,7 @@ function Normalize-Step {
                 } elseif (-not ($content)) {
                     $step.$($key) = $null
                 } else {
-                    throw "Unknown Task item: $(ConvertTo-Yaml $content)"
+                    $step.$($key) = $content
                 }
             } else {
                 $step = Merge-Hashtables $step $item
