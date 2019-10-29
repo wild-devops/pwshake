@@ -1,0 +1,11 @@
+name: Tests
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Run tests
+      run: powershell -File .\pwshake.ps1
