@@ -1,5 +1,3 @@
-![tests](.github/workflows/tests.yml)
-
 # PWSHAKE
 Yet another maker based on modern **Powershell** (aka `pwsh` in `Linux` world) and `yaml` configurations.
 
