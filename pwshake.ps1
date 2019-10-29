@@ -30,9 +30,6 @@ $ErrorActionPreference = "Stop"
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]'Tls12'
 
 if ([System.Environment]::OSVersion.Platform -match 'Win') {
-  Import-Module -Name PowerShellGet -Force -Global -DisableNameChecking
-  Install-Module -Name PackageManagement -Force
-  Import-Module -Name PackageManagement -Force -Global -DisableNameChecking
   if (-not (Get-PackageProvider -ListAvailable | Where-Object Name -eq NuGet)) {
     Set-PackageSource -Name PSGallery -Trusted -Force | Out-Null
     Install-PackageProvider NuGet -Force | Out-Null
