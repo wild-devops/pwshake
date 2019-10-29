@@ -7,7 +7,18 @@ if (-not (Get-Module -Name Pester | Where-Object Version -eq 4.9.0)) {
     Import-Module -Name Pester -Force -Global
 }
 
-$result = Invoke-Pester -Script $PSScriptRoot\module.Scope.ps1 -PassThru
+$mod = (Invoke-Expression (Get-Content $PSScriptRoot\..\pwshake\pwshake.psd1 -Raw))
+
+foreach ($dep in $mod.RequiredModules) {
+  $aval = Get-Module -ListAvailable `
+    | Where-Object {($_.Name -eq $dep.ModuleName) -and ($_.Version -eq $dep.RequiredVersion)}
+  if (-not $aval) {
+    Install-Module -Name $dep.ModuleName -Repository PSGallery -RequiredVersion $dep.RequiredVersion -Force -Scope CurrentUser
+    Import-Module -Name $dep.ModuleName -Force -Global -DisableNameChecking
+  }
+}
+
+$result = Invoke-Pester -Script $PSScriptRoot/module.Scope.ps1 -PassThru
 
 if ($result.FailedCount) {
     throw "Tests failed."

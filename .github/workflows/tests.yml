@@ -7,8 +7,8 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-18.04
     steps:
-    - uses: actions/checkout@develop
+    - uses: actions/checkout@master
     - name: Run tests
-      run: powershell -File .\pwshake.ps1
+      run: pwsh -NoLogo -NoProfile -File ./tests/pwshake.Tests.ps1

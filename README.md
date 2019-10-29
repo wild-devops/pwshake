@@ -1,3 +1,5 @@
+![badge](https://action-badges.now.sh/wild-devops/pwshake?action=tests)
+
 # PWSHAKE
 Yet another maker based on modern **Powershell** (aka `pwsh` in `Linux` world) and `yaml` configurations.
 

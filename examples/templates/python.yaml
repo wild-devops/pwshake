@@ -4,11 +4,11 @@ templates:
     inline:
     powershell: |
       if ($step.python) {
-        "python $($step.python)" | Cmd-Shell
+        "python3 $($step.python)" | Cmd-Shell
       } elseif ($step.file) {
-        "python $($step.file)" | Cmd-Shell
+        "python3 $($step.file)" | Cmd-Shell
       } elseif ($step.inline) {
-        python -c $step.inline
+        python3 -c $step.inline
       } else {
-        python --version
+        python3 --version
       }
