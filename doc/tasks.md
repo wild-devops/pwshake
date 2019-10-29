@@ -80,7 +80,7 @@ Every named element of the `tasks:` can contain some definitions to provide more
   ```
   This is the single task named `do_something` which contains a list of scripts to execute in order, so **PWSHAKE** engine will look for files `./do_clean.ps1`, `./do_build.ps1`, `./do_format_disk_c.ps1` and will execute them all in a sequence.
 
-  Also this syntax can be shortened since the `steps:` element is a default for task named item:
+  Also this syntax can be shortened since the `steps:` element is a default payload for task named item:
   ```
   tasks:
     do_something:

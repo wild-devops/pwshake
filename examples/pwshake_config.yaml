@@ -16,7 +16,7 @@ scripts_directories:
   - shake_deployment_scripts
   - pwshake_scripts
 
-# Run lists declared
+# Tasks declared
 tasks:
   nested_runlist1:
     - download_artifact
@@ -75,6 +75,6 @@ tasks:
       cmd: build.properties
       when: $false
 
-# Run lists to execute
+# Tasks to execute
 invoke_tasks:
   - create_linux_istance

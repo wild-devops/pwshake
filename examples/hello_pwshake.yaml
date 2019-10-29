@@ -9,7 +9,7 @@ scripts_directories:
   - .
   - pwshake_scripts
   
-# Declaration of run lists that compose and determine order of executing for scripts
+# Declaration of tasks that compose and determine order of executing for scripts
 tasks:
   hello:
   - pwsh: |
@@ -22,6 +22,6 @@ tasks:
   - shell: |
       ls .
 
-# Run lists to current execute
+# Tasks to current execute
 invoke_tasks:
 - hello

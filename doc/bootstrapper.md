@@ -35,9 +35,9 @@ All parameters are optional since they all have conventional default values:
 
   Default is: `@()` - an empty array, i.e. nothing to override in `yaml` config's `invoke_tasks:` element.
 
-  Tells to **PWSHAKE** engine which `tasks:` from a given `yaml` config must be executed.
+  Tells to **PWSHAKE** engine which `tasks:` from the given `yaml` config must be executed.
   
-  Actually if it's not an empty array, strongly overrides the content of the `yaml` config's `invoke_tasks:` element.
+  Actually if it's not an empty array, it strongly overrides the content of the `yaml` config's `invoke_tasks:` element.
 
   Example (invokes the only `publish` task):
   ```
@@ -58,7 +58,7 @@ All parameters are optional since they all have conventional default values:
   Gives **PWSHAKE** engine an ability to populate the `yaml` config's `attributes:` element with an external data (**metadata** as a term) passed from the outside world (CI server, cloud provider agent, canny developer, etc).
 
   The `-MetaData` parameter can accept:
-  * raw json string:
+  * raw `json` string:
     ```
     PS>./pwshake.ps1 -MetaData '{"env_name":"shake42","override_to":"test"}'
     ```
@@ -90,7 +90,7 @@ All parameters are optional since they all have conventional default values:
     PS>Invoke-pwshake -MetaData ./metadata.json
     ...
     ```
-  * path to the `metadata.yaml` file which contains `yaml` representation of the `attributes:` element content:
+  * path to the `metadata.yaml` file which contains `yaml` representation of the `attributes:` element content without  `attributes:` itself:
     ```
     PS>cat ./metadata.yaml
     env_name: shake42

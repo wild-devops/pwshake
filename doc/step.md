@@ -59,7 +59,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   ```
   Or even the same as:
   ```
-  - some_really_useless_string_identifier:
+  - some_really_useless_step_identifier:
       name: step1
       script: step1
   ```
@@ -86,7 +86,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   ```
 
 * ### - `powershell:` element implicit shortenings
-  Since the `powershell:` element contains inline code that can be too long and\or complex to use it as the meaningful name, so the `name:` property for these shortenings is generated from the `.GetHashCode()` method of the supplied inline string to distinct each other inline step  in the **PWSHAKE** engine log.
+  Since the `powershell:` element contains inline code that can be too long and\or complex to use it as the meaningful name, so the `name:` property for these shortenings is generated from the `.GetHashCode()` method of the supplied inline string to distinct each other inline step  in the **PWSHAKE** execution log.
 
   Example:
   ```
@@ -157,7 +157,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
     - test
     - deploy
   ```
-  This is useful for implementation of conditional scenarios inside run lists execution.
+  This is useful for implementation of conditional scenarios inside tasks execution.
     
   Example:
   ```
@@ -169,7 +169,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
     'Do all stuff if solution file is present':
       scripts:
       - powershell: $script:skip_it_all = -not (Test-Path MySolution.sln)
-      - skip: $skip_it_all
+      - skip_on: $skip_it_all
         invoke_tasks:
         - clean
         - build

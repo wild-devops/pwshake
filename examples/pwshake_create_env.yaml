@@ -1,4 +1,4 @@
-# Run lists declared
+# Tasks declared
 roles:
   update_chef:
     - powershell: Write-Host "Here chef step."
@@ -33,6 +33,6 @@ roles:
         - role_static
       - pwsh: Write-Host "{{$([System.Guid]::Empty)}}"
 
-# Run lists to execute
+# Tasks to execute
 invoke_tasks:
   - create_environment
