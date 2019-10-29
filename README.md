@@ -1,4 +1,4 @@
-![](https://github.com/wild-devops/pwshake/workflows/Tests/badge.svg)
+![](https://github.com/wild-devops/pwshake/workflows/all%20tests/badge.svg)
 
 # PWSHAKE
 Yet another maker based on modern **Powershell** (aka `pwsh` in `Linux` world) and `yaml` configurations.
