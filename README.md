@@ -1,3 +1,5 @@
+![](/.github/workflows/tests.yml/badge.svg)
+
 # PWSHAKE
 Yet another maker based on modern **Powershell** (aka `pwsh` in `Linux` world) and `yaml` configurations.
 
