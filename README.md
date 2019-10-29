@@ -1,4 +1,5 @@
-![](https://github.com/wild-devops/pwshake/workflows/all%20tests/badge.svg)
+![GitHub workflows (all tests)](https://github.com/wild-devops/pwshake/workflows/all%20tests/badge.svg)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/wild-devops/pwshake)
 
 # PWSHAKE
 Yet another maker based on modern **Powershell** (aka `pwsh` in `Linux` world) and `yaml` configurations.
