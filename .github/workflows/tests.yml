@@ -9,6 +9,6 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@develop
     - name: Run tests
       run: powershell -File .\pwshake.ps1
