@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 Context "Normalize-Yaml" {
-    $configPath = Get-RelativePath 'examples/corrupted.yaml'
+    $configPath = Get-RelativePath 'examples/6.errors/v1.3/corrupted.yaml'
 
     It "Should throw if ${configPath}1 file doesn't exist" {
         $configPath = "${configPath}1"
@@ -13,7 +13,7 @@ Context "Normalize-Yaml" {
         {Normalize-Yaml $configPath} | Should -Throw "File '$configPath' is corrupted:"
     }
 
-    It "Should not throw if $(Get-RelativePath 'examples/metadata.yaml') file is fine" {
-        {Normalize-Yaml (Get-RelativePath 'examples/metadata.yaml') | Out-Null} | Should -Not -Throw
+    It "Should not throw if $(Get-RelativePath 'examples/4.complex/v1.0/metadata.yaml') file is fine" {
+        {Normalize-Yaml (Get-RelativePath 'examples/4.complex/v1.0/metadata.yaml') | Out-Null} | Should -Not -Throw
     }
 }

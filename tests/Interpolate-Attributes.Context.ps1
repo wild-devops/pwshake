@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 Context "Interpolate-Attributes" {
-    $configPath = Get-RelativePath 'examples/pwshake_config.yaml'
+    $configPath = Get-RelativePath 'examples/4.complex/v1.0/complex_pwshake.yaml'
     $config = Load-Config $configPath | Merge-Metadata -yamlPath $configPath
 
     It "Should return a Hashtable" {

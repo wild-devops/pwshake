@@ -62,11 +62,11 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     Execute step: step_46664441
     Hello pwshake!
     Execute step: step_6213368
-    bash: python /workdir/examples/templates/hello.py again
+    bash: python /workdir/examples/5.templates/v1.2/hello.py again
 
     Hello again!
     Execute step: step_32712664
-    bash: python /workdir/examples/templates/hello.py twice
+    bash: python /workdir/examples/5.templates/v1.2/hello.py twice
     Hello twice!
     ```
 

@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 Context "Load-Config" {
-    $configPath = Get-RelativePath 'examples/pwshake_config.yaml'
+    $configPath = Get-RelativePath 'examples/4.complex/v1.0/complex_pwshake.yaml'
     $actual = Load-Config $configPath | Merge-Metadata -yamlPath $configPath
 
     It "Should read from $configPath" {
@@ -14,7 +14,7 @@ Context "Load-Config" {
 
     It "Should populate service attributes" {
         $pwshakePath = (Split-Path $configPath -Parent)
-        $workdir = (Split-Path $pwshakePath -Parent)
+        $workdir = (Split-Path $PSScriptRoot -Parent)
         $version = (Invoke-Expression (Get-Content "$(Join-Path $workdir -ChildPath 'pwshake\pwshake.psd1')" -Raw)).ModuleVersion
 
         $actual.attributes.work_dir | Should -Be "$workdir"

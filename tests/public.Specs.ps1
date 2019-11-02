@@ -39,17 +39,17 @@ Describe "PWSHAKE public functions" {
                
         It 'Should not throw on the example invocation of nested includes' {
             {
-                Invoke-pwshake (Get-RelativePath 'examples\6.modules\v1.0\pwshake.yaml') -Roles 'deep'
+                Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'deep'
             } | Should -Not -Throw
-            $pwshake_log = Get-Content (Get-RelativePath 'examples\6.modules\v1.0\pwshake.log')
+            $pwshake_log = Get-Content (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.log')
             $pwshake_log | Select-String "] Hello from 'Deep buried role'" | Should -Not -BeNullOrEmpty
         }
                
         It 'Should throw on the example invocation of generated errors' {
             {
-                Invoke-pwshake (Get-RelativePath 'examples\6.modules\v1.0\pwshake.yaml') -Roles 'errors'
+                Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'errors'
             } | Should -Throw 'ZeroDivisionError: division by zero'
-            $pwshake_log = Get-Content (Get-RelativePath 'examples\6.modules\v1.0\pwshake.log')
+            $pwshake_log = Get-Content (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.log')
             $pwshake_log | Select-String "] start0" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] noerr0" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] err0" | Should -Not -BeNullOrEmpty
@@ -59,9 +59,9 @@ Describe "PWSHAKE public functions" {
                
         It 'Should throw on the example invocation of Invoke-Command' {
             {
-                Invoke-pwshake (Get-RelativePath 'examples\6.modules\v1.0\pwshake.yaml') -Roles 'errors' -Metadata @{py_arg='42'}
+                Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'errors' -Metadata @{py_arg='42'}
             } | Should -Throw "The term 'pwshake42' is not recognized as the name of a cmdlet"
-            $pwshake_log = Get-Content (Get-RelativePath 'examples\6.modules\v1.0\pwshake.log')
+            $pwshake_log = Get-Content (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.log')
             $pwshake_log | Select-String "] Try call file: pwshake42" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] ERROR: The term 'pwshake42' is not recognized as the name of a cmdlet" | Should -Not -BeNullOrEmpty
         }
