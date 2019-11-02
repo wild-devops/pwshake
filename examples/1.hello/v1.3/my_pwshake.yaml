@@ -1,0 +1,11 @@
+attributes:
+  pwshake_verbosity: Normal # Try to change with any of: Error, Warning, Normal, Verbose, Debug
+  hello_to: PWSHAKE
+
+tasks:
+  say_hello:
+  # 'echo' template is now included in the built-in templates
+  - echo: "Hello {{hello_to}}!"
+
+invoke_tasks:
+- say_hello

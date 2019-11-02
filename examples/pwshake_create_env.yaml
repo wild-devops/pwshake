@@ -1,21 +1,16 @@
 # Tasks declared
 roles:
-  update_chef:
-    - powershell: Write-Host "Here chef step."
-  deploy_role:    
-    - powershell: Write-Host "Deploy role $($env:shake_application_role)"
-    - powershell: Write-Host "Here firewall rules for $($env:shake_application_role)"
   role_webui:
-    - powershell: $env:shake_application_role = 'webui'
+    - powershell: $script:shake_application_role = 'webui'
     - invoke_tasks:
       - deploy_role
   role_api:
-    - powershell: $env:shake_application_role = 'api'
+    - powershell: $script:shake_application_role = 'api'
     - invoke_tasks:
       - deploy_role
   role_static:
     scripts:
-    - powershell: $env:shake_application_role = 'static'
+    - powershell: $script:shake_application_role = 'static'
     - in: attributes_overrides
       pwsh: |
         Get-Location
@@ -32,6 +27,11 @@ roles:
         - role_api
         - role_static
       - pwsh: Write-Host "{{$([System.Guid]::Empty)}}"
+  update_chef:
+    - powershell: Write-Host "Here chef step."
+  deploy_role:    
+    - powershell: Write-Host "Deploy role $shake_application_role"
+    - powershell: Write-Host "Here firewall rules for $shake_application_role"
 
 # Tasks to execute
 invoke_tasks:

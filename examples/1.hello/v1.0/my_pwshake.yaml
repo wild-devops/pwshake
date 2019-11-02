@@ -1,0 +1,10 @@
+# Simple task invokation and attributes interpolation
+attributes:
+  hello_to: PWSHAKE
+
+tasks:
+  say_hello:
+  - powershell: Write-Host "Hello {{hello_to}}!"
+
+invoke_tasks:
+- say_hello

@@ -1,10 +1,4 @@
 templates:
-  dotnet:
-    command:
-    options: --version
-    powershell: |
-      "dotnet $($step.command) $($step.options)" | Cmd-Shell
-
   transform_xml_file:
     path:
     appends:

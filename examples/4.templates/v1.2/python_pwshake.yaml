@@ -1,5 +1,5 @@
 includes:
-- python.yaml
+- templates/python.yaml
 
 tasks:
   test_python_template:

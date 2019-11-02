@@ -1,0 +1,7 @@
+attributes:
+  a: "{{b}}"
+  b: "{{c}}"
+  c: "d"
+  env_name: "{{$env:HOSTNAME}}"
+  override_to: "{{c}}ev"
+  win_fqdn: "{{env_name}}-windows.shake.{{override_to}}"

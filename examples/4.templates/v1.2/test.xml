@@ -1,0 +1,5 @@
+<xml>
+  <one />
+  <two three="wrong" />
+  <six seven="wrong" />
+</xml>
