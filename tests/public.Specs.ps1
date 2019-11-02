@@ -18,7 +18,7 @@ Describe "PWSHAKE public functions" {
                     (Get-RelativePath "examples\4.complex\v1.0\metadata")
             } | Should -Not -Throw
         }
-               
+
         It "Should not throw on the examples invocation of create_env_pwshake" {
             {
                 Invoke-pwshake (Get-RelativePath "examples\4.complex\v1.0\create_env_pwshake.yaml") `
@@ -36,7 +36,7 @@ Describe "PWSHAKE public functions" {
             $pwshake_log | Select-String "] $((Get-RelativePath 'examples\4.complex\v1.0\attributes_overrides\local.yaml').Replace('\','\\'))" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] 00000000-0000-0000-0000-000000000000" | Should -Not -BeNullOrEmpty
         }
-               
+
         It 'Should not throw on the example invocation of nested includes' {
             {
                 Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'deep'
@@ -44,7 +44,7 @@ Describe "PWSHAKE public functions" {
             $pwshake_log = Get-Content (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.log')
             $pwshake_log | Select-String "] Hello from 'Deep buried role'" | Should -Not -BeNullOrEmpty
         }
-               
+
         It 'Should throw on the example invocation of generated errors' {
             {
                 Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'errors' -Metadata @{py_arg='0'}
@@ -56,7 +56,7 @@ Describe "PWSHAKE public functions" {
             $pwshake_log | Select-String "] ERROR: ZeroDivisionError: division by zero" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] Try call file: pwshake0" | Should -BeNullOrEmpty
         }
-               
+
         It 'Should throw on the example invocation of Invoke-Command' {
             {
                 Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'errors' -Metadata @{pwsh_arg='42'}

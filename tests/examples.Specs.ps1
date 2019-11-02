@@ -3,9 +3,11 @@ $ErrorActionPreference = "Stop"
 Describe "PWSHAKE examples" {
 
     Get-ChildItem -Path "$PSScriptRoot/../examples" -Include *pwshake.yaml -Recurse | ForEach-Object {
-        $example = $_.FullName  
+        $example = $_.FullName
         Context $example {
-            { Invoke-pwshake $example -MetaData 'pwshake_verbosity=Normal'} | Should -Not -Throw
+            It "Should not throw" {
+                { Invoke-pwshake $example -MetaData 'pwshake_verbosity=Normal' } | Should -Not -Throw
+            }
         }
     }
 }
