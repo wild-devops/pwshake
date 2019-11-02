@@ -15,14 +15,11 @@ function Log-Output {
   )    
     process {
         $level = Coalesce @(
-            $config.attributes['pwshake-context'].verbosity,
+            $config.attributes.pwshake_verbosity,
             ${pwshake-context}.verbosity,
-            [PwShake.VerbosityLevel]::Debug
+            "Debug"
         )
-        if (([PwShake.VerbosityLevel]$level) -lt $Verbosity)
-        {
-            return
-        }
+        if (([PwShake.VerbosityLevel]$level) -lt $Verbosity) { return }
 
         $tmstmp = Get-Date -format "[yyyy-MM-dd HH:mm:ss]"
 

@@ -58,6 +58,9 @@ function Merge-Metadata {
         $config.attributes.pwshake_module_path = (Split-Path $PSScriptRoot -Parent).ToString()
         $config.attributes.pwshake_version = (Invoke-Expression (Get-Content $PSScriptRoot\..\pwshake.psd1 -Raw)).ModuleVersion
         $config.attributes.work_dir = "$(Get-Location)"
+        if (-not $config.attributes.pwshake_verbosity) {
+            $config.attributes.pwshake_verbosity = ${pwshake-context}.verbosity
+        }
         if (-not $config.scripts_directories) {
             $config.scripts_directories = @('.')
         }
