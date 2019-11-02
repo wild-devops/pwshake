@@ -1,5 +1,5 @@
 includes:
-- templates/templates.yaml
+- templates/dotnet.yaml
 
 attributes:
   configuration: Release

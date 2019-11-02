@@ -1,0 +1,13 @@
+templates:
+  dotnet:
+    command:
+    options: --version
+    powershell: |
+      $cmd = "dotnet"
+      if ($step.command) {
+        $cmd += " $($step.command)"
+      }
+      if ($step.options) {
+        $cmd += " $($step.options)"
+      }
+      $cmd | Cmd-Shell
