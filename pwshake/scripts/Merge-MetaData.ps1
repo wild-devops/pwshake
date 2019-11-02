@@ -25,7 +25,7 @@ function Merge-Metadata {
                 $string = ""
                 if (Test-Path $metadata) {
                     if ((Split-Path $metadata -Leaf).EndsWith('.yaml') -or (Split-Path $metadata -Leaf).EndsWith('.json')) {
-                        $metadata = Get-Content $metadata -Raw | ConvertFrom-Yaml
+                        $metadata = $metadata | Normalize-Yaml
                     } elseif (!(Split-Path $metadata -Leaf).Contains('.')) {
                         foreach ($item in (Get-Content -Path $metadata)) {
                             if (-not $item.StartsWith('#')) {

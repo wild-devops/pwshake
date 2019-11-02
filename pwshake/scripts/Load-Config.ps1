@@ -6,12 +6,6 @@ function Load-Config {
     )
     process {
 
-        if (-not (Test-Path $yamlPath)) {
-            throw "$yamlPath does not exist."
-        }
-
-        $config = Get-Content $yamlPath -Raw | ConvertFrom-Yaml | Normalize-Config
-
-        return $config
+        return $yamlPath | Normalize-Yaml | Normalize-Config
     }
 }

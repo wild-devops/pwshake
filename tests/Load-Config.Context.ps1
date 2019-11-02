@@ -25,6 +25,6 @@ Context "Load-Config" {
     }
 
     It "Should throw if $configPath.mock file doesn't exist" {
-        {Load-Config "$configPath.mock"} | Should -Throw "$configPath.mock does not exist."
+        {Load-Config "$configPath.mock"} | Should -Throw "Cannot find path '$configPath.mock' because it does not exist."
     }
 }

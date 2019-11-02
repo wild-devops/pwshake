@@ -14,12 +14,7 @@ foreach ($script in $scripts) {
 # Shared variables
 [bool]${is-Windows} = ([System.Environment]::OSVersion.Platform -match 'Win')
 [bool]${is-Linux} = (-not ${is-Windows})
-[hashtable]${pwshake-context} = @{}
-${pwshake-context}.templates = @{}
-foreach ($template in (Get-ChildItem -Path (Join-Path -Path $PSScriptRoot -ChildPath 'templates/*.yaml') -Recurse)) {
-    $step = Get-Content $template -Raw | ConvertFrom-Yaml
-    ${pwshake-context}.templates = Merge-Hashtables ${pwshake-context}.templates $step.templates
-}
+[hashtable]${pwshake-context} = Normalize-Context @{}
 
 New-Alias -Name pwshake -Value Invoke-pwshake -Force
 

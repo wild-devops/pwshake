@@ -8,7 +8,7 @@ function Override-Attributes {
 
     foreach ($type in $config.attributes_overrides) {
       $path = Resolve-Path -Path "$($config.attributes.pwshake_path)\attributes_overrides\$type.yaml"
-      $override = Get-Content $path -Raw | ConvertFrom-Yaml
+      $override = $path | Normalize-Yaml
       $config.attributes = Merge-Hashtables $config.attributes $override
       if ($type -eq $config.attributes.override_to) {
         break
