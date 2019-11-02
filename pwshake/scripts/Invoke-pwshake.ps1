@@ -21,12 +21,12 @@ function Invoke-pwshake {
                     | Override-Attributes `
                     | Interpolate-Attributes
 
-        Log-Output "PWSHAKE config:" $config
-        Log-Output "$(ConvertTo-Yaml $config)" $config
+        Log-Output "PWSHAKE config:" $config -Verbosity "Verbose"
+        Log-Output "$(ConvertTo-Yaml $config)" $config -Verbosity "Verbose"
 
         $arranged_tasks = Arrange-Tasks $config
-        Log-Output "Arranged tasks:" $config
-        Log-Output "$(ConvertTo-Yaml $arranged_tasks)" $config
+        Log-Output "Arranged tasks:" $config -Verbosity "Verbose"
+        Log-Output "$(ConvertTo-Yaml $arranged_tasks)" $config -Verbosity "Verbose"
 
         try {
             Push-Location $config.attributes.work_dir

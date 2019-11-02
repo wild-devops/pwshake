@@ -11,7 +11,7 @@ function Invoke-Task {
         [bool]$dryRun = $false
     )
     process {
-        Log-Output "Invoke task: $($task.name)" $config
+        Log-Output "Invoke task: $($task.name)" $config -Verbosity "Verbose"
 
         if (-not (Invoke-Expression $task.when)) {
             Log-Output "`t`tBypassed because of: [$($task.when)] = $(Invoke-Expression $task.when)" $config

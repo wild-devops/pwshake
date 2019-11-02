@@ -8,9 +8,22 @@ function Log-Output {
       [hashtable]$config,
 
       [Parameter(Position = 2, Mandatory = $false)]
-      [bool]$Rethrow = $false
+      [bool]$Rethrow = $false,
+
+      [Parameter(Position = 3, Mandatory = $false)]
+      [PwShake.VerbosityLevel]$Verbosity = [PwShake.VerbosityLevel]::Normal
   )    
     process {
+        $level = Coalesce @(
+            $config.attributes['pwshake-context'].verbosity,
+            ${pwshake-context}.verbosity,
+            [PwShake.VerbosityLevel]::Debug
+        )
+        if (([PwShake.VerbosityLevel]$level) -lt $Verbosity)
+        {
+            return
+        }
+
         $tmstmp = Get-Date -format "[yyyy-MM-dd HH:mm:ss]"
 
         if ($message -is [System.Management.Automation.ErrorRecord]) {

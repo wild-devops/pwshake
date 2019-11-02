@@ -31,9 +31,10 @@ function Invoke-Step {
       }
       Push-Location (Normalize-Path "$($step.work_dir)" $config)
 
-      Log-Output "Execute step: $($step.name)" $config
+      Log-Output "Execute step: $($step.name)" $config -Verbosity "Verbose"
       $logOut = @()
       $global:LASTEXITCODE = 0
+      Log-Output "powershell: {$($step.powershell)}" $config -Verbosity "Debug"
       Invoke-Expression $step.powershell *>&1 | Tee-Object -Variable logOut | Log-Output -config $config
       if ((($LASTEXITCODE -ne 0) -or (-not $?)) -and ($throwOn)) { 
         $lastErr = $logOut | Where-Object {$_ -is [Management.Automation.ErrorRecord]} | Select-Object -Last 1
@@ -43,7 +44,7 @@ function Invoke-Step {
         throw "$lastErr"
       }
     } catch {
-      Log-Output $_ $config -Rethrow $throwOn
+      Log-Output $_ $config -Rethrow $throwOn -Verbosity "Error"
     } finally {
         Pop-Location
     }
