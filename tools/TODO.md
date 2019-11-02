@@ -1,4 +1,4 @@
-* add and organize more meaningful examples
+* add more meaningful examples
 
 * implement outer resources loading
 
