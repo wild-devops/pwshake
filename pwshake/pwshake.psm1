@@ -26,7 +26,10 @@ foreach ($script in $scripts) {
 # Shared variables
 [bool]${is-Windows} = ([System.Environment]::OSVersion.Platform -match 'Win')
 [bool]${is-Linux} = (-not ${is-Windows})
-[hashtable]${pwshake-context} = Normalize-Context @{verbosity = [PwShake.VerbosityLevel]::Verbose}
+[hashtable]${pwshake-context} = Normalize-Context @{
+    verbosity = 'Verbose'
+    max_depth = 100
+}
 
 New-Alias -Name pwshake -Value Invoke-pwshake -Force
 

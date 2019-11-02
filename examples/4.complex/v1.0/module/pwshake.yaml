@@ -1,5 +1,6 @@
 attributes:
-  py_arg: 0
+  py_arg: 42
+  pwsh_arg:
 
 includes:
 - module.json
@@ -25,7 +26,7 @@ tasks:
     pwsh: |
       Invoke-Command -ScriptBlock {
         if ($true) {
-          & '{{pwshake_path}}/call_throw.ps1' 'pwshake{{py_arg}}'
+          & '{{pwshake_path}}/call_throw.ps1' 'dir{{pwsh_arg}}'
         }
       } -InformationAction Ignore -ErrorAction Stop
 

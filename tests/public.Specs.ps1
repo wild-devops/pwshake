@@ -47,7 +47,7 @@ Describe "PWSHAKE public functions" {
                
         It 'Should throw on the example invocation of generated errors' {
             {
-                Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'errors'
+                Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'errors' -Metadata @{py_arg='0'}
             } | Should -Throw 'ZeroDivisionError: division by zero'
             $pwshake_log = Get-Content (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.log')
             $pwshake_log | Select-String "] start0" | Should -Not -BeNullOrEmpty
@@ -59,11 +59,11 @@ Describe "PWSHAKE public functions" {
                
         It 'Should throw on the example invocation of Invoke-Command' {
             {
-                Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'errors' -Metadata @{py_arg='42'}
-            } | Should -Throw "The term 'pwshake42' is not recognized as the name of a cmdlet"
+                Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'errors' -Metadata @{pwsh_arg='42'}
+            } | Should -Throw "The term 'dir42' is not recognized as the name of a cmdlet"
             $pwshake_log = Get-Content (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.log')
-            $pwshake_log | Select-String "] Try call file: pwshake42" | Should -Not -BeNullOrEmpty
-            $pwshake_log | Select-String "] ERROR: The term 'pwshake42' is not recognized as the name of a cmdlet" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] Try call file: dir42" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] ERROR: The term 'dir42' is not recognized as the name of a cmdlet" | Should -Not -BeNullOrEmpty
         }
     }
 }
