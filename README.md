@@ -140,5 +140,6 @@ And it runs various tests and examples included in this repo.
   * [`templates:` element](/doc/templates.md)
   * [implicit `[step]:` element](/doc/step.md)
   * [`scripts_directories:` element](/doc/scripts_directories.md)
+  * [`resources:` element](/doc/resources.md)
 
 ## Happy **PWSHAKE**-ing!
