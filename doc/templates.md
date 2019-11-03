@@ -89,6 +89,13 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
           path: 'test.json'
           content: '{"I":"m","a":"test"}'
           encoding: Ascii # default is UTF8
+      - git:
+          repo: https://github.com/wild-devops/pwshake.git
+          ref: v1.0.0
+          sparses:
+          - examples
+          - doc
+          target: .old_repo
       - invoke_tasks:
           - list_of
           - tasks_to_execute
