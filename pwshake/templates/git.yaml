@@ -13,7 +13,7 @@ templates:
       try {
         Push-Location $target
         git init --quiet
-        git remote add origin https://github.com/wild-devops/pwshake.git
+        & git remote add origin $($step.repo)
         git fetch --quiet --tags --prune --no-progress --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/*
         if ($step.sparses) {
           git config core.sparsecheckout true

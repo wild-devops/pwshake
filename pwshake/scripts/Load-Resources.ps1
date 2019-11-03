@@ -5,8 +5,14 @@ function Load-Resources {
         [hashtable]$config
     )
     process {
-        foreach ($step in $config.resources) {
-            Invoke-Step $config $step
+        $verbosity = $config.attributes.pwshake_verbosity
+        try {
+            $config.attributes.pwshake_verbosity = "Error"
+            foreach ($step in $config.resources) {
+                Invoke-Step $config $step
+            }
+        } finally {
+            $config.attributes.pwshake_verbosity = $verbosity
         }
 
         return $config
