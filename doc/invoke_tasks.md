@@ -1,8 +1,8 @@
 ## `invoke_tasks:` **element**
 
-Aliases: **`invoke_run_lists:`**, **`apply_roles:`**
-
 **Optional**
+
+Aliases: **`invoke_run_lists:`**, **`apply_roles:`**
 
 Contains list of `tasks:` element named items, that **PWSHAKE** engine executes in order of this element contained enumeration. 
 

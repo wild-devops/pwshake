@@ -2,6 +2,8 @@
 
 **Optional**
 
+Aliase: **`actions:`**
+
 Contains definitions of `[step:]` elements structure for reusing and syntax shortenings in the whole `pwshake.yaml` config.
 
 This tells to **PWSHAKE** engine how to substitute any structured `yaml` input in step definitions into an executable **Powershell** command.
@@ -81,11 +83,26 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     PS>cat some_pwshake.yaml
     ...
     tasks:
-      - cmd:
-      - shell:
-      - msbuild:
-      - script:
+      - cmd: 'dir /b'
+      - echo: 'Hello PWSHAKE!'
+      - file:
+          path: 'test.json'
+          content: '{"I":"m","a":"test"}'
+          encoding: Ascii # default is UTF8
       - invoke_tasks:
+          - list_of
+          - tasks_to_execute
+      - msbuild:
+          project: 'MySolution.sln'
+          targets:
+            - Clean
+            - Build
+          properties:
+            - Configuration=Release
+            - SolutionDir=.
+          options: /m
+      - script: tasks_to_execute
+      - shell: 'ls .'
     ```
     All these steps above are actually substituted templates which are loaded from [this location](/pwshake/templates).
 

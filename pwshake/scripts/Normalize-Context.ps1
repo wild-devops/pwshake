@@ -8,7 +8,7 @@ function Normalize-Context {
         $templates = @{}
         foreach ($template in (Get-ChildItem -Path (Join-Path -Path $PSScriptRoot -ChildPath '../templates/*.yaml') -Recurse)) {
             $metadata = Normalize-Yaml $template
-            $templates = Merge-Hashtables $templates $metadata.templates
+            $templates = Merge-Hashtables $templates (Coalesce $metadata.templates, $metadata.actions, @{})
         }
 
         return Merge-Hashtables $context @{

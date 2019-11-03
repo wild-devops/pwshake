@@ -45,6 +45,9 @@
     
 
 * ### **`templates:` element**
+
+  Aliase: **`actions:`**
+
     Optional
     ```
     templates:

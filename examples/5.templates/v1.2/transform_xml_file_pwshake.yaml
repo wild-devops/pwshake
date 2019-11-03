@@ -1,8 +1,20 @@
 includes:
+- templates/file.yaml
 - templates/transform_xml_file.yaml
 
 tasks:
   transform_xml_config:
+  - file:
+      path: '{{pwshake_path}}/test.xml'
+      content: |
+        <xml>
+          <one />
+          <two three="wrong" />
+          <six seven="wrong" />
+        </xml>
+  - pwsh: |
+      Write-Host "Initial content:"
+      Get-Content {{pwshake_path}}/test.xml -Raw
   - transform_xml_file:
       path: test.xml
       appends:
@@ -15,6 +27,7 @@ tasks:
   - pwsh: |
       Write-Host "Transform result:"
       Get-Content {{pwshake_path}}/test.xml -Raw
+      Remove-Item {{pwshake_path}}/test.xml -Force
 
 invoke_tasks:
 - transform_xml_config

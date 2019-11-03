@@ -1,3 +1,5 @@
 templates:
   echo:
-    powershell: Write-Host "$($step.echo)"
+    powershell: |
+      if ($step.echo -match '^\$\((?<eval>.*?)\)$') { $step.echo = Invoke-Expression $step.echo }
+      Write-Host $step.echo

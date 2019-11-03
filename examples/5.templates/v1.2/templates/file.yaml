@@ -1,0 +1,8 @@
+templates:
+  file:
+    path:
+    content:
+    encoding: UTF8
+    powershell: |
+      if (-not (Test-Path $step.path)) { New-Item -ItemType File -Path $step.path }
+      Set-Content -Path (Resolve-Path $step.path) -Value $step.content -Encoding $step.encoding -Force

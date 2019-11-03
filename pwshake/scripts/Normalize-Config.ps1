@@ -5,7 +5,7 @@ function Normalize-Config {
         [hashtable]$config
     )
     process {
-        $templates = Coalesce $config.templates, @{}
+        $templates = Coalesce $config.templates, $config.actions, @{}
         ${pwshake-context}.templates = Merge-Hashtables ${pwshake-context}.templates $templates
         return @{
             includes = @() + (Coalesce $config.includes,  @());
