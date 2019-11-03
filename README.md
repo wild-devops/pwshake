@@ -11,6 +11,8 @@ Technically it's a movable **Powershell** module that helps to perform various o
 
 As well it's a simple script executor based on **Powershell**.
 
+All executed scripts and\or inline **Powershell** commands are composed, instrumented with input data and structured by the `yaml` configuration.
+
 # What's this NOT?
 This is definitely not a piece of computer state\configuration management (aka **DSC**, **CM**, etc), despite it has basic concepts inspired by **Chef** (attributes, overrides, run lists\roles) and **Ansible** (`yaml` config).
 
