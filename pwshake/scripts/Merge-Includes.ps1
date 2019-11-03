@@ -22,7 +22,7 @@ function Merge-Includes {
           $attributes = $include_path | Normalize-Yaml
           $config.attributes = Merge-Hashtables $config.attributes $attributes
         } else {
-          $include = Load-Config $include_path | Merge-Includes -yamlPath $include_path -depth ($depth + 1)
+          $include = $include_path | Normalize-Yaml | Normalize-Config | Merge-Includes -yamlPath $include_path -depth ($depth + 1)
           $config = Merge-Hashtables $config $include
         }
       }

@@ -15,7 +15,8 @@ function Invoke-pwshake {
         [switch]$DryRun
     )
     process {
-        $config = Load-Config $ConfigPath `
+        $config = Load-Config -YamlPath $ConfigPath `
+                    | Load-Resources `
                     | Merge-Includes -yamlPath $ConfigPath `
                     | Merge-Metadata -metadata $MetaData -tasks $Tasks -yamlPath $ConfigPath `
                     | Override-Attributes `

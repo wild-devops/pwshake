@@ -15,6 +15,7 @@ function Normalize-Config {
             tasks = Coalesce $config.tasks, $config.tasks, $config.roles, @{};
             templates = $templates;
             invoke_tasks = @() + (Coalesce $config.invoke_tasks, $config.invoke_run_lists, $config.apply_roles,  @());
+            resources = @() + (Coalesce $config.resources, $config.repositories, @());
         }
     }
 }
