@@ -17,8 +17,8 @@ function Invoke-Step {
     $throwOn = ($step.on_error -eq 'throw')
 
     if (-not (Invoke-Expression $step.when)) {
-      Log-Output "`t`tBypassed because of: [$($step.when)] = $(Invoke-Expression $step.when)" $config
-      continue;
+      Log-Verbose "`t`tBypassed because of: [$($step.when)] = $(Invoke-Expression $step.when)" $config
+      return
     }
 
     try {
@@ -31,10 +31,11 @@ function Invoke-Step {
       }
       Push-Location (Normalize-Path "$($step.work_dir)" $config)
 
-      Log-Output "Execute step: $($step.name)" $config
+      Log-Verbose "Execute step: $($step.name)" $config
       $logOut = @()
       $global:LASTEXITCODE = 0
-      Invoke-Expression $step.powershell *>&1 | Tee-Object -Variable logOut | Log-Output -config $config
+      Log-Debug "powershell: {$($step.powershell)}" $config
+      Invoke-Expression $step.powershell *>&1 | Tee-Object -Variable logOut | Log-Normal -Config $config
       if ((($LASTEXITCODE -ne 0) -or (-not $?)) -and ($throwOn)) { 
         $lastErr = $logOut | Where-Object {$_ -is [Management.Automation.ErrorRecord]} | Select-Object -Last 1
         if (-not $lastErr) {
@@ -43,7 +44,7 @@ function Invoke-Step {
         throw "$lastErr"
       }
     } catch {
-      Log-Output $_ $config -Rethrow $throwOn
+      Log-Error $_ $config -Rethrow $throwOn
     } finally {
         Pop-Location
     }

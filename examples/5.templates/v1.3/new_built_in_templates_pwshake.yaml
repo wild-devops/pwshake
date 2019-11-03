@@ -1,0 +1,16 @@
+attributes:
+  test_path: '{{pwshake_path}}/hello.json'
+
+tasks:
+  test_new_actions:
+  - echo: 'Creating: {{test_path}}'
+  - file:
+      path: '{{test_path}}'
+      content: '$(@{"I"="m";"a"="test"} | ConvertTo-Json)'
+  - echo: 'Checking: {{test_path}}'
+  - echo: '$(Get-Content {{test_path}} -Raw)'
+  - echo: 'Removing: {{test_path}}'
+  - pwsh: Remove-Item {{test_path}} -Force
+
+invoke_tasks:
+- test_new_actions

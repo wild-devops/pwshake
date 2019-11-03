@@ -1,5 +1,17 @@
 $ErrorActionPreference = "Stop"
 
+Add-Type -TypeDefinition @"
+namespace PwShake {
+    public enum VerbosityLevel {
+        Error,
+        Warning,
+        Normal,
+        Verbose,
+        Debug
+    }
+}
+"@
+
 $scripts = @(Get-ChildItem -Path (Join-Path -Path $PSScriptRoot -ChildPath 'scripts/*.ps1') -Recurse -ErrorAction Stop)
 
 foreach ($script in $scripts) {
@@ -14,11 +26,9 @@ foreach ($script in $scripts) {
 # Shared variables
 [bool]${is-Windows} = ([System.Environment]::OSVersion.Platform -match 'Win')
 [bool]${is-Linux} = (-not ${is-Windows})
-[hashtable]${pwshake-context} = @{}
-${pwshake-context}.templates = @{}
-foreach ($template in (Get-ChildItem -Path (Join-Path -Path $PSScriptRoot -ChildPath 'templates/*.yaml') -Recurse)) {
-    $step = Get-Content $template -Raw | ConvertFrom-Yaml
-    ${pwshake-context}.templates = Merge-Hashtables ${pwshake-context}.templates $step.templates
+[hashtable]${pwshake-context} = Normalize-Context @{
+    verbosity = 'Verbose'
+    max_depth = 100
 }
 
 New-Alias -Name pwshake -Value Invoke-pwshake -Force

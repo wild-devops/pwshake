@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 Context "Merge-MetaData" {
-    $metadataPath = Get-RelativePath 'examples/metadata'
+    $metadataPath = Get-RelativePath 'examples/4.complex/v1.0/metadata'
     $mock = @{}
 
     It "Should return a Hashtable" {

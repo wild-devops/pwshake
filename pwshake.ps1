@@ -1,6 +1,6 @@
 # Bootstrapper script for those who wants to run pwshake without prior importing the module.
 # Example run from PowerShell:
-# PS>./pwshake.ps1 ./examples/pwshake_config.yaml @("create_linux_istance","deploy_shake") @{override_to="local";artifact_id="42"}
+# PS>./pwshake.ps1 ./examples/4.complex/v1.0/complex_pwshake.yaml @("create_linux_istance","deploy_shake") @{override_to="local";artifact_id="42"}
 
 # Must match parameter definitions for pwshake.psm1/Invoke-pwshake function
 # otherwise named parameter binding fails
@@ -22,7 +22,7 @@ param(
   [switch]$DryRun,
 
   [Parameter(Mandatory = $false)]
-  [string]$Version = "1.2.0"
+  [string]$Version = "1.3.0"
 )
 
 $ErrorActionPreference = "Stop"

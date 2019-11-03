@@ -25,7 +25,7 @@ function Merge-Metadata {
                 $string = ""
                 if (Test-Path $metadata) {
                     if ((Split-Path $metadata -Leaf).EndsWith('.yaml') -or (Split-Path $metadata -Leaf).EndsWith('.json')) {
-                        $metadata = Get-Content $metadata -Raw | ConvertFrom-Yaml
+                        $metadata = $metadata | Normalize-Yaml
                     } elseif (!(Split-Path $metadata -Leaf).Contains('.')) {
                         foreach ($item in (Get-Content -Path $metadata)) {
                             if (-not $item.StartsWith('#')) {
@@ -53,21 +53,6 @@ function Merge-Metadata {
             $config.invoke_tasks = $tasks
         }
         
-        $config.attributes.pwshake_path = (Split-Path $yamlPath -Resolve).ToString()
-        $config.attributes.pwshake_log_path = (Join-Path -Path $config.attributes.pwshake_path -ChildPath "$((Resolve-Path $yamlPath | Get-Item).BaseName).log").ToString()
-        $config.attributes.pwshake_module_path = (Split-Path $PSScriptRoot -Parent).ToString()
-        $config.attributes.pwshake_version = (Invoke-Expression (Get-Content $PSScriptRoot\..\pwshake.psd1 -Raw)).ModuleVersion
-        $config.attributes.work_dir = "$(Get-Location)"
-        if (-not $config.scripts_directories) {
-            $config.scripts_directories = @('.')
-        }
-        if (($config.scripts_directories.Count) -and (-not $config.scripts_directories.Contains('.'))) {
-            $config.scripts_directories += '.'
-        }
-        if (Test-Path $config.attributes.pwshake_log_path) {
-            Remove-Item -Path $config.attributes.pwshake_log_path -Force
-        }
-
         return $config
     }
 }

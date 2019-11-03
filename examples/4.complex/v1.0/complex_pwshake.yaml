@@ -1,8 +1,6 @@
 # Includes
 includes:
   - attributes.json
-  - hello_pwshake.yaml
-  - empty_tasks_pwshake.yaml
 
 # Attributes overrides
 attributes_overrides:

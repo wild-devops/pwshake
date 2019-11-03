@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 Context "Arrange-Tasks" {
-    $configPath = Get-RelativePath 'examples\module\pwshake.yaml'
+    $configPath = Get-RelativePath 'examples/4.complex/v1.0/module/pwshake.yaml'
     $config =  Load-Config $configPath | Merge-Metadata -yamlPath $configPath
 
     $config.tasks.role1 = @{name = 'role1';depends_on=@('errors')}

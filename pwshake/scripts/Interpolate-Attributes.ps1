@@ -27,7 +27,7 @@ function Interpolate-Attributes {
             }
           }
         }
-        if ($counter++ -ge 100) {
+        if ($counter++ -ge ${pwshake-context}.max_depth) {
           throw "Circular reference detected for substitutions: $($regex.Matches($yaml) | Sort-Object -Property Value)"
         }
         $config = ConvertFrom-Yaml $yaml

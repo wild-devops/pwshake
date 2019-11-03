@@ -11,7 +11,7 @@ function Merge-Includes {
       [int]$depth = 0
   )    
     process {
-      if ($depth -gt 100) {
+      if ($depth -gt ${pwshake-context}.max_depth) {
         throw "Circular reference detected for includes in: $yamlPath"
       }
   
@@ -19,10 +19,10 @@ function Merge-Includes {
         $config_path = Split-Path -Path $yamlPath -Parent
         $include_path = Join-Path -Path $config_path -ChildPath $path
         if ((Get-Item $include_path).BaseName -eq 'attributes') {
-          $attributes = Get-Content $include_path -Raw | ConvertFrom-Yaml
+          $attributes = $include_path | Normalize-Yaml
           $config.attributes = Merge-Hashtables $config.attributes $attributes
         } else {
-          $include = Load-Config $include_path | Merge-Includes -yamlPath $include_path -depth ($depth + 1)
+          $include = $include_path | Normalize-Yaml | Normalize-Config | Merge-Includes -yamlPath $include_path -depth ($depth + 1)
           $config = Merge-Hashtables $config $include
         }
       }

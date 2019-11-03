@@ -1,0 +1,14 @@
+attributes:
+  hello_to: PWSHAKE
+
+# Simple template substitution
+templates:
+  echo:
+    powershell: Write-Host "$($step.echo)"
+
+tasks:
+  say_hello:
+  - echo: "Hello {{hello_to}}!"
+
+invoke_tasks:
+- say_hello

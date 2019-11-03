@@ -11,10 +11,10 @@ function Invoke-Task {
         [bool]$dryRun = $false
     )
     process {
-        Log-Output "Invoke task: $($task.name)" $config
+        Log-Verbose "Invoke task: $($task.name)" $config
 
         if (-not (Invoke-Expression $task.when)) {
-            Log-Output "`t`tBypassed because of: [$($task.when)] = $(Invoke-Expression $task.when)" $config
+            Log-Verbose "`t`tBypassed because of: [$($task.when)] = $(Invoke-Expression $task.when)" $config
             continue;
         }
         try {
@@ -24,7 +24,7 @@ function Invoke-Task {
                 if (-not $dryRun) {
                     Invoke-Step $config $step $task.work_dir
                 } else {
-                    Log-Output "`t`tBypassed because of -DryRun:$dryRun" $config
+                    Log-Verbose "`t`tBypassed because of -DryRun:$dryRun" $config
                 }
             }
         } finally {

@@ -11,7 +11,7 @@ function Arrange-Tasks {
     [int]$depth = 0
   )
   process {
-    if ($depth -gt 100) {
+    if ($depth -gt ${pwshake-context}.max_depth) {
       throw "Circular reference detected for dependant tasks in: $depends_on"
     }
 
