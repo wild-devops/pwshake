@@ -9,8 +9,7 @@ tasks:
   - python:
       inline: print('Hello pwshake!');
   - python:
-      file: |
-        {{pwshake_path}}/hello.py again
+      file: '{{pwshake_path}}/hello.py again'
   - python: '{{pwshake_path}}/hello.py twice'
 
 invoke_tasks:
