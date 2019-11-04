@@ -1,12 +1,12 @@
 templates:
   python:
-    file:
+    options:
     inline:
     powershell: |
       if ($step.python) {
         "python3 $($step.python)" | Cmd-Shell
-      } elseif ($step.file) {
-        "python3 $($step.file)" | Cmd-Shell
+      } elseif ($step.options) {
+        "python3 $($step.options)" | Cmd-Shell
       } elseif ($step.inline) {
         python3 -c $step.inline
       } else {

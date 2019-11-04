@@ -1,0 +1,40 @@
+includes:
+- templates/steps.yaml
+- templates/nested.yaml
+
+tasks:
+  test_nested_templates:
+  - 'implicit version':
+      dotnet:
+  - 'inline command':
+      dotnet: --version
+  - 'explicit command':
+      dotnet:
+        command: --version
+  - 'explicit options':
+      dotnet:
+          options: --version
+  - 'explicit command and options':
+      dotnet:
+        command: msbuild
+        options: /version
+  - 'nested version':
+      dotnet_version:
+  - 'deep nested version':
+      msbuild_version:
+  - 'circular ref error':
+    on_error: continue
+    msbuild_version1:
+
+  test_composed_templates:
+
+  test_nested_composed_templates:
+
+  test_all:
+    depends_on:
+    - test_nested_templates
+    - test_composed_templates
+    - test_nested_composed_templates
+
+invoke_tasks:
+- test_all

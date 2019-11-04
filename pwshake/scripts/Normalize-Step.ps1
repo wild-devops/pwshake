@@ -12,6 +12,8 @@ function Normalize-Step {
     )    
     process {
         $ErrorActionPreference = "Stop"
+        
+        Log-Debug "Normalize-Step:`$item:`n$(ConvertTo-Yaml $item)" $config
 
         if ($depth -gt ${pwshake-context}.max_depth) {
             throw "Circular reference detected for template in:`n$(ConvertTo-Yaml $item)"
@@ -59,15 +61,19 @@ function Normalize-Step {
                 $step = Merge-Hashtables ${pwshake-context}.templates[$key] $step
                 if ($step[$key] -is [hashtable]) {
                     $step = Merge-Hashtables $step[$key] $step
+                    $step.Remove($key)
+                } elseif (-not $step[$key]) {
+                    $step.Remove($key)
                 }
                 $step.powershell = ${pwshake-context}.templates[$key].powershell
-                $step.Remove($key)
                 if (-not $step.powershell) {
                     $step = Normalize-Step $step $config ($depth + 1)
                 }
                 break;
             }
         }
+
+        Log-Debug "Normalize-Step:`$step:`n$(ConvertTo-Yaml $step)" $config
 
         return $step
     }
