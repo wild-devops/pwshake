@@ -58,6 +58,11 @@ function Normalize-Step {
 
         foreach ($key in ${pwshake-context}.templates.Keys) {
             if ($step.Keys -contains $key) {
+                $step = Normalize-Template $step $key $config ($depth + 1)
+#Write-Host "`$step:`n$($step | cty)"
+                break;
+
+
                 $step = Merge-Hashtables ${pwshake-context}.templates[$key] $step
                 if ($step[$key] -is [hashtable]) {
                     $step = Merge-Hashtables $step[$key] $step

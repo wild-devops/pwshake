@@ -1,0 +1,8 @@
+templates:
+  each:
+    powershell: |
+      (Coalesce $step.items, @()) | ForEach-Object { Invoke-Expression "$($step.do)" }
+  steps:
+    each:
+      items: $[[$step.steps]]
+      do: Invoke-Step $config $_

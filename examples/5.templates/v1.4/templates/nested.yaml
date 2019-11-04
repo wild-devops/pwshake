@@ -3,19 +3,18 @@ templates:
     command:
     options:
     powershell: |
-      & dotnet $(Coalesce $step.dotnet, $step.command, "") $(Coalesce $step.dotnet, $step.options, "--version")
+      & dotnet $(Coalesce $step.command, $step.dotnet, "") $(Coalesce $step.options, $step.dotnet, "--version")
   dotnet_version:
-    dotnet:
-      options: --version
+    dotnet: --version
   msbuild_version:
     dotnet_version:
       command: msbuild
       options: /version
-  msbuild_version1:
-    msbuild_version2:
-      command: msbuild
-      options: /version
-  msbuild_version2:
-    msbuild_version1:
-      command: msbuild
-      options: /version
+  circular1:
+    circular2:
+  circular2:
+    circular3:
+  circular3:
+    circular4:
+  circular4:
+    circular2:
