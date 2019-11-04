@@ -18,8 +18,7 @@ foreach ($dep in $mod.RequiredModules) {
   }
 }
 
-#$result = Invoke-Pester -Script $PSScriptRoot/module.Scope.ps1 -PassThru
-$result = Invoke-Pester -Script $PSScriptRoot/module.Scope.ps1 -PassThru -TestName "PWSHAKE examples"
+$result = Invoke-Pester -Script $PSScriptRoot/module.Scope.ps1 -PassThru
 
 if ($result.FailedCount) {
     throw "Tests failed."

@@ -12,7 +12,7 @@ tasks:
         command: --version
   - 'explicit options':
       dotnet:
-          options: --version
+        options: --version
   - 'explicit command and options':
       dotnet:
         command: msbuild

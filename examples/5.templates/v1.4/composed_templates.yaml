@@ -11,14 +11,14 @@ tasks:
           dotnet: --version
       - 'explicit command':
           dotnet:
-              command: --version
+            command: --version
       - 'explicit options':
           dotnet:
-              options: --version
+            options: --version
       - 'explicit command and options':
           dotnet:
-              command: msbuild
-              options: /version
+            command: msbuild
+            options: /version
       - 'nested version':
           dotnet_version:
       - 'deep nested version':

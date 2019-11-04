@@ -1,7 +1,7 @@
 templates:
   each:
     powershell: |
-      (Coalesce $step.items, @()) | ForEach-Object { Invoke-Expression "$($step.do)" }
+      (Coalesce $step.items, @()) | ForEach-Object { Invoke-Expression $step.do }
   steps:
     each:
       items: $[[$step.steps]]
