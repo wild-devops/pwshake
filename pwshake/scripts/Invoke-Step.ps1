@@ -13,13 +13,7 @@ function Invoke-Step {
   process {
     $ErrorActionPreference = "Continue"
 
-    $step = Normalize-Step $step $config
-    $throwOn = ($step.on_error -eq 'throw')
-
-    if (-not (Invoke-Expression $step.when)) {
-      Log-Verbose "`t`tBypassed because of: [$($step.when)] = $(Invoke-Expression $step.when)" $config
-      return
-    }
+    $throwOn = (Coalesce $step.on_error, 'throw') -eq 'throw'
 
     try {
       if ($work_dir) {
@@ -32,6 +26,14 @@ function Invoke-Step {
       Push-Location (Normalize-Path "$($step.work_dir)" $config)
 
       Log-Verbose "Execute step: $($step.name)" $config
+
+      $step = Normalize-Step $step $config
+
+      if (-not (Invoke-Expression $step.when)) {
+        Log-Verbose "`t`tBypassed because of: [$($step.when)] = $(Invoke-Expression $step.when)" $config
+        return
+      }
+  
       $logOut = @()
       $global:LASTEXITCODE = 0
       Log-Debug "powershell: {$($step.powershell)}" $config

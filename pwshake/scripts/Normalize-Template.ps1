@@ -14,7 +14,7 @@ function Normalize-Template {
         $ErrorActionPreference = "Stop"
 
         if ($depth -gt ${pwshake-context}.max_depth) {
-            throw "Circular reference detected for templates in:`n$(ConvertFrom-Yaml $item)"
+            throw "Circular reference detected for templates in:`n$(ConvertTo-Yaml $item)"
         }
 
         if (-not $item) { return $null }

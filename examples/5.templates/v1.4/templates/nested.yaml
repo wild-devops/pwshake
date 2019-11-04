@@ -1,0 +1,21 @@
+templates:
+  dotnet:
+    command:
+    options:
+    powershell: |
+      & dotnet $(Coalesce $step.dotnet, $step.command, "") $(Coalesce $step.dotnet, $step.options, "--version")
+  dotnet_version:
+    dotnet:
+      options: --version
+  msbuild_version:
+    dotnet_version:
+      command: msbuild
+      options: /version
+  msbuild_version1:
+    msbuild_version2:
+      command: msbuild
+      options: /version
+  msbuild_version2:
+    msbuild_version1:
+      command: msbuild
+      options: /version

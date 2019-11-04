@@ -1,0 +1,32 @@
+includes:
+- templates/steps.yaml
+- templates/nested.yaml
+
+tasks:
+  test_nested_templates:
+  - dotnet:
+  - dotnet: --version
+  - dotnet:
+      command: --version
+  - dotnet:
+      options: --version
+  - dotnet:
+      command: msbuild
+      options: /version
+  - dotnet_version:
+  - msbuild_version:
+  - msbuild_version1:
+    on_error: continue
+
+  test_composed_templates:
+
+  test_nested_composed_templates:
+
+  test_all:
+    depends_on:
+    - test_nested_templates
+    - test_composed_templates
+    - test_nested_composed_templates
+
+invoke_tasks:
+- test_all

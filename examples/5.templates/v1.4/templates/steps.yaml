@@ -1,0 +1,9 @@
+templates:
+  steps:
+    steps:
+    powershell: |
+      if ($step.steps) {
+        foreach ($item in $step.steps) {
+          Invoke-Step $config $item $step.work_dir
+        }
+      }
