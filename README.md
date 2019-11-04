@@ -95,16 +95,19 @@ tasks:
   hello:
   - powershell: Write-Host "Hello PWSHAKE!"
 includes: []
+templates: {}
 attributes_overrides: []
-scripts_directories: .
+scripts_directories:
+- .
+resources: []
 invoke_tasks: hello
 attributes:
   pwshake_module_path: /path/to/pwshake/module/source
   pwshake_path: /absolute/path/to/your/working/directory
-  pwshake_version: <current.pwshake.version>
+  pwshake_version: 1.4.0
   work_dir: /absolute/path/to/process/working/directory
-  hello: Hello PWSHAKE!
   pwshake_log_path: /absolute/path/to/your/working/directory/my_pwshake.log
+  some_attribute: this is an attribute value
 
 Arranged tasks:
 - when: $true
@@ -116,7 +119,6 @@ Arranged tasks:
 
 Invoke task: hello
 Execute step: step_66875131
-powershell: {Write-Host "Hello PWSHAKE!"}
 Hello PWSHAKE!
 ```
 ## Test **PWSHAKE** by itself
