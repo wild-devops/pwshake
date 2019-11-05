@@ -125,11 +125,18 @@ Hello PWSHAKE!
 
 Clone this repo, change current directory to the repo root folder.
 
-Start the bootstrapper `pwshake.ps1` script without any arguments passed:
+Start the `./tests/pwshake.Tests.ps1` script without any arguments passed:
 ```
-PS>./pwshake.ps1
+PS>./tests/pwshake.Tests.ps1
 ```
 And it runs various tests and examples included in this repo.
+
+**Prerequisites:**
+Since some examples use third party cli tools, make shure that you have installed:
+* python >v3.6
+* git >v2.16
+* dotnetcore-sdk >v2.2
+* msbuild (for Windows only)
 
 ## See more about:
 * [bootstrapper `pwshake.ps1` script](/doc/bootstrapper.md)
@@ -142,5 +149,6 @@ And it runs various tests and examples included in this repo.
   * [`templates:` element](/doc/templates.md)
   * [implicit `[step]:` element](/doc/step.md)
   * [`scripts_directories:` element](/doc/scripts_directories.md)
+  * [`resources:` element](/doc/resources.md)
 
 ## Happy **PWSHAKE**-ing!
