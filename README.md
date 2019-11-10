@@ -125,9 +125,9 @@ Hello PWSHAKE!
 
 Clone this repo, change current directory to the repo root folder.
 
-Start the `./tests/pwshake.Tests.ps1` script without any arguments passed:
+Start the bootstrapper `./pwshake.ps1` script without any arguments passed:
 ```
-PS>./tests/pwshake.Tests.ps1
+PS>./pwshake.ps1
 ```
 And it runs various tests and examples included in this repo.
 

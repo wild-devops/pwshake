@@ -11,5 +11,5 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Run tests
-      run: ./tests/pwshake.Tests.ps1
+      run: ./pwshake.ps1
       shell: pwsh
