@@ -12,7 +12,7 @@ function Normalize-Config {
             attributes = Coalesce $config.attributes, @{};
             attributes_overrides = @() + (Coalesce $config.attributes_overrides,  @());
             scripts_directories = @() + (Coalesce $config.scripts_directories, @());
-            tasks = Coalesce $config.tasks, $config.tasks, $config.roles, @{};
+            tasks = Coalesce $config.tasks, $config.run_lists, $config.roles, @{};
             templates = $templates;
             invoke_tasks = @() + (Coalesce $config.invoke_tasks, $config.invoke_run_lists, $config.apply_roles,  @());
             resources = @() + (Coalesce $config.resources, $config.repositories, @());
