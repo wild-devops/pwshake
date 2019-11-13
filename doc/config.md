@@ -135,18 +135,21 @@
     [See more about `attributes_overrides:`](/doc/attributes_overrides.md)
 
 * ### **`resources:` element**
-    Optional
 
-    ```
-    resources:
-    - git:
-        repo: https://github.com/wild-devops/pwshake.git
-        ref: v1.0.0
-        sparses:
-        - examples
-        - doc
-        target: .old_repo
-    ```
-    Tells to **PWSHAKE** engine about the source(-s) of outer resources that should be loaded before the current execution starts.
-    
-    [See more about `resources:`](/doc/resources.md)
+  Alias: **`repositories:`**
+
+  Optional
+
+  ```
+  resources:
+  - git:
+      repo: https://github.com/wild-devops/pwshake.git
+      ref: v1.0.0
+      sparses:
+      - examples
+      - doc
+      target: .old_repo
+  ```
+  Tells to **PWSHAKE** engine about the source(-s) of outer resources that should be loaded before the current execution starts.
+  
+  [See more about `resources:`](/doc/resources.md)
