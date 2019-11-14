@@ -24,10 +24,10 @@ So, below are a few shortenings that can be useful in the `pwshake.yaml` configu
 
 ## **Built-in** `templates:` **element items**
 
-* `cmd.yaml` - with `shell:` alias inside
+* `cmd.yaml` - with `shell:` alias inside, redirects the input shell command text to built-in function that cares about exit codes, **stderr** output, exception handling, etc
 * `echo.yaml` - just for fun
 * `file.yaml` - simplification of files content manipulations
-* `git.yaml` - simplification of git checkout
+* `git.yaml` - simplification of git checkout operation
 * `invoke_tasks.yaml` - to invoke other tasks from the step inside of the current task
 * `msbuild.yaml` - yes, it's our legacy tribute since we still have tons of **MsBuild** projects
 * `script.yaml` - in the v1.0.0 this was an awful part of main code
