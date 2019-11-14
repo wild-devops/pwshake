@@ -1,4 +1,4 @@
-# Here the kind of **PWSHAKE** DSL
+# Here is the kind of **PWSHAKE** DSL
 Assumed good enough to start.
 
 Technically the **PWSHAKE** don't need any **DSL** except the basic config structure.
@@ -33,3 +33,49 @@ So, below are a few shortenings that can be useful in the `pwshake.yaml` configu
 * `script.yaml` - in the v1.0.0 this was an awful part of main code
 
 [See more about `templates:` element](../../doc/templates.md) 
+
+## **Moreover**
+Built-in `templates:` element items are loaded into the **PWSHAKE** execution contex on early stage of the `yaml` config file processing.
+
+After this the regular `templates:` element items defined in the current `yaml` config file are merged into the same context.
+
+So, as the result of this merging there is an ability to override any built-in template based on your own decision.
+
+Example:
+```
+PS> cat ./my_colored_echo.yaml
+templates:
+  echo:
+    text: '...' # this is default
+    color: DarkGreen # this is default
+    powershell: |
+      Write-Host (Coalesce $step.echo, $step.text) -ForegroundColor $step.color
+
+tasks:
+  print_me_in_green:
+  - echo: I'm not green
+  print_me_in_cyan:
+  - echo:
+  - echo:
+      text:  I'm not cyan
+      color: Cyan
+
+invoke_tasks:
+- print_me_in_green
+- print_me_in_cyan
+```
+Output:
+```
+Invoke task: print_me_in_green
+Execute step: step_27465073
+I'm not green
+Invoke task: print_me_in_cyan
+Execute step: step_50635237
+...
+Execute step: step_63993163
+I'm not cyan
+```
+By those three dots you can see that your new inline template works correctly, but unfortunately **PWSHAKE** engine (at least in the current version) captures all commands outputs to save them into the log file and redirects the captured strings to user console via the dumb non-colored `Write-Host` (sorry).
+
+Anyway, there are good news:
+## The **PWSHAKE**'s **DSL** is really in your own hands!
