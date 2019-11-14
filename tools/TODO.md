@@ -1,5 +1,3 @@
-* add more meaningful examples
-
-* implement nested and composed templates
+* implement nested and composed built-in templates
 
 * implement plug-ins concept
