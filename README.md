@@ -30,6 +30,15 @@ Average time to live for most of them is during from 30 minutes (for auto-testin
 
 So, we do not need to manage a big **snowflake** infrastructure and to care about managed **state** of it (say hello to **Chef** and **DSC**). Rather we need to organize a simple and robust way to make the full initial configuration of our hosts (quite complex in some cases) and to perform it only once per each host instantiation.
 
+# Where is your own DSL?
+
+All respectable makers or config managers have their own **DSL**, all those `knife`-s, `cookbook`-s, `recipe`-s and other `cucumber`-s.
+
+The **PWSHAKE** is not an exception, but its **DSL** is based on simple concept of `templates:` and implemented via basic functionality of **PWSHAKE** engine: to read `yaml` configs, to compose `[hashtable]`-s from them and to execute `powershell:` commands.
+
+[See about our **DSL**](/pwshake/templates)
+
+
 # How to prepare **PWSHAKE** usage on Windows or Linux
 
 * Create a new working directory
