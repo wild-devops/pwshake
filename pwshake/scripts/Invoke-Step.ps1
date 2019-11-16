@@ -13,40 +13,43 @@ function Invoke-Step {
   process {
     $ErrorActionPreference = "Continue"
 
-    $step = Normalize-Step $step $config
-    $throwOn = ($step.on_error -eq 'throw')
-
-    if (-not (Invoke-Expression $step.when)) {
-      Log-Verbose "`t`tBypassed because of: [$($step.when)] = $(Invoke-Expression $step.when)" $config
-      return
-    }
-
     try {
+      $step = Normalize-Step $step $config
+
       if ($work_dir) {
         # Since actual execution is performed in the $step that can contain it's own .work_dir property
-        # overrride it only if the $step.work_dir is empty
+        # override it only if the $step.work_dir is empty
         if (-not $step.work_dir) { 
           $step.work_dir = $work_dir
         } 
       }
-      Push-Location (Normalize-Path "$($step.work_dir)" $config)
+      try {
+        Push-Location (Normalize-Path "$($step.work_dir)" $config)
 
-      Log-Verbose "Execute step: $($step.name)" $config
-      $logOut = @()
-      $global:LASTEXITCODE = 0
-      Log-Debug "powershell: {$($step.powershell)}" $config
-      Invoke-Expression $step.powershell *>&1 | Tee-Object -Variable logOut | Log-Normal -Config $config
-      if ((($LASTEXITCODE -ne 0) -or (-not $?)) -and ($throwOn)) { 
-        $lastErr = $logOut | Where-Object {$_ -is [Management.Automation.ErrorRecord]} | Select-Object -Last 1
-        if (-not $lastErr) {
-            $lastErr = "$($step.name) failed."
+        Log-Verbose "Execute step: $($step.name)" $config
+  
+        if (-not (Invoke-Expression $step.when)) {
+          Log-Verbose "`t`tBypassed because of: [$($step.when)] = $(Invoke-Expression $step.when)" $config
+          return
         }
-        throw "$lastErr"
+    
+        $logOut = @()
+        $global:LASTEXITCODE = 0
+        Log-Debug "powershell: {$($step.powershell)}" $config
+        Invoke-Expression $step.powershell *>&1 | Tee-Object -Variable logOut | Log-Normal -Config $config
+        if ((($LASTEXITCODE -ne 0) -or (-not $?)) -and ($step.on_error -eq 'throw')) { 
+          $lastErr = $logOut | Where-Object {$_ -is [Management.Automation.ErrorRecord]} | Select-Object -Last 1
+          if (-not $lastErr) {
+              $lastErr = "$($step.name) failed."
+          }
+          throw "$lastErr"
+        }
+      } finally {
+        Pop-Location
       }
     } catch {
-      Log-Error $_ $config -Rethrow $throwOn
-    } finally {
-        Pop-Location
+      Log-Debug "Invoke-Step: `$step`n$($step | ConvertTo-Yaml)" $config
+      Log-Error $_ $config -Rethrow ((Coalesce $step.on_error, 'throw') -eq 'throw')
     }
   }
 }

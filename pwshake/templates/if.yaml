@@ -1,0 +1,15 @@
+actions:
+  if:
+    condition: $[[$step.if]]
+    then:
+    else:
+    powershell: |
+      if ($step.condition) {
+        if ($step.then) {
+          (@() + $step.then) | ForEach-Object { Invoke-Step $config $_ }
+        }
+      } else {
+        if ($step.else) {
+          (@() + $step.else) | ForEach-Object { Invoke-Step $config $_ }
+        }
+      }

@@ -1,4 +1,4 @@
-function Log-Debug {
+function global:Log-Debug {
     [CmdletBinding()]
     param (
       [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
@@ -8,6 +8,6 @@ function Log-Debug {
       [hashtable]$config
   )    
     process {
-        $message | Log-Output -Config $config -Verbosity "Debug"
+        "DEBUG: >>>$message<<<" | Log-Output -Config $config -Verbosity "Debug"
     }
  }

@@ -1,0 +1,33 @@
+includes:
+- templates/nested.yaml
+
+tasks:
+  test_nested_templates:
+  - 'implicit version':
+      dotnet:
+  - 'inline command':
+      dotnet: --version
+  - 'explicit command':
+      dotnet:
+        command: --version
+  - 'explicit options':
+      dotnet:
+        options: --version
+  - 'explicit command and options':
+      dotnet:
+        command: msbuild
+        options: /version
+  - 'nested version':
+      dotnet_version:
+  - 'deep nested version':
+      msbuild_version:
+  - 'circular reference error':
+    on_error: continue
+    circular1:
+
+  test_all:
+    depends_on:
+    - test_nested_templates
+
+invoke_tasks:
+- test_all

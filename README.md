@@ -30,6 +30,15 @@ Average time to live for most of them is during from 30 minutes (for auto-testin
 
 So, we do not need to manage a big **snowflake** infrastructure and to care about managed **state** of it (say hello to **Chef** and **DSC**). Rather we need to organize a simple and robust way to make the full initial configuration of our hosts (quite complex in some cases) and to perform it only once per each host instantiation.
 
+# Where is your own DSL?
+
+All respectable makers or config managers have their own **DSL**, all those `knife`-s, `cookbook`-s, `recipe`-s and other `cucumber`-s.
+
+The **PWSHAKE** is not an exception, but its **DSL** is based on simple concept of `templates:` and implemented via basic functionality of **PWSHAKE** engine: to read `yaml` configs, to compose `[hashtable]`-s from them and to execute `powershell:` commands.
+
+[See about our **DSL**](/pwshake/templates)
+
+
 # How to prepare **PWSHAKE** usage on Windows or Linux
 
 * Create a new working directory
@@ -95,16 +104,19 @@ tasks:
   hello:
   - powershell: Write-Host "Hello PWSHAKE!"
 includes: []
+templates: {}
 attributes_overrides: []
-scripts_directories: .
+scripts_directories:
+- .
+resources: []
 invoke_tasks: hello
 attributes:
   pwshake_module_path: /path/to/pwshake/module/source
   pwshake_path: /absolute/path/to/your/working/directory
-  pwshake_version: <current.pwshake.version>
+  pwshake_version: 1.4.0
   work_dir: /absolute/path/to/process/working/directory
-  hello: Hello PWSHAKE!
   pwshake_log_path: /absolute/path/to/your/working/directory/my_pwshake.log
+  some_attribute: this is an attribute value
 
 Arranged tasks:
 - when: $true
@@ -116,16 +128,15 @@ Arranged tasks:
 
 Invoke task: hello
 Execute step: step_66875131
-powershell: {Write-Host "Hello PWSHAKE!"}
 Hello PWSHAKE!
 ```
 ## Test **PWSHAKE** by itself
 
 Clone this repo, change current directory to the repo root folder.
 
-Start the `./tests/pwshake.Tests.ps1` script without any arguments passed:
+Start the bootstrapper `./pwshake.ps1` script without any arguments passed:
 ```
-PS>./tests/pwshake.Tests.ps1
+PS>./pwshake.ps1
 ```
 And it runs various tests and examples included in this repo.
 

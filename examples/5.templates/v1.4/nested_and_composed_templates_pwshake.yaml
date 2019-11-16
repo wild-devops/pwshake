@@ -1,0 +1,31 @@
+includes:
+- nested_templates.yaml
+- composed_templates.yaml
+- templates/sparse-checkout.yaml
+
+tasks:
+  test_nested_composed_templates:
+  - 'Test each':
+      each:
+        items:
+        - one
+        - two
+        - three
+        action: echo $_
+  - 'Prepare sparse-checkout file':
+      sparse-checkout:
+      - examples
+      - doc
+      - tools
+  - 'Prepare other sparse-checkout file':
+      sparse-checkout:
+        directories:
+        - tests
+        - scripts
+
+  test_all:
+    depends_on:
+    - test_nested_composed_templates
+
+invoke_tasks:
+- test_all

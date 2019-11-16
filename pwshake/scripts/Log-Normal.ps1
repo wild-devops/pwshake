@@ -1,4 +1,4 @@
-function Log-Normal {
+function global:Log-Normal {
     [CmdletBinding()]
     param (
       [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]

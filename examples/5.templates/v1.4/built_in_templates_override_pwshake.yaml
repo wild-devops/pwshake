@@ -1,0 +1,19 @@
+templates:
+  echo:
+    text: '...'
+    color: DarkGreen # this is default
+    powershell: |
+      Write-Host (Coalesce $step.echo, $step.text) -ForegroundColor $step.color
+
+tasks:
+  print_me_in_green:
+  - echo: I'm not green
+  print_me_in_cyan:
+  - echo:
+  - echo:
+      text:  I'm not cyan
+      color: Cyan
+
+invoke_tasks:
+- print_me_in_green
+- print_me_in_cyan

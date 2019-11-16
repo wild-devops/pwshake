@@ -1,9 +1,17 @@
 actions:
   file:
-    path:
+    path: $[[$step.file]]
     content:
+    append:
     encoding: UTF8
     powershell: |
-      if (-not (Test-Path $step.path)) { New-Item -ItemType File -Path $step.path }
-      if ($step.content -match '^\$\((?<eval>.*?)\)$') { $step.content = Invoke-Expression $step.content }
-      Set-Content -Path (Resolve-Path $step.path) -Value $step.content -Encoding $step.encoding -Force
+      if (-not $step.path) { throw "Template 'file:' attribute 'path:' is not specified!" }
+      $path = Join-Path -Path $config.attributes.pwshake_path -ChildPath $step.path
+      if (-not (Test-Path $path)) { New-Item -ItemType File -Path $path }
+      if ($step.content) {
+        if ($step.content -match '^\$\((?<eval>.*?)\)$') { $step.content = Invoke-Expression $step.content }
+        Set-Content -Path (Resolve-Path $path) -Value $step.content -Encoding $step.encoding -Force
+      } elseif ($step.append) {
+        if ($step.append -match '^\$\((?<eval>.*?)\)$') { $step.append = Invoke-Expression $step.append }
+        Add-Content -Path (Resolve-Path $path) -Value $step.append -Encoding $step.encoding -Force
+      }

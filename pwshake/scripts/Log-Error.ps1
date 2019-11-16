@@ -1,4 +1,4 @@
-function Log-Error {
+function global:Log-Error {
     [CmdletBinding()]
     param (
       [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]

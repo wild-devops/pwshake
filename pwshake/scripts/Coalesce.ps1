@@ -1,4 +1,4 @@
-function Coalesce {
+function global:Coalesce {
     [CmdletBinding()]
     param (
       [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]

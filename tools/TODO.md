@@ -1,5 +1,3 @@
-* add more meaningful examples
-
-* implement outer resources loading
+* implement context concept to don't mix-in external and internal yaml
 
 * implement plug-ins concept

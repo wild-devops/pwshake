@@ -1,4 +1,4 @@
-function Log-Output {
+function global:Log-Output {
     [CmdletBinding()]
     param (
       [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
