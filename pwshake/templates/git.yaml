@@ -6,21 +6,20 @@ templates:
     target:
     steps:
     - directory: $[[$step.target]]
-    - each:
-        work_dir: $[[$step.target]]
-        items:
-        - git init --quiet
-        - git remote add origin $[[$step.source]]
-        - git fetch --quiet --tags --prune --no-progress --no-recurse-submodules --depth 1 origin +refs/heads/*:refs/remotes/origin/*
-        action: Cmd-Shell $_
-    - if: $[[$step.directories]]
-      then:
-      - shell: git config core.sparsecheckout true
-        work_dir: $[[$step.target]]
+    - work_dir: $[[$step.target]]
+      steps:
       - each:
-          items: $[[$step.directories]]
-          action: >
-            $spch_path = (Join-Path $config.attributes.pwshake_path $[[$step.target + "/.git/info/sparse-checkout"]]);
-            Add-Content -Path $spch_path -Value "/$_" -Encoding Ascii -Force -PassThru;
-    - shell: git checkout --quiet $[[$step.ref]]
-      work_dir: $[[$step.target]]
+          items:
+          - git init --quiet
+          - git remote add origin $[[$step.source]]
+          - git fetch --quiet --tags --prune --no-progress --no-recurse-submodules --depth 1 origin +refs/heads/*:refs/remotes/origin/*
+          action: Cmd-Shell $_
+      - if: $[[$step.directories]]
+        then:
+        - shell: git config core.sparsecheckout true
+        - each:
+            items: $[[$step.directories]]
+            action: >
+              $spch_path = (Join-Path $config.attributes.pwshake_path $[[$step.target + "/.git/info/sparse-checkout"]]);
+              Add-Content -Path $spch_path -Value "/$_" -Encoding Ascii -Force -PassThru;
+      - shell: git checkout --quiet $[[$step.ref]]
