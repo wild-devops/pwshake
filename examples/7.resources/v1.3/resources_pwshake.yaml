@@ -1,11 +1,41 @@
+
 resources:
 - git:
-    source: https://github.com/wild-devops/pwshake.git
+    repo: https://github.com/wild-devops/pwshake.git
     ref: v1.0.0
-    directories:
+    sparses:
     - examples
     - doc
     target: .old_repo
+
+templates:
+  git:
+    repo:
+    ref:
+    sparses:
+    target:
+    powershell: |
+      $target = Join-Path -Path $config.attributes.pwshake_path -ChildPath $step.target
+      if (Test-Path $target) {
+          Remove-Item -Path $target -Recurse -Force
+      }
+      New-Item -Path $target -ItemType Directory | Out-Null
+      try {
+        Push-Location $target
+        git init --quiet
+        & git remote add origin $($step.repo)
+        git fetch --quiet --tags --prune --no-progress --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/*
+        if ($step.sparses) {
+          git config core.sparsecheckout true
+          New-Item -Path .git/info/sparse-checkout -ItemType File | Out-Null
+          foreach ($folder in $step.sparses) {
+            Add-Content -path .git/info/sparse-checkout -value "/$folder" -Encoding Ascii -Force
+          }
+        }
+        & git checkout --quiet $($step.ref)
+      } finally {
+        Pop-Location
+      }
 
 includes:
 - .old_repo/examples/hello_pwshake.yaml
