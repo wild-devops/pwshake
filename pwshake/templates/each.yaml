@@ -1,0 +1,7 @@
+actions:
+  each:
+    items:
+    action:
+    powershell: |
+      if (-not $step.action) { throw "Template 'each:' attribute 'action:' is not specified!" }
+      (@() + $step.items) | ForEach-Object { Invoke-Expression $step.action }

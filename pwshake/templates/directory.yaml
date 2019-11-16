@@ -1,0 +1,9 @@
+actions:
+  directory:
+    path: $[[$step.directory]]
+    clean: true
+    powershell: |
+      if (-not $step.path) { throw "Template 'directory:' attribute 'path:' is not specified!" }
+      $directory = Join-Path -Path $config.attributes.pwshake_path -ChildPath $step.path
+      if (($step.clean) -and (Test-Path $directory)) { Remove-Item $directory -Force -Recurse }
+      if (-not (Test-Path $directory)) { New-Item $directory -ItemType Directory | Out-Null }

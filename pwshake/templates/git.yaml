@@ -1,28 +1,23 @@
 templates:
   git:
-    repo:
+    source:
     ref:
-    sparses:
+    directories:
     target:
-    powershell: |
-      $target = Join-Path -Path $config.attributes.pwshake_path -ChildPath $step.target
-      if (Test-Path $target) {
-          Remove-Item -Path $target -Recurse -Force
-      }
-      New-Item -Path $target -ItemType Directory | Out-Null
-      try {
-        Push-Location $target
-        git init --quiet
-        & git remote add origin $($step.repo)
-        git fetch --quiet --tags --prune --no-progress --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/*
-        if ($step.sparses) {
-          git config core.sparsecheckout true
-          New-Item -Path .git/info/sparse-checkout -ItemType File | Out-Null
-          foreach ($folder in $step.sparses) {
-            Add-Content -path .git/info/sparse-checkout -value "/$folder" -Encoding Ascii -Force
-          }
-        }
-        & git checkout --quiet $($step.ref)
-      } finally {
-        Pop-Location
-      }
+    steps:
+    - directory: $[[$step.target]]
+    - each:
+        work_dir: $[[$step.target]]
+        items:
+        - git init --quiet
+        - git config core.sparsecheckout true
+        - git remote add origin $[[$step.source]]
+        - git fetch --quiet --tags --prune --no-progress --no-recurse-submodules --depth 1 origin +refs/heads/*:refs/remotes/origin/*
+        action: Cmd-Shell $_
+    - each:
+        items: $[[$step.directories]]
+        action: >
+          $spch_path = (Join-Path $config.attributes.pwshake_path $[[$step.target + "/.git/info/sparse-checkout"]]);
+          Add-Content -Path $spch_path -Value "/$_" -Encoding Ascii -Force -PassThru;
+    - shell: git checkout --quiet $[[$step.ref]]
+      work_dir: $[[$step.target]]
