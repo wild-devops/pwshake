@@ -4,10 +4,10 @@ templates:
     ref:
     directories:
     target:
-    steps:
+    invoke_steps:
     - directory: $[[$step.target]]
     - work_dir: $[[$step.target]]
-      steps:
+      invoke_steps:
       - each:
           items:
           - git init --quiet

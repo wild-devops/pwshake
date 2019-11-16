@@ -25,12 +25,16 @@ So, below are a few shortenings that can be useful in the `pwshake.yaml` configu
 ## **Built-in** `templates:` **element items**
 
 * `cmd.yaml` - with `shell:` alias inside, redirects the input shell command text to built-in function that cares about exit codes, **stderr** output, exception handling, etc
+* `directory.yaml` - to ensure that given directory exists
+* `each.yaml` - simple iterator
 * `echo.yaml` - just for fun
 * `file.yaml` - simplification of files content manipulations
-* `git.yaml` - simplification of git checkout operation
+* `git.yaml` - simplification of git checkout operation, from the v1.4 implemented as real **DSL** via other templates composition
+* `if.yaml` - for conditional templates composition
+* `invoke_steps.yaml` - for groupping templates composition
 * `invoke_tasks.yaml` - to invoke other tasks from the step inside of the current task
-* `msbuild.yaml` - yes, it's our legacy tribute since we still have tons of **MsBuild** projects
-* `script.yaml` - in the v1.0.0 this was an awful part of main code
+* `msbuild.yaml` - yes, it's our legacy tribute since we still have to use tons of **MsBuild** projects
+* `script.yaml` - calling **Powershell** scripts, in the v1.0.0 this was an awful part of main code
 
 [See more about `templates:` element](../../doc/templates.md) 
 

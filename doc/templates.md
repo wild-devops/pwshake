@@ -84,18 +84,36 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     ...
     tasks:
       - cmd: 'dir /b'
+      - directory: .test_results
+      - each:
+          items:
+            - Hello
+            - PWSHAKE
+          action: echo $_
       - echo: 'Hello PWSHAKE!'
       - file:
           path: 'test.json'
           content: '{"I":"m","a":"test"}'
           encoding: Ascii # default is UTF8
       - git:
-          repo: https://github.com/wild-devops/pwshake.git
+          source: https://github.com/wild-devops/pwshake.git
           ref: v1.0.0
-          sparses:
-          - examples
-          - doc
+          directories:
+            - examples
+            - doc
           target: .old_repo
+      - if:
+          condition: true
+          then:
+            - echo: true
+          else:
+            - echo: false
+            - pwsh: throw 'Good bye!'
+      - invoke_steps:
+          - echo: List
+          - cmd: echo of
+          - pwsh: echo other
+          - shell: echo steps
       - invoke_tasks:
           - list_of
           - tasks_to_execute
