@@ -48,6 +48,7 @@ function Invoke-Step {
         Pop-Location
       }
     } catch {
+      Log-Debug "Invoke-Step: `$step`n$($step | ConvertTo-Yaml)" $config
       Log-Error $_ $config -Rethrow ((Coalesce $step.on_error, 'throw') -eq 'throw')
     }
   }

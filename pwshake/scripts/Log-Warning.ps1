@@ -1,4 +1,4 @@
-function Log-Warning {
+function global:Log-Warning {
     [CmdletBinding()]
     param (
       [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]

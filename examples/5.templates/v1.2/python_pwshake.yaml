@@ -3,14 +3,20 @@ includes:
 
 tasks:
   test_python_template:
-  - python:
+  - 'All defaults':
+      python:
   - 'Give me a version please':
       python: --version
+  - 'Inline python':
+      python:
+        inline: print('Hello pwshake!');
+  - 'Explicit file':
+      python:
+        options: '{{pwshake_path}}/hello.py again'
+  - 'Implicit file':
+      python: '{{pwshake_path}}/hello.py twice'
   - python:
       inline: print('Hello pwshake!');
-  - python:
-      options: '{{pwshake_path}}/hello.py again'
-  - python: '{{pwshake_path}}/hello.py twice'
 
 invoke_tasks:
 - test_python_template

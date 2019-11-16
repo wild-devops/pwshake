@@ -11,7 +11,7 @@ tasks:
         - one
         - two
         - three
-        do: echo $_
+        action: echo $_
   - 'Prepare sparse-checkout file':
       sparse-checkout:
       - examples

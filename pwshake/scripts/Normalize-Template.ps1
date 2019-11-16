@@ -16,13 +16,13 @@ function Normalize-Template {
     process {
         $ErrorActionPreference = "Stop"
 
-        Log-Debug "== Normalize-Template:`$step ==`n$($step | cty)" $config
+        Log-Debug "Normalize-Template:`$step`n$($step | cty)" $config
 
         if ($depth -gt ${pwshake-context}.max_depth) {
             throw "Circular reference detected for template:`n$(ConvertTo-Yaml $item)"
         }
 
-        Log-Debug "== Normalize-Template:`$key = '$key' ==" $config
+        Log-Debug "Normalize-Template:`$key = '$key'" $config
         $step.Remove('powershell')
         $template = Merge-Hashtables ${pwshake-context}.templates[$key] $step
         
@@ -38,7 +38,6 @@ function Normalize-Template {
             $yaml = $yaml.Replace("`$[[$eval]]", (Invoke-Expression $eval | ConvertTo-Json -Compress -Depth 99))
         }
         $template = $yaml | ConvertFrom-Yaml
-        Log-Debug "== Normalize-Template:`$template ==`n$($template | cty)" $config
 
         if (-not $template.powershell) {
             $template.Remove($key)
@@ -46,6 +45,7 @@ function Normalize-Template {
             $template = Normalize-Template $template $key $config ($depth + 1)
         }
 
+        Log-Debug "Normalize-Template:`$template`n$($template | cty)" $config
         return $template
     }
 }

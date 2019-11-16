@@ -1,8 +1,11 @@
+includes:
+- nested.yaml
+
 templates:
   each:
     powershell: |
-      (Coalesce $step.items, @()) | ForEach-Object { Invoke-Expression $step.do }
+      (@() + $step.items) | ForEach-Object { Invoke-Expression $step.action }
   steps:
     each:
       items: $[[$step.steps]]
-      do: Invoke-Step $config $_
+      action: Invoke-Step $config $_
