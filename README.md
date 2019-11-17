@@ -141,7 +141,7 @@ PS>./pwshake.ps1
 And it runs various tests and examples included in this repo.
 
 **Prerequisites:**
-Since some examples use third party cli tools, make shure that you have installed:
+Since some examples use third party cli tools, make sure that you have installed:
 * python >v3.6
 * git >v2.16
 * dotnetcore-sdk >v2.2
