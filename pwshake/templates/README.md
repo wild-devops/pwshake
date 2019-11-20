@@ -1,7 +1,7 @@
 # Here is the kind of **PWSHAKE** DSL
 Assumed good enough to start.
 
-Technically the **PWSHAKE** don't need any **DSL** except the basic config structure.
+Technically the **PWSHAKE** doesn't need any **DSL** except the basic config structure.
 
 [See more about `pwshake.yaml` configuration file structure](../../doc/config.md)
 
@@ -58,8 +58,8 @@ templates:
 tasks:
   print_me_in_green:
   - echo: I'm not green
-  print_me_in_cyan:
   - echo:
+  print_me_in_cyan:
   - echo:
       text:  I'm not cyan
       color: Cyan
@@ -73,9 +73,9 @@ Output:
 Invoke task: print_me_in_green
 Execute step: step_27465073
 I'm not green
-Invoke task: print_me_in_cyan
 Execute step: step_50635237
 ...
+Invoke task: print_me_in_cyan
 Execute step: step_63993163
 I'm not cyan
 ```
