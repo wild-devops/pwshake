@@ -1,29 +1,23 @@
 templates:
   msbuild:
-    project: /version
+    project: $[[Coalesce $_.msbuild, '/version']]
     targets:
     properties:
     options:
     powershell: |
-      $cmd = if (${is-Linux}) {'dotnet msbuild'} else {'msbuild'}
-      if ($step.msbuild) {
-        $cmd += " $($step.msbuild)"
-      } elseif ($step.project) {
-        $cmd += " $($step.project)"
+      $cmd = if (${is-Linux}) {'dotnet msbuild'} else {'msbuild /nologo'}
+      if ($msbuild.project -eq '/version') {
+        $cmd += " $($msbuild.project)"
+      } else {
+        $cmd += " $(Build-Path $msbuild.project)"
       }
-      if ($step.targets) {
-        foreach ($target in $step.targets) {
-          $cmd += " /t:$target"
-        }
+      if ($msbuild.targets) {
+        $cmd += " /t:$($msbuild.targets)"
       }
-      if ($step.properties) {
-        foreach ($property in $step.properties) {
-          $cmd += " /p:$property"
-        }
+      if ($msbuild.properties) {
+        $cmd += " /p:$($msbuild.properties)"
       }
-      if ($step.options) {
-        foreach ($option in $step.options) {
-          $cmd += " $option"
-        }
+      if ($msbuild.options) {
+        $cmd += " $($msbuild.options)"
       }
       $cmd | Cmd-Shell

@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 Context "Load-Config" {
     $configPath = Get-RelativePath 'examples/4.complex/v1.0/complex_pwshake.yaml'
-    $actual = Load-Config $configPath | Merge-Metadata -yamlPath $configPath
+    (Peek-Invocation).config = $actual = Load-Config -config @{} -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
 
     It "Should read from $configPath" {
         $actual | Should -Not -BeNullOrEmpty
@@ -25,6 +25,6 @@ Context "Load-Config" {
     }
 
     It "Should throw if $configPath.mock file doesn't exist" {
-        {Load-Config "$configPath.mock"} | Should -Throw "Cannot find path '$configPath.mock' because it does not exist."
+        {Load-Config "$configPath.mock"} | Should -Throw "$configPath.mock"
     }
 }

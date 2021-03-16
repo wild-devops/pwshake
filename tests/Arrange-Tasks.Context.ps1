@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 Context "Arrange-Tasks" {
     $configPath = Get-RelativePath 'examples/4.complex/v1.0/module/pwshake.yaml'
-    $config =  Load-Config $configPath | Merge-Metadata -yamlPath $configPath
+    (Peek-Invocation).config = $config =  Load-Config -config @{} -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
 
     $config.tasks.role1 = @{name = 'role1';depends_on=@('errors')}
     $config.invoke_tasks = @('role1')
@@ -17,7 +17,7 @@ Context "Arrange-Tasks" {
             name = 'role2'
             depends_on = @('role1')
         }
-    
+
         { Arrange-Tasks $config } `
             | Should -Throw "Circular reference detected for dependant tasks in:"
     }

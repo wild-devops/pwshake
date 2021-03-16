@@ -1,11 +1,7 @@
 templates:
   cmd:
     powershell: |
-      $cmd = ""
-      foreach ($line in ($step.cmd -split '\^\s*\n')) {
-          $cmd += $line
-      }
-      Cmd-Shell $cmd
+      Cmd-Shell "$($_.cmd -split '\^\s*\n')"
   shell:
     powershell: |
-      Cmd-Shell $step.shell
+      Cmd-Shell $_.shell

@@ -50,7 +50,7 @@ if (Test-Path $PSScriptRoot\pwshake\pwshake.psd1) {
     }
   }
   
-  Import-Module $PSScriptRoot\pwshake\pwshake.psd1 -Force -Global -DisableNameChecking
+  Import-Module $PSScriptRoot\pwshake\pwshake.psm1 -Force -Global -DisableNameChecking
 } else {
   Get-Module -ListAvailable | Where-Object {($_.Name -eq 'pwshake') -and ($_.Version -lt $version)} | Remove-Module -Force
 

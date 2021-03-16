@@ -4,10 +4,10 @@ templates:
     options: --version
     powershell: |
       $cmd = "dotnet"
-      if ($step.command) {
-        $cmd += " $($step.command)"
+      if ($dotnet.command) {
+        $cmd += " $($dotnet.command)"
       }
-      if ($step.options) {
-        $cmd += " $($step.options)"
+      if ($dotnet.options) {
+        $cmd += " $($dotnet.options)"
       }
       $cmd | Cmd-Shell

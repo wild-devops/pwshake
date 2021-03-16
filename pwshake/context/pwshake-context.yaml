@@ -1,0 +1,46 @@
+pwshake-context:
+  module:
+    name: pwshake
+    path: $[[$PSScriptRoot_]]
+    version: $[[(Get-Content $PSScriptRoot_/pwshake.psd1 -Raw | Invoke-Expression).ModuleVersion]]
+
+  options:
+    max_depth: 100
+    tasks_count: 0
+    steps_count: 0
+    tests_context:
+    tests_verbosity: Error
+    debug_filter:
+    json_log_format: '@{"@timestamp"=(Get-Date).ToString("o");message=$_}'
+
+  stages:
+    - Load-Resources
+    - Merge-Includes
+    - Merge-Metadata
+    - Override-Attributes
+    - Interpolate-Attributes
+
+  hooks:
+    invoke-step:
+      onEnter:
+        - 'Log-Debug "Invoke-Step:In:`$step`n$(ConvertTo-Yaml $step)"'
+        - 'Push-Location (Build-Path "$($step.work_dir)")'
+        - "$caption | Log-Information 6>&1 | f-teamcity-o | tee-sb | Write-Host"
+      onExit:
+        - "Pop-Location"
+        - "$caption | f-teamcity-c | Log-Information"
+      onError:
+        - 'Log-Debug "Invoke-Step:Error:`n$($last_error.Exception)"'
+        - 'if ((Coalesce $step.on_error, "throw") -eq "throw") { throw $last_error } else { Log-Error $last_error 6>&1 | tee-sb | Write-Host -ForegroundColor Red }'
+
+  plugins: {}
+
+  templates: {}
+
+  filters: {}
+
+  types: []
+
+  secured: []
+
+  invocations: $[[New-Object Collections.Stack]]

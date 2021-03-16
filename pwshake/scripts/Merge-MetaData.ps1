@@ -5,13 +5,13 @@ function Merge-Metadata {
         [hashtable]$config,
 
         [Parameter(Position = 1, Mandatory = $false)]
-        [object]$metadata = $null,
+        [object]$metadata = (Peek-Invocation).arguments.MetaData,
 
         [Parameter(Position = 2, Mandatory = $false)]
-        [object[]]$tasks = @(),
-    
+        [object[]]$tasks = (Peek-Invocation).arguments.Tasks,
+
         [Parameter(Position = 3, Mandatory = $false)]
-        [string]$yamlPath = "$PSScriptRoot\..\..\pwshake.yaml"
+        [string]$yamlPath = (Peek-Invocation).arguments.ConfigPath
     )
     process {
         if (-not $config['attributes']) {
@@ -21,12 +21,14 @@ function Merge-Metadata {
         if ($metadata) {
             if ($metadata -is [Hashtable]) {
                 $config['attributes'] = Merge-Hashtables $config['attributes'] $metadata
-            } elseif ($metadata -is [string]) {
+            }
+            elseif ($metadata -is [string]) {
                 $string = ""
                 if (Test-Path $metadata) {
                     if ((Split-Path $metadata -Leaf).EndsWith('.yaml') -or (Split-Path $metadata -Leaf).EndsWith('.json')) {
-                        $metadata = $metadata | Normalize-Yaml
-                    } elseif (!(Split-Path $metadata -Leaf).Contains('.')) {
+                        $metadata = $metadata | Build-FromYaml
+                    }
+                    elseif (!(Split-Path $metadata -Leaf).Contains('.')) {
                         foreach ($item in (Get-Content -Path $metadata)) {
                             if (-not $item.StartsWith('#')) {
                                 $string += "$([regex]::Escape($item))`n"
@@ -34,17 +36,20 @@ function Merge-Metadata {
                         }
                         $metadata = $string | ConvertFrom-StringData
                     }
-                } elseif ($metadata -match '^{.+}$') {
+                }
+                elseif ($metadata -match '^{.+}$') {
                     $metadata = $metadata | ConvertFrom-Yaml
-                } else {
+                }
+                else {
                     foreach ($item in ($metadata -split '\n')) {
                         $string += "$([Regex]::Escape($item))`n"
                     }
                     $metadata = $string | ConvertFrom-StringData
                 }
-                
+
                 $config['attributes'] = Merge-Hashtables $config['attributes'] $metadata
-            } else {
+            }
+            else {
                 throw "`$metadata.GetType() = '$($metadata.GetType())' is unknown."
             }
         }
@@ -52,7 +57,7 @@ function Merge-Metadata {
         if ($tasks) {
             $config.invoke_tasks = $tasks
         }
-        
+
         return $config
     }
 }

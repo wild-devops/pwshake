@@ -1,14 +1,14 @@
 $ErrorActionPreference = "Stop"
 
-Context "Normalize-Config" {
+Context "Build-Config" {
 
     It "Should return a Hashtable" {
-        @{} | Normalize-Config | Should -BeOfType [Hashtable]
+        @{} | Build-Config | Should -BeOfType [Hashtable]
     }
 
     It "Should return a full config structure" {
-        $actual = @{} | Normalize-Config
-        
+        $actual = @{} | Build-Config
+
         $actual.includes -is [Object[]] | Should -BeTrue
         $actual.attributes -is [Hashtable] | Should -BeTrue
         $actual.attributes_overrides -is [Object[]] | Should -BeTrue

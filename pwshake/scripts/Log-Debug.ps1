@@ -4,10 +4,24 @@ function global:Log-Debug {
       [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
       [object]$message,
 
-      [Parameter(Position = 1, Mandatory = $true)]
-      [hashtable]$config
-  )    
+      [Parameter(Position = 1, Mandatory = $false)]
+      [hashtable]$config = (Coalesce (Peek-Config), @{}),
+
+      [switch]$Force
+  )
     process {
-        "DEBUG: >>>$message<<<" | Log-Output -Config $config -Verbosity "Debug"
+      $verbosity = [pwshake.VerbosityLevel](Coalesce $config.attributes.pwshake_verbosity, 'Default')
+
+      $color = "$($Host.PrivateData.WarningForegroundColor)"
+      if ($Force) {
+        $color = 'Cyan'
+      } elseif ((${global:pwshake-context}.options.debug_filter) `
+          -and ($message -notmatch ${global:pwshake-context}.options.debug_filter)) {
+        return
+      } elseif ($verbosity -lt [pwshake.VerbosityLevel]::Debug) {
+        return
+      }
+
+      "DEBUG: $message" | Log-Output -ForegroundColor $color
     }
  }

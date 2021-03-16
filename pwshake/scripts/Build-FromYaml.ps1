@@ -1,7 +1,7 @@
-function Normalize-Yaml {
+function Build-FromYaml {
     [CmdletBinding()]
     param (
-        [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline= $true)]
+        [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
         [string]$path
     )
     process {

@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 Context "Merge-Includes" {
     $configPath = Get-RelativePath 'examples/4.complex/v1.0/includes/module1.yaml'
-    $config =  Load-Config $configPath | Merge-Metadata -yamlPath $configPath
+    (Peek-Invocation).config = $config = Load-Config -config @{} -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
 
     $config.includes = @(
         "module2.json"

@@ -1,0 +1,71 @@
+pwshake-context:
+  types:
+  - type: |-
+      namespace PWSHAKE {
+        public enum VerbosityLevel {
+          Error,
+          Warning,
+          Minimal,
+          Information,
+          Verbose,
+          Debug,
+          Normal = Information,
+          Default = Verbose
+        }
+      }
+
+  - type: |-
+      using System;
+      using System.IO;
+      using System.Security.Cryptography;
+      using System.Text;
+
+      namespace PWSHAKE {
+        public static class Cryptography
+        {
+          public static string GenerateKey() {
+            using (RijndaelManaged cryptor = new RijndaelManaged())
+            {
+              cryptor.GenerateKey();
+              return Convert.ToBase64String(cryptor.Key);
+            }
+          }
+
+          public static string GenerateIV() {
+            using (RijndaelManaged cryptor = new RijndaelManaged())
+            {
+              cryptor.GenerateIV();
+              return Convert.ToBase64String(cryptor.IV);
+            }
+          }
+
+          public static string Encrypt(string input, byte[] key, byte[] vector) {
+            using (RijndaelManaged cryptor = new RijndaelManaged())
+            {
+              using (ICryptoTransform encryptor = cryptor.CreateEncryptor(key, vector))
+                return Convert.ToBase64String(PerformCryptography(encryptor, Encoding.Unicode.GetBytes(input)));
+            }
+          }
+
+          public static string Decrypt(string input, byte[] key, byte[] vector) {
+            using (RijndaelManaged cryptor = new RijndaelManaged())
+            {
+              using (ICryptoTransform decryptor = cryptor.CreateDecryptor(key, vector))
+                return Encoding.Unicode.GetString(PerformCryptography(decryptor, Convert.FromBase64String(input)));
+            }
+          }
+
+          private static byte[] PerformCryptography(ICryptoTransform cryptoTransform, byte[] data)
+          {
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+              using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, cryptoTransform, CryptoStreamMode.Write))
+              {
+                cryptoStream.Write(data, 0, data.Length);
+                cryptoStream.FlushFinalBlock();
+                return memoryStream.ToArray();
+              }
+            }
+          }
+        }
+      }

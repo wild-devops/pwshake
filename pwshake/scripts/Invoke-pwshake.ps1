@@ -2,40 +2,92 @@ function Invoke-pwshake {
     [CmdletBinding()]
     param (
         [Parameter(Position = 0, Mandatory = $false)]
-        [string]$ConfigPath = "./pwshake.yaml",
-    
+        [string]$ConfigPath = (Resolve-Path "${PWD}\pwshake.yaml"),
+
         [Parameter(Position = 1, Mandatory = $false)]
         [Alias("RunLists", "Roles")]
         [object[]]$Tasks = @(),
-    
+
+        [Alias("Attributes")]
         [Parameter(Position = 2, Mandatory = $false)]
         [object]$MetaData = $null,
 
         [Alias("WhatIf", "Noop")]
-        [switch]$DryRun
+        [switch]$DryRun,
+
+        [Parameter(Mandatory = $false)]
+        [string]$Verbosity = 'Default',
+
+        [Parameter(Mandatory = $false)]
+        [string]$DebugFilter = $null
+
     )
     process {
-        $config = Load-Config -YamlPath $ConfigPath `
-                    | Load-Resources `
-                    | Merge-Includes -yamlPath $ConfigPath `
-                    | Merge-Metadata -metadata $MetaData -tasks $Tasks -yamlPath $ConfigPath `
-                    | Override-Attributes `
-                    | Interpolate-Attributes
-
-        Log-Verbose "PWSHAKE config:" $config
-        Log-Verbose "$(ConvertTo-Yaml $config)" $config
-
-        $arranged_tasks = Arrange-Tasks $config
-        Log-Verbose "Arranged tasks:" $config
-        Log-Verbose "$(ConvertTo-Yaml $arranged_tasks)" $config
+        $arguments = @{
+            ConfigPath  = $ConfigPath
+            MetaData    = $MetaData
+            DryRun      = [bool]$DryRun
+            Verbosity   = $Verbosity
+            DebugFilter = $DebugFilter
+        }
+        $context = ${global:pwshake-context}.Clone() + @{json_sb=(New-Object 'Text.StringBuilder')}
+        $context.Remove('invocations')
+        ${global:pwshake-context}.invocations.Push(@{
+                arguments = ($arguments + @{Tasks = $Tasks; WorkDir = "$(Get-Location)" })
+                # early loading (before stages invocation) is required for base settings of logging etc.
+                config    = (Load-Config @arguments)
+                context = $context
+            })
 
         try {
-            Push-Location $config.attributes.work_dir
-            foreach ($task in $arranged_tasks) {
-                Invoke-Task $task $config $dryRun
+            try {
+                $caption = "PWSHAKE arguments:"
+                $caption | Log-Verbose 6>&1 | tee-sb | f-teamcity-o
+                "$(ConvertTo-Yaml (Peek-Invocation).arguments)" | Log-Verbose 6>&1 | tee-sb | Write-Host
+                $caption | f-teamcity-c | Log-Verbose
+
+                foreach ($stage in ${global:pwshake-context}.stages) {
+                    "Invoke-pwshake:`$stage`:{$stage}" | f-dbg
+                    (Peek-Invocation).config = Invoke-Expression "(Peek-Config) | $stage"
+                }
+
+                "Invoke-pwshake:stagesInvoked:`$config:`n$(ConvertTo-Yaml (Peek-Config))" | f-dbg
+
+                $caption = "PWSHAKE config:"
+                $caption | Log-Verbose 6>&1 | tee-sb | f-teamcity-o
+                "$(ConvertTo-Yaml (Peek-Config))" | Log-Verbose 6>&1 | tee-sb | Write-Host
+                $caption | f-teamcity-c | Log-Verbose
             }
-        } finally {
+            finally {
+                if ((Peek-Config).attributes.pwshake_log_to_json) {
+                    $context.json_sb.ToString() | f-json | Add-Content -Path "$((Peek-Config).attributes.pwshake_log_path).json" -Encoding UTF8
+                }
+            }
+
+            $arranged_tasks = Arrange-Tasks (Peek-Config)
+            "Invoke-pwshake:`$arranged_tasks:`n$(ConvertTo-Yaml $arranged_tasks)" | f-dbg
+
+            Push-Location (Peek-Config).attributes.work_dir
+            foreach ($task in $arranged_tasks) {
+                Invoke-Task $task
+            }
+        }
+        finally {
             Pop-Location
+            "Invoke-pwshake:finally:`${global:pwshake-context}.invocations.Count:{$(${global:pwshake-context}.invocations.Count)}" | f-dbg
+            ${global:pwshake-context}.invocations.Pop() | Out-Null
         }
     }
+}
+
+function global:Peek-Invocation {
+    return ${global:pwshake-context}.invocations.Peek()
+}
+
+function global:Peek-Config {
+    return (Peek-Invocation).config
+}
+
+function global:Peek-Context{
+    return (Peek-Invocation).context
 }

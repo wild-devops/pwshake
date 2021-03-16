@@ -1,19 +1,19 @@
 templates:
   invoke_tasks:
     powershell: |
-      $tasks = Arrange-Tasks $config $step.invoke_tasks
+      $tasks = Arrange-Tasks $config $_.invoke_tasks
       foreach ($task in $tasks) {
           Invoke-Task $task $config
       }
   apply_roles:
     powershell: |
-      $tasks = Arrange-Tasks $config $step.apply_roles
+      $tasks = Arrange-Tasks $config $_.apply_roles
       foreach ($task in $tasks) {
           Invoke-Task $task $config
       }
   invoke_run_lists:
     powershell: |
-      $tasks = Arrange-Tasks $config $step.invoke_run_lists
+      $tasks = Arrange-Tasks $config $_.invoke_run_lists
       foreach ($task in $tasks) {
           Invoke-Task $task $config
       }

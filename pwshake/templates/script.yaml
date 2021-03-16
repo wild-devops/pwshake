@@ -5,6 +5,6 @@ templates:
       $script_path = Get-ChildItem $paths -File `
           | Where-Object BaseName -eq $step.script `
           | Select-Object -ExpandProperty FullName
-      Log-Verbose "Script file: $script_path" $config
+      Log-Information "Script file: $script_path"
       if (-not $script_path) { throw "Script file: $($step.script).ps1 not found." }
       & $script_path -attributes $config.attributes

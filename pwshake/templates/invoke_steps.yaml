@@ -1,5 +1,5 @@
 actions:
   invoke_steps:
     each:
-      items: $[[$step.invoke_steps]]
-      action: Invoke-Step $config $_
+      items: $[[$_.invoke_steps]]
+      action: $_ | Invoke-Step

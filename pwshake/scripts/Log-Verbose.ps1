@@ -1,13 +1,16 @@
 function global:Log-Verbose {
     [CmdletBinding()]
     param (
-      [Parameter(Position = 0, Mandatory = $false)]
+      [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline=$true)]
       [object]$message,
 
-      [Parameter(Position = 1, Mandatory = $true)]
-      [hashtable]$config
-  )    
+      [Parameter(Position = 1, Mandatory = $false)]
+      [hashtable]$config = (Coalesce (Peek-Config), @{})
+  )
     process {
-        $message | Log-Output -Config $config -Verbosity "Verbose"
+      $verbosity = [pwshake.VerbosityLevel](Coalesce $config.attributes.pwshake_verbosity, 'Default')
+      if ($verbosity -lt [pwshake.VerbosityLevel]::Verbose) { return }
+
+      $message | Log-Output -Config $config
     }
  }

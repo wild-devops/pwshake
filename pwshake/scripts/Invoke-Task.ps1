@@ -4,31 +4,40 @@ function Invoke-Task {
         [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
         [hashtable]$task,
 
-        [Parameter(Position = 1, Mandatory = $true, ValueFromPipeline = $true)]
-        [hashtable]$config,
-
-        [Parameter(Position = 2, Mandatory = $false)]
-        [bool]$dryRun = $false
+        [Parameter(Position = 1, Mandatory = $false)]
+        [hashtable]$config = (Coalesce (Peek-Config), @{})
     )
     process {
-        Log-Verbose "Invoke task: $($task.name)" $config
+        $caption = "Invoke task: $($task.name)"
+        $throw = $true
 
-        if (-not (Invoke-Expression $task.when)) {
-            Log-Verbose "`t`tBypassed because of: [$($task.when)] = $(Invoke-Expression $task.when)" $config
-            continue;
-        }
         try {
-            Push-Location (Normalize-Path "$($task.work_dir)" $config)
+            $caption | Log-Information 6>&1 | tee-sb | f-teamcity-o
+
+            if (-not (Invoke-Expression $task.when)) {
+                "`t`tBypassed because of: [$($task.when)] = $(Invoke-Expression $task.when)" `
+                | Log-Information 6>&1 | tee-sb | Out-Null
+                continue;
+            }
+
+            Push-Location (Build-Path "$($task.work_dir)" $config)
 
             foreach ($step in $task.steps) {
-                if (-not $dryRun) {
-                    Invoke-Step $config $step $task.work_dir
-                } else {
-                    Log-Verbose "`t`tBypassed because of -DryRun:$dryRun" $config
-                }
+                $step = Build-Item $step
+                $throw = ((Coalesce $step.on_error, 'throw') -eq 'throw')
+                $step | Invoke-Step -work_dir $task.work_dir
             }
-        } finally {
+        }
+        catch {
+            $_ | f-error | tee-sb | Out-Null
+            Log-Error $_ -Rethrow $throw
+        }
+        finally {
             Pop-Location
+            $caption | f-teamcity-c | Log-Information
+            if ($config.attributes.pwshake_log_to_json) {
+                (Peek-Context).json_sb.ToString() | f-json | Add-Content -Path "$($config.attributes.pwshake_log_path).json" -Encoding UTF8
+            }
         }
     }
 }

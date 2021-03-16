@@ -2,5 +2,5 @@ templates:
   sparse-checkout:
     powershell: |
       foreach ($directory in (Coalesce $step.directories, $step['sparse-checkout'])) {
-        Invoke-Step $config @{echo=$directory}
+        @{echo=$directory} | Invoke-Step
       }
