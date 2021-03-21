@@ -14,10 +14,7 @@ function global:Load-Config {
         [bool]$DryRun = $false,
 
         [Parameter(Mandatory = $false)]
-        [string]$Verbosity = 'Default',
-
-        [Parameter(Mandatory = $false)]
-        [string]$DebugFilter = $null
+        [string]$Verbosity = 'Default'
     )
     process {
         $config = $ConfigPath | Build-FromYaml | Build-Config
@@ -30,9 +27,6 @@ function global:Load-Config {
         $config.attributes.pwshake_verbosity = $Verbosity
         if ($DryRun) {
             $config.attributes.pwshake_dry_run = $DryRun
-        }
-        if ($DebugFilter) {
-            ${global:pwshake-context}.options.debug_filter = $DebugFilter
         }
 
         if (-not $config.scripts_directories.Count) {

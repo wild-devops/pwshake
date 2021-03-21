@@ -2,7 +2,7 @@ function Invoke-pwshake {
     [CmdletBinding()]
     param (
         [Alias("Path","File","ConfigFile")]
-        [Parameter(Position = 0, Mandatory = $false)]
+        [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
         [string]$ConfigPath = (Resolve-Path "${PWD}\pwshake.yaml"),
 
         [Parameter(Position = 1, Mandatory = $false)]
@@ -19,19 +19,15 @@ function Invoke-pwshake {
         [Alias("LogLevel")]
         [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default')]
         [Parameter(Mandatory = $false)]
-        [string]$Verbosity = 'Default',
-
-        [Parameter(Mandatory = $false)]
-        [string]$DebugFilter = $null
+        [string]$Verbosity = 'Default'
 
     )
     process {
         $arguments = @{
             ConfigPath  = $ConfigPath
             MetaData    = $MetaData
-            DryRun      = [bool]$DryRun
             Verbosity   = $Verbosity
-            DebugFilter = $DebugFilter
+            DryRun      = [bool]$DryRun
         }
         $context = ${global:pwshake-context}.Clone() + @{json_sb=(New-Object 'Text.StringBuilder')}
         $context.Remove('invocations')

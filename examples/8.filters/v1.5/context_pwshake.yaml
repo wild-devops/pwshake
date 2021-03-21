@@ -1,0 +1,35 @@
+attributes:
+  context:
+    Key: PWSHAKE
+    Value: '[[.Key]]'
+    Files:
+    - '[[.Key]].txt'
+    - '[[.Key]].log'
+    - '[[.Key]].key'
+    ListOfFiles: '[[$("$($_.Files)")]]'
+    AppService:
+      Locations: '[[.Files]]'
+      Executable: '[[.Key]]\[[.Value]].exe'
+
+tasks:
+  context:
+  - echo: 'Hello {{context.Key}}!'
+  - pwsh: |-
+      $result = $config.attributes.context | Interpolate-Item | ConvertTo-Yaml
+      Write-Host "`$result`:`n$result"
+      if ($result -notmatch 'ListOfFiles: PWSHAKE\.txt PWSHAKE\.log PWSHAKE\.key') {
+        throw 'Something wrong!'
+      }
+  - each:
+      items: $[[$config.attributes.context]]
+      action:
+        invoke_steps:
+        - pwsh: |-
+            $result = '[[.Key]] files: [[.ListOfFiles]]'
+            Write-Host "`$result = '$result'"
+            if ($result -notmatch 'PWSHAKE files: PWSHAKE\.txt PWSHAKE\.log PWSHAKE\.key') {
+              throw 'Something wrong!'
+            }
+
+invoke_tasks:
+- context

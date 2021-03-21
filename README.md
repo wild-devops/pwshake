@@ -70,12 +70,12 @@ attributes:
 scripts_directories:
   - .
 
-# Declaration of tasks that compose and determine order of executing for scripts
+# Declaration of tasks that compose and determine order of executing for scripts, inline commands and other tasks
 tasks:
   hello:
   - powershell: Write-Host "Hello PWSHAKE!"
 
-# Tasks to current execute
+# List of tasks to current execute
 invoke_tasks:
 - hello
 
@@ -92,24 +92,34 @@ This installs all required components from the `PSGallery` and invokes scripts a
 
 
 The result looks like the followed output including information about:
+*  `PWSHAKE arguments:` - arguments passed to `Invoke-pwshake` command (useful in logs inspection)
 *  `PWSHAKE config:` - loaded config file content (may be rearranged due to overriding, interpolation, and merging metadata)
-*  `Arranged tasks:` - tasks to be executed in actual order
 *  `Invoke task:` - invoked tasks name
 *  `Execute step:` - invoked steps caption
 *  Everything else - invoked scripts output
 
 ```
+PWSHAKE arguments:
+Verbosity: Default
+DryRun: false
+MetaData:
+ConfigPath: /absolute/path/to/your/working/directory/my_pwshake.yaml
+Tasks: []
+WorkDir: /absolute/path/to/process/working/directory
+
 PWSHAKE config:
 tasks:
   hello:
   - powershell: Write-Host "Hello PWSHAKE!"
+filters: {}
+resources: []
 includes: []
 templates: {}
 attributes_overrides: []
 scripts_directories:
 - .
-resources: []
-invoke_tasks: hello
+invoke_tasks:
+- hello
 attributes:
   pwshake_module_path: /path/to/pwshake/module/source
   pwshake_path: /absolute/path/to/your/working/directory
@@ -144,6 +154,7 @@ Since some examples use third party cli tools, make sure that you have installed
 * [`pwshake.yaml` configuration file structure](/doc/config.md)
   * [`attributes:` element](/doc/attributes.md)
   * [`attributes_overrides:` element](/doc/attributes_overrides.md)
+  * [`filters:` element](/doc/filters.md)
   * [`includes:` element](/doc/includes.md)
   * [`invoke_tasks:` element](/doc/invoke_tasks.md)
   * [`tasks:` element](/doc/tasks.md)

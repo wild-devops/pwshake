@@ -7,7 +7,7 @@
 [CmdletBinding()]
 param(
   [Alias("Path","File","ConfigFile")]
-  [Parameter(Position = 0, Mandatory = $false)]
+  [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
   [string]$ConfigPath = "$PSScriptRoot/pwshake.yaml",
 
   [Alias("RunLists", "Roles")]
@@ -29,9 +29,6 @@ param(
   [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default')]
   [Parameter(Mandatory = $false)]
   [string]$Verbosity = 'Default',
-
-  [Parameter(Mandatory = $false)]
-  [string]$DebugFilter = $null,
 
   [Parameter(Mandatory = $false)]
   [switch]$Bootstrap
@@ -77,9 +74,8 @@ $params = @{
   ConfigPath    = $ConfigPath
   Tasks         = $Tasks
   MetaData      = $MetaData
-  DryRun        = [bool]$DryRun
   Verbosity     = $Verbosity
-  DebugFilter   = $DebugFilter
+  DryRun        = [bool]$DryRun
 }
 
 Invoke-pwshake @params

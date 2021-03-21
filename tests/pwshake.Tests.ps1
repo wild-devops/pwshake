@@ -9,7 +9,7 @@ param (
     [Parameter(Mandatory = $false)]
     [Alias("LogLevel")]
     [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default')]
-    [string]$Verbosity = 'Minimal',
+    [string]$Verbosity = 'Error',
 
     [Parameter(Mandatory = $false)]
     [hashtable]$attributes = @{} # required to run from PWSHAKE with scripts conventions
