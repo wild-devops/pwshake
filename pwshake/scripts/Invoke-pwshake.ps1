@@ -1,6 +1,7 @@
 function Invoke-pwshake {
     [CmdletBinding()]
     param (
+        [Alias("Path","File","ConfigFile")]
         [Parameter(Position = 0, Mandatory = $false)]
         [string]$ConfigPath = (Resolve-Path "${PWD}\pwshake.yaml"),
 
@@ -15,6 +16,8 @@ function Invoke-pwshake {
         [Alias("WhatIf", "Noop")]
         [switch]$DryRun,
 
+        [Alias("LogLevel")]
+        [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default')]
         [Parameter(Mandatory = $false)]
         [string]$Verbosity = 'Default',
 
@@ -42,9 +45,8 @@ function Invoke-pwshake {
         try {
             try {
                 $caption = "PWSHAKE arguments:"
-                $caption | Log-Verbose 6>&1 | tee-sb | f-teamcity-o
+                $caption | Log-Verbose 6>&1 | tee-sb | Write-Host
                 "$(ConvertTo-Yaml (Peek-Invocation).arguments)" | Log-Verbose 6>&1 | tee-sb | Write-Host
-                $caption | f-teamcity-c | Log-Verbose
 
                 foreach ($stage in ${global:pwshake-context}.stages) {
                     "Invoke-pwshake:`$stage`:{$stage}" | f-dbg
@@ -54,9 +56,8 @@ function Invoke-pwshake {
                 "Invoke-pwshake:stagesInvoked:`$config:`n$(ConvertTo-Yaml (Peek-Config))" | f-dbg
 
                 $caption = "PWSHAKE config:"
-                $caption | Log-Verbose 6>&1 | tee-sb | f-teamcity-o
+                $caption | Log-Verbose 6>&1 | tee-sb | Write-Host
                 "$(ConvertTo-Yaml (Peek-Config))" | Log-Verbose 6>&1 | tee-sb | Write-Host
-                $caption | f-teamcity-c | Log-Verbose
             }
             finally {
                 if ((Peek-Config).attributes.pwshake_log_to_json) {

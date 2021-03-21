@@ -1,16 +1,17 @@
-actions:
-  each:
-    items:
-    action:
-    powershell: |
-      if (-not $each.items) { throw "Template 'each:' attribute 'items:' is not specified!" }
-      if (-not $each.action) { throw "Template 'each:' attribute 'action:' is not specified!" }
-      (@() + $each.items) | ForEach-Object {
-        if ($each.action -is [string]) {
-          Invoke-Expression $each.action
-        } elseif ($each.action -is [hashtable]) {
-          $_ | Interpolate-Item -step $each.action | Invoke-Step
-        } else {
-          throw "Uknown type of the 'action:' attribute: $($each.action.GetType())"
+pwshake-context:
+  templates:
+    each:
+      items:
+      action:
+      powershell: |
+        if (-not $each.items) { throw "Template 'each:' attribute 'items:' is not specified!" }
+        if (-not $each.action) { throw "Template 'each:' attribute 'action:' is not specified!" }
+        (@() + $each.items) | ForEach-Object {
+          if ($each.action -is [string]) {
+            Invoke-Expression $each.action
+          } elseif ($each.action -is [hashtable]) {
+            $_ | Interpolate-Item -step $each.action | Invoke-Step
+          } else {
+            throw "Uknown type of the 'action:' attribute: $($each.action.GetType())"
+          }
         }
-      }

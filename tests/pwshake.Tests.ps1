@@ -1,15 +1,15 @@
 [CmdletBinding()]
 param (
     [Parameter(Position = 0, Mandatory = $false)]
-    [string]$Group = '',
+    [string]$Group = '', # examples
 
     [Parameter(Mandatory = $false)]
-    [string]$Context = '',
+    [string]$Context = '', # resources
 
     [Parameter(Mandatory = $false)]
     [Alias("LogLevel")]
     [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default')]
-    [string]$Verbosity = 'Error',
+    [string]$Verbosity = 'Minimal',
 
     [Parameter(Mandatory = $false)]
     [hashtable]$attributes = @{} # required to run from PWSHAKE with scripts conventions

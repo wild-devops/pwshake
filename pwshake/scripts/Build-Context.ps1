@@ -10,7 +10,7 @@ function Build-Context {
     if ($null -ne $context) { return $context } # just for tests
 
     $context = @{}
-    Get-ChildItem -Path (Join-Path -Path $PSScriptRoot -ChildPath '../context/*.yaml') | ForEach-Object {
+    Get-ChildItem -Path (Split-Path $PSScriptRoot -Parent) -Include *.yaml,*.yml,*json -Recurse | ForEach-Object {
       $context = Merge-Hashtables $context ($_.FullName | Build-FromYaml)
     }
     $context = $context | ForEach-Object 'pwshake-context'
@@ -29,14 +29,6 @@ function Build-Context {
         $context.$($section) = $matches.eval | Invoke-Expression
       }
     }
-
-    # to avoid premature evaluation in templates it runs after stages
-    $templates = @{}
-    foreach ($template in (Get-ChildItem -Path "$PSScriptRoot/../templates/*.yaml" -Recurse)) {
-        $metadata = Build-FromYaml $template
-        $templates = Merge-Hashtables $templates (Coalesce $metadata.templates, $metadata.actions, @{})
-    }
-    $context.templates = Merge-Hashtables $context.templates $templates
 
     $context.filters.GetEnumerator() | ForEach-Object {
       Invoke-Expression "filter script:$($_.Key) $($_.Value)"

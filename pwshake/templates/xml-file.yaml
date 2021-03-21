@@ -1,45 +1,46 @@
-templates:
-  xml-file:
-    path: $[[throw "Template 'xml-file:' attribute 'path:' is not specified!"]]
-    verbose: false
-    xmlns: []
-    appends: $[[(Coalesce $_.inserts, $_.appends, [])]]
-    updates: $[[(Coalesce $_.transforms, $_.updates, [])]]
-    removes: $[[(Coalesce $_.deletes, $_.removes, [])]]
-    powershell: |
-      $path = Build-Path ${xml-file}.path
-      Write-Line "Transforming file '$path'"
-      $xml = [xml](Get-Content $path -Raw)
-      $nsm = New-Object Xml.XmlNamespaceManager($xml.NameTable)
-      ${xml-file}.xmlns.Keys | ForEach-Object {
-        $nsm.AddNamespace($_,${xml-file}.xmlns.$($_))
-      }
-
-      ${xml-file}.appends.Keys | ForEach-Object {
-        foreach ($node in $xml.SelectNodes($_, $nsm)) {
-          $value = ${xml-file}.appends.$($_)
-          Write-Host "xml-append: with value '$value' against node '$_'"
-          $xml | f-xml-append $node $value
+pwshake-context:
+  templates:
+    xml-file:
+      path: $[[throw "Template 'xml-file:' attribute 'path:' is not specified!"]]
+      verbose: false
+      xmlns: []
+      appends: $[[(Coalesce $_.inserts, $_.appends, [])]]
+      updates: $[[(Coalesce $_.transforms, $_.updates, [])]]
+      removes: $[[(Coalesce $_.deletes, $_.removes, [])]]
+      powershell: |
+        $path = Build-Path ${xml-file}.path
+        Write-Line "Transforming file '$path'"
+        $xml = [xml](Get-Content $path -Raw)
+        $nsm = New-Object Xml.XmlNamespaceManager($xml.NameTable)
+        ${xml-file}.xmlns.Keys | ForEach-Object {
+          $nsm.AddNamespace($_,${xml-file}.xmlns.$($_))
         }
-      }
 
-      ${xml-file}.updates.Keys | ForEach-Object {
-        foreach ($node in $xml.SelectNodes($_, $nsm)) {
-          $value = ${xml-file}.updates.$($_)
-          Write-Host "xml-update: with value '$value' against node '$_'"
-          $node | f-xml-update $value
+        ${xml-file}.appends.Keys | ForEach-Object {
+          foreach ($node in $xml.SelectNodes($_, $nsm)) {
+            $value = ${xml-file}.appends.$($_)
+            Write-Host "xml-append: with value '$value' against node '$_'"
+            $xml | f-xml-append $node $value
+          }
         }
-      }
 
-      ${xml-file}.removes.Keys | ForEach-Object {
-        foreach ($node in $xml.SelectNodes($_, $nsm)) {
-          Write-Host "xml-remove: against node '$_'"
-          $node | f-xml-remove
+        ${xml-file}.updates.Keys | ForEach-Object {
+          foreach ($node in $xml.SelectNodes($_, $nsm)) {
+            $value = ${xml-file}.updates.$($_)
+            Write-Host "xml-update: with value '$value' against node '$_'"
+            $node | f-xml-update $value
+          }
         }
-      }
 
-      $xml.Save($path)
-      if (${xml-file}.verbose) {
-        Write-Line "Transformation result of file '$path'"
-        Write-Host (Get-Content $path -Raw)
-      }
+        ${xml-file}.removes.Keys | ForEach-Object {
+          foreach ($node in $xml.SelectNodes($_, $nsm)) {
+            Write-Host "xml-remove: against node '$_'"
+            $node | f-xml-remove
+          }
+        }
+
+        $xml.Save($path)
+        if (${xml-file}.verbose) {
+          Write-Line "Transformation result of file '$path'"
+          Write-Host (Get-Content $path -Raw)
+        }

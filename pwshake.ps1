@@ -6,7 +6,7 @@
 # otherwise named parameter binding fails
 [CmdletBinding()]
 param(
-  [Alias("Path")]
+  [Alias("Path","File","ConfigFile")]
   [Parameter(Position = 0, Mandatory = $false)]
   [string]$ConfigPath = "$PSScriptRoot/pwshake.yaml",
 
@@ -14,6 +14,7 @@ param(
   [Parameter(Position = 1, Mandatory = $false)]
   [object[]]$Tasks = @(),
 
+  [Alias("Attributes")]
   [Parameter(Position = 2, Mandatory = $false)]
   [object]$MetaData = $null,
 
@@ -22,12 +23,24 @@ param(
   [switch]$DryRun,
 
   [Parameter(Mandatory = $false)]
-  [string]$Version = "1.4.0"
+  [string]$Version = "1.5.0",
+
+  [Alias("LogLevel")]
+  [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default')]
+  [Parameter(Mandatory = $false)]
+  [string]$Verbosity = 'Default',
+
+  [Parameter(Mandatory = $false)]
+  [string]$DebugFilter = $null,
+
+  [Parameter(Mandatory = $false)]
+  [switch]$Bootstrap
 )
 
 $ErrorActionPreference = "Stop"
+$ProgressPreference    = "SilentlyContinue"
 
-[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]'Tls12'
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor [System.Net.SecurityProtocolType]::Tls12
 
 if ([System.Environment]::OSVersion.Platform -match 'Win') {
   if (-not (Get-PackageProvider -ListAvailable | Where-Object Name -eq NuGet)) {
@@ -60,4 +73,13 @@ if (Test-Path $PSScriptRoot\pwshake\pwshake.psd1) {
   Import-Module -Name pwshake -RequiredVersion $version -Force -Global -DisableNameChecking
 }
 
-Invoke-pwshake -ConfigPath $configPath -Tasks $Tasks -MetaData $MetaData -DryRun:$DryRun
+$params = @{
+  ConfigPath    = $ConfigPath
+  Tasks         = $Tasks
+  MetaData      = $MetaData
+  DryRun        = [bool]$DryRun
+  Verbosity     = $Verbosity
+  DebugFilter   = $DebugFilter
+}
+
+Invoke-pwshake @params

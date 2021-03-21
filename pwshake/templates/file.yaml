@@ -1,30 +1,31 @@
-actions:
-  file:
-    path: $[[Build-Path -Path $file.path -Unresolved]]
-    content:
-    append:
-    lines:
-    updates:
-    encoding: UTF8
-    powershell: |
-      if (-not $file.path) { throw "Template 'file:' attribute 'path:' is not specified!" }
-      if (-not (Test-Path $file.path)) { New-Item -ItemType File -Path $file.path | Out-Null }
-      if ($file.content) {
-        if ($file.content -match '^\$\((?<eval>.*?)\)$') { $file.content = Invoke-Expression $file.content }
-        Set-Content -Path (Resolve-Path $file.path) -Value $file.content -Encoding $file.encoding -Force
-      }
-      $file.lines = Coalesce $file.appends, $file.lines, @()
-      foreach ($line in ($file.lines + $file.append)) {
-        if ($line -match '^\$\((?<eval>.*?)\)$') { $line = Invoke-Expression $line }
-        Add-Content -Path (Resolve-Path $file.path) -Value $line -Encoding $file.encoding -Force -PassThru `
-        | ForEach-Object { Write-Host "file-append: '$_' in '$($file.path)'" }
-      }
-      $file.updates = Coalesce $file.replaces, $file.updates, @()
-      foreach ($key in $file.updates.Keys) {
-        $content = (Get-Content -Path (Resolve-Path $file.path) -Raw)
-        $value = $file.updates.$($key)
-        if ($value -match '^\$\((?<eval>.*?)\)$') { $value = Invoke-Expression $value }
-        $content = $content.Replace($key, $value)
-        Write-Host "file-replace: '$key' with '$value' in '$($file.path)'"
-        Set-Content -Path (Resolve-Path $file.path) -Value $content -Encoding $file.encoding -Force
-      }
+pwshake-context:
+  templates:
+    file:
+      path: $[[Build-Path -Path $_.path -Unresolved]]
+      content:
+      append:
+      lines:
+      updates:
+      encoding: UTF8
+      powershell: |
+        if (-not $file.path) { throw "Template 'file:' attribute 'path:' is not specified!" }
+        if (-not (Test-Path $file.path)) { New-Item -ItemType File -Path $file.path | Out-Null }
+        if ($file.content) {
+          if ($file.content -match '^\$\((?<eval>.*?)\)$') { $file.content = Invoke-Expression $file.content }
+          Set-Content -Path (Resolve-Path $file.path) -Value $file.content -Encoding $file.encoding -Force
+        }
+        $file.lines = Coalesce $file.appends, $file.lines, @()
+        foreach ($line in ($file.lines + $file.append)) {
+          if ($line -match '^\$\((?<eval>.*?)\)$') { $line = Invoke-Expression $line }
+          Add-Content -Path (Resolve-Path $file.path) -Value $line -Encoding $file.encoding -Force -PassThru `
+          | ForEach-Object { Write-Host "file-append: '$_' in '$($file.path)'" }
+        }
+        $file.updates = Coalesce $file.replaces, $file.updates, @()
+        foreach ($key in $file.updates.Keys) {
+          $content = (Get-Content -Path (Resolve-Path $file.path) -Raw)
+          $value = $file.updates.$($key)
+          if ($value -match '^\$\((?<eval>.*?)\)$') { $value = Invoke-Expression $value }
+          $content = $content.Replace($key, $value)
+          Write-Host "file-replace: '$key' with '$value' in '$($file.path)'"
+          Set-Content -Path (Resolve-Path $file.path) -Value $content -Encoding $file.encoding -Force
+        }

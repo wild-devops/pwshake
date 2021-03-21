@@ -1,7 +1,8 @@
-templates:
-  cmd:
-    powershell: |
-      Cmd-Shell "$($_.cmd -split '\^\s*\n')"
-  shell:
-    powershell: |
-      Cmd-Shell $_.shell
+pwshake-context:
+  templates:
+    cmd:
+      powershell: |
+        Cmd-Shell "$($_.cmd -split '\^\s*\n')"
+    shell:
+      powershell: |
+        Cmd-Shell $_.shell

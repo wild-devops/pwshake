@@ -1,32 +1,33 @@
-templates:
-  git:
-    source:
-    ref: master
-    directories:
-    target:
-    clean: true
-    invoke_steps:
-    - directory: $[[$git.target]]
-    - work_dir: $[[$git.target]]
+pwshake-context:
+  templates:
+    git:
+      source:
+      ref: master
+      directories:
+      target:
+      clean: true
       invoke_steps:
-      - each:
-          items:
-          - git init --quiet
-          - git remote add origin $[[$git.source]]
-          - git fetch --quiet --tags --prune --no-progress --no-recurse-submodules --depth 1 origin +refs/heads/*:refs/remotes/origin/*
-          action: $_ | f-wh-iex
-      - if:
-          condition: $[[$git.directories.Count]]
-          then:
-          - pwsh: |
-              'git config core.sparsecheckout true' | f-wh-iex
-          - each:
-              items: $[[$git.directories]]
-              action:
-                file:
-                  path: .git/info/sparse-checkout
-                  append: '/[[.]]'
-                  encoding: Ascii
-      - pwsh: |
-          'git checkout --quiet $[[$git.ref]]' | f-wh-iex
-          if ($git.clean) {Remove-Item .git -Recurse -Force}
+      - directory: $[[$git.target]]
+      - work_dir: $[[$git.target]]
+        invoke_steps:
+        - each:
+            items:
+            - git init --quiet
+            - git remote add origin $[[$git.source]]
+            - git fetch --quiet --tags --prune --no-progress --no-recurse-submodules --depth 1 origin +refs/heads/*:refs/remotes/origin/*
+            action: $_ | f-wh-iex
+        - if:
+            condition: $[[$git.directories.Count]]
+            then:
+            - pwsh: |
+                'git config core.sparsecheckout true' | f-wh-iex
+            - each:
+                items: $[[$git.directories]]
+                action:
+                  file:
+                    path: .git/info/sparse-checkout
+                    append: '/[[.]]'
+                    encoding: Ascii
+        - pwsh: |
+            'git checkout --quiet $[[$git.ref]]' | f-wh-iex
+            if ($git.clean) {Remove-Item .git -Recurse -Force}

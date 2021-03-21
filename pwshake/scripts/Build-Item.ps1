@@ -8,7 +8,7 @@ function Build-Item {
     [Parameter(Position = 1, Mandatory = $false)]
     [hashtable]$config = (Coalesce (Peek-Config), @{}),
 
-    [Parameter(Position = 2, Mandatory = $false)]
+    [Parameter(Mandatory = $false)]
     [Collections.ICollection]${reserved-keys} = (@('pwsh', 'powershell') + ${global:pwshake-context}.templates.Keys)
   )
   process {

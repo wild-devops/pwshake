@@ -12,7 +12,7 @@ function Invoke-Task {
         $throw = $true
 
         try {
-            $caption | Log-Information 6>&1 | tee-sb | f-teamcity-o
+            $caption | Log-Information 6>&1 | tee-sb | Write-Host
 
             if (-not (Invoke-Expression $task.when)) {
                 "`t`tBypassed because of: [$($task.when)] = $(Invoke-Expression $task.when)" `
@@ -34,7 +34,6 @@ function Invoke-Task {
         }
         finally {
             Pop-Location
-            $caption | f-teamcity-c | Log-Information
             if ($config.attributes.pwshake_log_to_json) {
                 (Peek-Context).json_sb.ToString() | f-json | Add-Content -Path "$($config.attributes.pwshake_log_path).json" -Encoding UTF8
             }

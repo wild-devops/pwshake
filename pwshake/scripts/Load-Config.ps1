@@ -52,10 +52,6 @@ function global:Load-Config {
             Remove-Item -Path "$($config.attributes.pwshake_log_path).json" -Force
         }
 
-        $config.filters.GetEnumerator() | ForEach-Object {
-            Invoke-Expression "filter script:$($_.Key) $($_.Value)"
-        }
-
         return $config
     }
 }

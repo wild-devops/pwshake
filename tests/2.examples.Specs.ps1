@@ -6,7 +6,7 @@ Describe "PWSHAKE examples" {
         $example = $_.FullName
         Context $example {
             It "Should not throw on: $example" {
-                { Invoke-pwshake -ConfigPath $example -Verbosity 'Minimal' } | Should -Not -Throw
+                { Invoke-pwshake -ConfigPath $example -Verbosity ${global:pwshake-context}.options.tests_verbosity } | Should -Not -Throw
             }
         }
     }

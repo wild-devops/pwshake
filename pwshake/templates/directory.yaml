@@ -1,9 +1,10 @@
-actions:
-  directory:
-    path: $[[$(if ($_.directory -is [string]) { $_.directory })]]
-    clean: true
-    powershell: |
-      if (-not $directory.path) { throw "Template 'directory:' attribute 'path:' is not specified!" }
-      $dir_path = Build-Path $directory.path -Unresolved
-      if (($directory.clean) -and (Test-Path $dir_path)) { Remove-Item $dir_path -Force -Recurse }
-      if (-not (Test-Path $dir_path)) { New-Item $dir_path -ItemType Directory -Verbose | Out-Null }
+pwshake-context:
+  templates:
+    directory:
+      path: $[[$(if ($_.directory -is [string]) { $_.directory })]]
+      clean: true
+      powershell: |
+        if (-not $directory.path) { throw "Template 'directory:' attribute 'path:' is not specified!" }
+        $dir_path = Build-Path $directory.path -Unresolved
+        if (($directory.clean) -and (Test-Path $dir_path)) { Remove-Item $dir_path -Force -Recurse }
+        if (-not (Test-Path $dir_path)) { New-Item $dir_path -ItemType Directory | % FullName }

@@ -20,20 +20,6 @@ filter global:tee-sb {
   }
   $_
 }
-filter global:f-teamcity-o {
-  param($f = "##teamcity[blockOpened name='{0}']")
-  if (${is-teamcity}) {
-    ($f -f (Escape-TeamCityText $_))
-  }
-  else { $_ }
-}
-filter global:f-teamcity-c {
-  param($f = "##teamcity[blockClosed name='{0}']")
-  if (${is-teamcity}) {
-    ($f -f (Escape-TeamCityText $_))
-  }
-}
-
 filter script:f-cnvp {
   Convert-Path $_ -ErrorAction 'Continue' 2>&1 | ForEach-Object {
     if ($_ -is [Management.Automation.ErrorRecord]) {

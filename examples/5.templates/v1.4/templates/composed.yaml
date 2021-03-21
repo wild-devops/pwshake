@@ -2,9 +2,6 @@ includes:
 - nested.yaml
 
 templates:
-  each:
-    powershell: |
-      (@() + $each.items) | ForEach-Object { Invoke-Expression $each.action }
   steps:
     each:
       items: $[[$_.steps]]

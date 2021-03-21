@@ -113,21 +113,13 @@ invoke_tasks: hello
 attributes:
   pwshake_module_path: /path/to/pwshake/module/source
   pwshake_path: /absolute/path/to/your/working/directory
-  pwshake_version: 1.4.0
+  pwshake_version: 1.5.0
   work_dir: /absolute/path/to/process/working/directory
   pwshake_log_path: /absolute/path/to/your/working/directory/my_pwshake.log
   some_attribute: this is an attribute value
 
-Arranged tasks:
-- when: $true
-  steps:
-    powershell: Write-Host "Hello PWSHAKE!"
-  depends_on: []
-  work_dir: ""
-  name: hello
-
 Invoke task: hello
-Execute step: step_66875131
+Execute step: powershell_1
 Hello PWSHAKE!
 ```
 ## Test **PWSHAKE** by itself

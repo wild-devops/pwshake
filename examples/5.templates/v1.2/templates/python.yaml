@@ -4,9 +4,9 @@ templates:
     inline:
     powershell: |
       if ($step.python) {
-        "python3 $($step.python)" | Cmd-Shell
+        iex "python3 $($step.python)"
       } elseif ($step.options) {
-        "python3 $($step.options)" | Cmd-Shell
+        iex "python3 $($step.options)"
       } elseif ($step.inline) {
         python3 -c $step.inline
       } else {

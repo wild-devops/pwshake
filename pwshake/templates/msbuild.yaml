@@ -1,23 +1,24 @@
-templates:
-  msbuild:
-    project: $[[Coalesce $_.msbuild, '/version']]
-    targets:
-    properties:
-    options:
-    powershell: |
-      $cmd = if (${is-Linux}) {'dotnet msbuild'} else {'msbuild /nologo'}
-      if ($msbuild.project -eq '/version') {
-        $cmd += " $($msbuild.project)"
-      } else {
-        $cmd += " $(Build-Path $msbuild.project)"
-      }
-      if ($msbuild.targets) {
-        $cmd += " /t:$($msbuild.targets)"
-      }
-      if ($msbuild.properties) {
-        $cmd += " /p:$($msbuild.properties)"
-      }
-      if ($msbuild.options) {
-        $cmd += " $($msbuild.options)"
-      }
-      $cmd | Cmd-Shell
+pwshake-context:
+  templates:
+    msbuild:
+      project: $[[Coalesce $_.msbuild, '/version']]
+      targets:
+      properties:
+      options:
+      powershell: |
+        $cmd = if (${is-Linux}) {'dotnet msbuild'} else {'msbuild /nologo'}
+        if ($msbuild.project -eq '/version') {
+          $cmd += " $($msbuild.project)"
+        } else {
+          $cmd += " $(Build-Path $msbuild.project)"
+        }
+        if ($msbuild.targets) {
+          $cmd += " /t:$($msbuild.targets)"
+        }
+        if ($msbuild.properties) {
+          $cmd += " /p:$($msbuild.properties)"
+        }
+        if ($msbuild.options) {
+          $cmd += " $($msbuild.options)"
+        }
+        $cmd | Cmd-Shell
