@@ -1,4 +1,4 @@
-function global:Load-Config {
+function Load-Config {
     [CmdletBinding()]
     param (
         [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]

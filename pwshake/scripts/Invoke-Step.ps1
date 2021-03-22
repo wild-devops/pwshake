@@ -44,8 +44,7 @@ function Invoke-Step {
       $global:LASTEXITCODE = 0
       "Invoke-Step:powershell: {`n$($step.powershell)}" | f-log-dbg
       if ($config.attributes.pwshake_dry_run) {
-        "`tBypassed because of -DryRun: $($config.attributes.pwshake_dry_run)" | f-log-info `
-       
+        "`tBypassed because of -DryRun: $($config.attributes.pwshake_dry_run)" | f-log-info
         return
       }
       Invoke-Expression $step.powershell -ErrorAction 'Continue' *>&1 | Tee-Object -Variable logOutputs `
