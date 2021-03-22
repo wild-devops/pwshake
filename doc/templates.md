@@ -56,18 +56,18 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     PS>Invoke-pwshake ./python_pwshake.yaml
     ...
     Invoke task: test_python_template
-    Execute step: step_25540982
+    Execute step: python_1
     Python 3.6.8
     Execute step: Run python
     bash: python --version
     Python 3.6.8
-    Execute step: step_46664441
+    Execute step: python_2
     Hello pwshake!
-    Execute step: step_6213368
+    Execute step: python_3
     bash: python /workdir/examples/5.templates/v1.2/hello.py again
 
     Hello again!
-    Execute step: step_32712664
+    Execute step: python_4
     bash: python /workdir/examples/5.templates/v1.2/hello.py twice
     Hello twice!
     ```

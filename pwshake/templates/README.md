@@ -71,12 +71,12 @@ invoke_tasks:
 Output:
 ```
 Invoke task: print_me_in_green
-Execute step: step_27465073
+Execute step: echo_1
 I'm not green
-Execute step: step_50635237
+Execute step: echo_2
 ...
 Invoke task: print_me_in_cyan
-Execute step: step_63993163
+Execute step: echo_3
 I'm not cyan
 ```
 By those three dots you can see that your new inline template works correctly, but unfortunately **PWSHAKE** engine (at least in the current version) captures all commands outputs to save them into the log file and redirects the captured strings to user console via the dumb non-colored `Write-Host` (sorry).
