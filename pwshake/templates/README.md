@@ -79,7 +79,7 @@ Invoke task: print_me_in_cyan
 Execute step: echo_3
 I'm not cyan
 ```
-By those three dots you can see that your new inline template works correctly, but unfortunately **PWSHAKE** engine (at least in the current version) captures all commands outputs to save them into the log file and redirects the captured strings to user console via the dumb non-colored `Write-Host` (sorry).
+By those three dots you can see that your new inline template works correctly, but unfortunately **PWSHAKE** engine (at least in the current version) captures all commands outputs to save them into the log file and redirects the captured strings to user console via the dumb non-colored `$Host.UI.WriteLine()` (sorry).
 
 Anyway, there are good news:
 ## The **PWSHAKE**'s **DSL** is really in your own hands!
