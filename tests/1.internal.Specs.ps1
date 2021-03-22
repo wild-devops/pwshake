@@ -14,6 +14,7 @@ Describe "PWSHAKE internal functions" {
                         pwshake_log_path  = "TestDrive:\mock.log"
                     }
                 }
+                context = @{json_sb=(New-Object 'Text.StringBuilder');thrown=$false}
             })
 
         Get-ChildItem -Path $PSScriptRoot -Filter "*$(${global:pwshake-context}.options.tests_context)*.Context.ps1" | ForEach-Object {

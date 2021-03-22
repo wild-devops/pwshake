@@ -6,6 +6,6 @@ pwshake-context:
         $script_path = Get-ChildItem $paths -File `
             | Where-Object BaseName -eq $step.script `
             | Select-Object -ExpandProperty FullName
-        Log-Information "Script file: $script_path"
+        "Script file: $script_path" | f-log-info
         if (-not $script_path) { throw "Script file: $($step.script).* not found." }
         & $script_path -attributes $config.attributes

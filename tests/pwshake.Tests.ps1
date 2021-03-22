@@ -8,7 +8,7 @@ param (
 
     [Parameter(Mandatory = $false)]
     [Alias("LogLevel")]
-    [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default')]
+    [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default', 'Quiet', 'Silent')]
     [string]$Verbosity = 'Error',
 
     [Parameter(Mandatory = $false)]
@@ -43,7 +43,7 @@ $params = @{
     TestName = "PWSHAKE ${Group}*"
 }
 # Add coverage report on CI build
-if (!!"$env:CI_PIPELINE_IID") {
+if (!!"$env:GITHUB_ACTIONS") {
     $params.CodeCoverage = "$PSScriptRoot\..\pwshake\scripts\*.ps1"
 }
 

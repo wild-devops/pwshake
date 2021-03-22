@@ -8,7 +8,7 @@ function Override-Attributes {
 
     foreach ($item in $config.attributes_overrides) {
       $type = $item
-      "Override-Attributes:`$item`: $($item | ctj)" | f-dbg
+      "Override-Attributes:`$item`: $($item | ctj)" | f-log-dbg
       if ($item -is [hashtable]) {
         if ($item.Keys.Count -gt 1) {
           throw "Item of 'attributes_overrides:' can't contain $($item.Keys.Count) keys."

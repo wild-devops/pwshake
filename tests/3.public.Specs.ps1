@@ -15,7 +15,7 @@ Describe "PWSHAKE public functions" {
             {
                 Invoke-pwshake (Get-RelativePath "examples\4.complex\v1.0\complex_pwshake.yaml") `
                     @("create_linux_istance","deploy_shake") `
-                    (Get-RelativePath "examples\4.complex\v1.0\metadata")
+                    "$(Get-RelativePath 'examples\4.complex\v1.0\metadata')"
             } | Should -Not -Throw
         }
 
@@ -23,7 +23,7 @@ Describe "PWSHAKE public functions" {
             {
                 Invoke-pwshake (Get-RelativePath "examples\4.complex\v1.0\create_env_pwshake.yaml") `
                     @("create_environment") `
-                    (Get-RelativePath "examples\4.complex\v1.0\metadata")
+                    "$(Get-RelativePath 'examples\4.complex\v1.0\metadata')"
             } | Should -Not -Throw
             $pwshake_log = Get-Content (Get-RelativePath "examples\4.complex\v1.0\create_env_pwshake.log")
             $pwshake_log | Select-String '] Here chef step\.' | Should -Not -BeNullOrEmpty

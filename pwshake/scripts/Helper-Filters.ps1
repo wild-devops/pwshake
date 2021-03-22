@@ -1,7 +1,7 @@
 filter script:tee-wh-yaml {
   Write-Host "tee-wh-yaml:`n$(ConvertTo-Yaml $_)"; $_
 }
-filter global:f-error {
+filter script:f-error {
   @"
 ERROR: $_
 $($_.InvocationInfo.PositionMessage)
@@ -13,12 +13,11 @@ filter script:f-tmstmp {
   param($f = "$(Get-Date -format '[yyyy-MM-dd HH:mm:ss]') {0}", $skip = $false)
   $_ | Where-Object { !!$_ } | ForEach-Object { if (!$skip) { $f -f $_ } else { $_ } }
 }
-filter global:tee-sb {
+filter script:sb-append {
   param([Text.StringBuilder]$sb = (Peek-Context).json_sb)
   if (!!$sb) {
     $sb.AppendLine("$_") | Out-Null
   }
-  $_
 }
 filter script:f-cnvp {
   Convert-Path $_ -ErrorAction 'Continue' 2>&1 | ForEach-Object {

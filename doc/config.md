@@ -153,3 +153,21 @@
   Tells to **PWSHAKE** engine about the source(-s) of outer resources that should be loaded before the current execution starts.
   
   [See more about `resources:`](/doc/resources.md)
+
+* ### **`filters:` element**
+
+    Optional
+
+    ```
+    filters:
+      f-$capsed: |-
+        { "$_".ToUpper() }
+      f-braced: |-
+        { "[$_]" }
+    ```
+    Tells to **PWSHAKE** engine to add small functions into the script execution context.
+
+    These functions will be used into the  **PWSHAKE** processing as attributes interpolators or helpers.
+
+    [See more about `filters:`](/doc/filters.md)
+

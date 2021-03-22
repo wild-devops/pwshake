@@ -15,7 +15,8 @@ function Build-Task {
         name       = $name;
         steps      = @();
         depends_on = @();
-        when       = "`$true";
+        on_error   = 'throw';
+        when       = '$true';
         work_dir   = '';
       }
     }
@@ -32,6 +33,7 @@ function Build-Task {
       name       = Coalesce $item.name, $name;
       steps      = Coalesce $item.steps, $item.scripts, @();
       depends_on = Coalesce $item.depends_on, @();
+      on_error   = Coalesce $item.on_error, 'throw';
       when       = (Build-When $item);
       work_dir   = Coalesce $item.work_dir, $item.in, '';
     }

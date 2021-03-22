@@ -11,7 +11,7 @@ All parameters are optional since they all have conventional default values:
 
 * ### **`-ConfigPath`**
 
-  Alias: **`-Path`**
+  Aliases: **`-Path`, `-File`, `-ConfigFile`**
 
   Default is: `[string]"$PSScriptRoot\pwshake.yaml"` - i.e. `pwshake.yaml` from the same directory as the bootstrapper.
   
@@ -53,6 +53,8 @@ All parameters are optional since they all have conventional default values:
   ```
 
 * ### **`-MetaData`**
+  Alias: **`-Attributes`**
+
   Default is: `$null` - i.e. nothing to merge into the `yaml` config's `attributes:` element.
 
   Gives **PWSHAKE** engine an ability to populate the `yaml` config's `attributes:` element with an external data (**metadata** as a term) passed from the outside world (CI server, cloud provider agent, canny developer, etc).
@@ -108,6 +110,24 @@ All parameters are optional since they all have conventional default values:
       pwshake_path: /absolute/path/to/your/working/directory/MyRepo
     ...
     ```
+
+* ### **`-Verbosity`**
+
+  Alias: **`-LogLevel`**
+
+  Default is: `Verbose` - for backward compatibility.
+
+  Available values:
+  * `Quiet` - logs nothing, except `Powershell` host process exceptions, the olny way to check if run was successful - inspect if process (`powershell.exe` or `pwsh`) exit code was not 0;
+  * `Error` - logs only script exceptions and third party cli tools failures (exit code is not 0);
+  * `Warning` - reserved for future;
+  * `Minimal` - logs only raw scripts and cli tools output passed to **stdout**, **stderr** and any **Powershell** streams;
+  * `Information` - additionally logs task and step captions before each task\step invocation;
+  * `Verbose` - additionally logs `Invoke-pwshake` call arguments and **PWSHAKE** config file content after all initialization stages performed by the **PWSHAKE** engine (merging metadata, attributes interpolation, etc)
+  * `Debug` - logs tons of tracing information about each action performed during the **PWSHAKE** config file processing;
+  * `Silent = Quiet` - alias;
+  * `Normal = Information` - alias;
+  * `Default = Verbose` - alias for backward compatibility.
 
 * ### **`-DryRun`**
 

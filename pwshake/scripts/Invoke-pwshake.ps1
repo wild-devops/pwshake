@@ -17,7 +17,7 @@ function Invoke-pwshake {
         [switch]$DryRun,
 
         [Alias("LogLevel")]
-        [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default')]
+        [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default', 'Silent', 'Quiet')]
         [Parameter(Mandatory = $false)]
         [string]$Verbosity = 'Default'
 
@@ -29,31 +29,31 @@ function Invoke-pwshake {
             Verbosity   = $Verbosity
             DryRun      = [bool]$DryRun
         }
-        $context = ${global:pwshake-context}.Clone() + @{json_sb=(New-Object 'Text.StringBuilder')}
+        $context = @{json_sb=(New-Object 'Text.StringBuilder');thrown=$false}
         $context.Remove('invocations')
         ${global:pwshake-context}.invocations.Push(@{
                 arguments = ($arguments + @{Tasks = $Tasks; WorkDir = "$(Get-Location)" })
                 # early loading (before stages invocation) is required for base settings of logging etc.
                 config    = (Load-Config @arguments)
-                context = $context
+                context   = $context
             })
 
         try {
             try {
                 $caption = "PWSHAKE arguments:"
-                $caption | Log-Verbose 6>&1 | tee-sb | Write-Host
-                "$(ConvertTo-Yaml (Peek-Invocation).arguments)" | Log-Verbose 6>&1 | tee-sb | Write-Host
+                $caption | f-log-verb
+                "$(ConvertTo-Yaml (Peek-Invocation).arguments)" | f-log-verb
 
                 foreach ($stage in ${global:pwshake-context}.stages) {
-                    "Invoke-pwshake:`$stage`:{$stage}" | f-dbg
+                    "Invoke-pwshake:`$stage`:{$stage}" | f-log-dbg
                     (Peek-Invocation).config = Invoke-Expression "(Peek-Config) | $stage"
                 }
 
-                "Invoke-pwshake:stagesInvoked:`$config:`n$(ConvertTo-Yaml (Peek-Config))" | f-dbg
+                "Invoke-pwshake:stagesInvoked:`$config:`n$(ConvertTo-Yaml (Peek-Config))" | f-log-dbg
 
                 $caption = "PWSHAKE config:"
-                $caption | Log-Verbose 6>&1 | tee-sb | Write-Host
-                "$(ConvertTo-Yaml (Peek-Config))" | Log-Verbose 6>&1 | tee-sb | Write-Host
+                $caption | f-log-verb
+                "$(ConvertTo-Yaml (Peek-Config))" | f-log-verb
             }
             finally {
                 if ((Peek-Config).attributes.pwshake_log_to_json) {
@@ -62,29 +62,41 @@ function Invoke-pwshake {
             }
 
             $arranged_tasks = Arrange-Tasks (Peek-Config)
-            "Invoke-pwshake:`$arranged_tasks:`n$(ConvertTo-Yaml $arranged_tasks)" | f-dbg
+            "Invoke-pwshake:`$arranged_tasks:`n$(ConvertTo-Yaml $arranged_tasks)" | f-log-dbg
 
             Push-Location (Peek-Config).attributes.work_dir
             foreach ($task in $arranged_tasks) {
                 Invoke-Task $task
             }
-        }
-        finally {
+        } catch {
+            if (-not (Peek-Context).thrown) {
+                # if it was not thrown in execution context, it should be logged
+                $_ | f-log-err
+            }
+            throw $_
+        } finally {
             Pop-Location
-            "Invoke-pwshake:finally:`${global:pwshake-context}.invocations.Count:{$(${global:pwshake-context}.invocations.Count)}" | f-dbg
+            if ((Peek-Config).attributes.pwshake_log_to_json) {
+                (Peek-Context).json_sb.ToString() | f-json | Add-Content -Path "$((Peek-Config).attributes.pwshake_log_path).json" -Encoding UTF8
+            }
+            "Invoke-pwshake:finally:`${global:pwshake-context}.invocations.Count:{$(${global:pwshake-context}.invocations.Count)}" | f-log-dbg
             ${global:pwshake-context}.invocations.Pop() | Out-Null
         }
     }
 }
 
-function global:Peek-Invocation {
+function Peek-Invocation {
     return ${global:pwshake-context}.invocations.Peek()
 }
 
-function global:Peek-Config {
+function Peek-Context{
+    return (Peek-Invocation).context
+}
+
+function Peek-Config {
     return (Peek-Invocation).config
 }
 
-function global:Peek-Context{
-    return (Peek-Invocation).context
+function Peek-Verbosity {
+    return [PWSHAKE.VerbosityLevel](Peek-Invocation).config.attributes.pwshake_verbosity
 }

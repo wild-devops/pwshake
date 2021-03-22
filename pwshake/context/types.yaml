@@ -3,6 +3,7 @@ pwshake-context:
   - type: |-
       namespace PWSHAKE {
         public enum VerbosityLevel {
+          Quiet,
           Error,
           Warning,
           Minimal,
@@ -10,6 +11,7 @@ pwshake-context:
           Verbose,
           Debug,
           Normal = Information,
+          Silent = Quiet,
           Default = Verbose
         }
       }

@@ -14,11 +14,9 @@ function Invoke-Step {
     $ErrorActionPreference = 'Continue'
 
     try {
-      "Invoke-Step:In:$(@{'$_'=$_} | ConvertTo-Yaml)" | f-dbg
+      "Invoke-Step:In:$(@{'$_'=$_} | ConvertTo-Yaml)" | f-log-dbg
       $step = $step | Build-Step
-      "Invoke-Step:Build-Step:$(@{'$step'=$step} | ConvertTo-Yaml)" | f-dbg
-
-      $caption = "Execute step: $($step.name)"
+      "Invoke-Step:Build-Step:$(@{'$step'=$step} | ConvertTo-Yaml)" | f-log-dbg
 
       if ($step['$context'].template_key) {
         # add alias to simplify templates definition
@@ -34,24 +32,24 @@ function Invoke-Step {
       }
 
       ${global:pwshake-context}.hooks['invoke-step'].onEnter | ForEach-Object {
-        Log-Debug "Invoke-Step:try:{$_}"; Invoke-Expression $_
+        "Invoke-Step:try:{$_}" | f-log-dbg; Invoke-Expression $_
       }
 
       if (-not (Invoke-Expression $step.when)) {
-        Log-Information "`tBypassed because of: [$($step.when)] = $(Invoke-Expression $step.when)"
+        "`tBypassed because of: [$($step.when)] = $(Invoke-Expression $step.when)" | f-log-info | Out-Null
         return
       }
 
       $logOutputs = @()
       $global:LASTEXITCODE = 0
-      Log-Debug "Invoke-Step:powershell: {`n$($step.powershell)}"
+      "Invoke-Step:powershell: {`n$($step.powershell)}" | f-log-dbg
       if ($config.attributes.pwshake_dry_run) {
-        "`tBypassed because of -DryRun: $($config.attributes.pwshake_dry_run)" | Log-Information 6>&1 `
-        | tee-sb | Write-Host
+        "`tBypassed because of -DryRun: $($config.attributes.pwshake_dry_run)" | f-log-info `
+       
         return
       }
       Invoke-Expression $step.powershell -ErrorAction 'Continue' *>&1 | Tee-Object -Variable logOutputs `
-      | Log-Minimal 6>&1 | tee-sb | Write-Host
+      | f-log-min
       if ((($LASTEXITCODE -ne 0) -or (-not $?)) -and ($step.on_error -eq 'throw')) {
         $lastErr = $logOutputs | Where-Object { $_ -is [Management.Automation.ErrorRecord] } | Select-Object -Last 1
         if (-not $lastErr) {
@@ -59,16 +57,15 @@ function Invoke-Step {
         }
         throw $lastErr
       }
-    }
-    catch {
-      $last_error = $_
-      ${global:pwshake-context}.hooks['invoke-step'].onError | ForEach-Object {
-        Log-Debug "Invoke-Step:catch:{$_}"; Invoke-Expression $_
+    } catch {
+      $_ | f-log-err
+      if ($step.on_error -eq 'throw') {
+        (Peek-Context).thrown = $true
+        throw $_
       }
-    }
-    finally {
+    } finally {
       ${global:pwshake-context}.hooks['invoke-step'].onExit | ForEach-Object {
-        Log-Debug "Invoke-Step:finally:{$_}"; Invoke-Expression $_
+        "Invoke-Step:finally:{$_}" | f-log-dbg; Invoke-Expression $_
       }
     }
   }

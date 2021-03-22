@@ -5,14 +5,14 @@ function Build-Item {
     [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
     [object]$item,
 
-    [Parameter(Position = 1, Mandatory = $false)]
+    [Parameter(Mandatory = $false)]
     [hashtable]$config = (Coalesce (Peek-Config), @{}),
 
     [Parameter(Mandatory = $false)]
     [Collections.ICollection]${reserved-keys} = (@('pwsh', 'powershell') + ${global:pwshake-context}.templates.Keys)
   )
   process {
-    Log-Debug "Build-Item:In:`$item:`n$(cty $item)" $config
+    "Build-Item:In:`$_:`n$(cty $_)" | f-log-dbg
 
     if ($null -eq $item) {
       return $null
@@ -26,7 +26,7 @@ function Build-Item {
 
     $temlate_key = Compare-Object (@() + $item.Keys) (@() + ${reserved-keys}) `
       -PassThru -IncludeEqual -ExcludeDifferent # intersection
-    Log-Debug "Build-Item:`$temlate_key`:$temlate_key" $config
+    "Build-Item:`$temlate_key`:$temlate_key" | f-log-dbg
 
     if ($item.pwsh) {
       $item.powershell = $item.pwsh
@@ -36,7 +36,7 @@ function Build-Item {
     if (($item.Keys.Count -eq 1) -and ($null -eq $temlate_key)) {
       $key = "$($item.Keys)"
       $content = $item.$($key)
-      Log-Debug "Build-Item:`$content:`n$(cty $content)"
+      "Build-Item:`$content:`n$(cty $content)" | f-log-dbg
       if (${reserved-keys} -notcontains $key) {
         if ($null -eq $content) {
           # 'Some name':
@@ -63,7 +63,7 @@ function Build-Item {
       $item.name = "$(Coalesce $temlate_key, 'step')_$((++(Peek-Invocation).steps_count) | Write-Output)"
     }
 
-    Log-Debug "Build-Item:Out:`$item:`n$(cty $item)"
+    "Build-Item:Out:`$item:`n$(cty $item)" | f-log-dbg
     return $item
   }
 }

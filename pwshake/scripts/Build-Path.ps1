@@ -12,7 +12,7 @@ function Build-Path {
     [switch]$Unresolved
   )
   process {
-    "Build-Path:In:`$path = $path" | f-dbg
+    "Build-Path:In:`$path = $path" | f-log-dbg
     if (-not $path) {
       return $null
     }
@@ -41,7 +41,7 @@ function Build-Path {
       }
     }
 
-    "Build-Path:Out:`$path = $path" | f-dbg
+    "Build-Path:Out:`$path = $path" | f-log-dbg
     return $path
   }
 }

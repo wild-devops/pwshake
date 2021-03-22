@@ -12,7 +12,7 @@ function Build-Template {
         [int]$depth = 0
     )
     process {
-        "Build-Template:In:$(@{'$_'=$_} | ConvertTo-Yaml)" | f-dbg
+        "Build-Template:In:$(@{'$_'=$_} | ConvertTo-Yaml)" | f-log-dbg
         if ($null -eq $step) {
             return $null
         }
@@ -26,7 +26,7 @@ function Build-Template {
 
         $template_key = Compare-Object (@() + $step.Keys) (@() + ${global:pwshake-context}.templates.Keys) `
             -PassThru -IncludeEqual -ExcludeDifferent # intersection
-        "Build-Template:`$template_key = '$template_key'" | f-dbg
+        "Build-Template:`$template_key = '$template_key'" | f-log-dbg
         if ($null -eq $template_key) {
             # not a template
             return $step
@@ -43,16 +43,16 @@ function Build-Template {
             $template.Remove($template_key)
             $template = Merge-Hashtables $template $step.$($template_key)
         }
-        "Build-Template:Merge-Hashtables:$(@{'$template'=$template} | ConvertTo-Yaml)" | f-dbg
+        "Build-Template:Merge-Hashtables:$(@{'$template'=$template} | ConvertTo-Yaml)" | f-log-dbg
         $template = $template | Interpolate-Evals -template_key $template_key
-        "Build-Template:Interpolate-Evals:$(@{'$template'=$template} | ConvertTo-Yaml)" | f-dbg
+        "Build-Template:Interpolate-Evals:$(@{'$template'=$template} | ConvertTo-Yaml)" | f-log-dbg
 
         if ($template.powershell) {
-            "Build-Template:Out:$(@{'$template'=$template} | ConvertTo-Yaml)" | f-dbg
+            "Build-Template:Out:$(@{'$template'=$template} | ConvertTo-Yaml)" | f-log-dbg
             return $template
         } else {
             $template.Remove($template_key) # to avoid double template keys search
-            "Build-Template:Nest:$(@{'$template'=$template} | ConvertTo-Yaml)" | f-dbg
+            "Build-Template:Nest:$(@{'$template'=$template} | ConvertTo-Yaml)" | f-log-dbg
             return $template | Build-Template -depth ($depth + 1)
         }
     }

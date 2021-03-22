@@ -11,7 +11,6 @@ pwshake-context:
     tests_context:
     tests_verbosity: Error
     resources_verbosity: Minimal
-    debug_filter:
     json_log_format: '@{"@timestamp"=(Get-Date).ToString("o");message=$_}'
 
   stages:
@@ -24,14 +23,10 @@ pwshake-context:
   hooks:
     invoke-step:
       onEnter:
-        - 'Log-Debug "Invoke-Step:In:`$step`n$(ConvertTo-Yaml $step)"'
-        - 'Push-Location (Build-Path "$($step.work_dir)")'
-        - "$caption | Log-Information 6>&1 | tee-sb | Write-Host"
+        - Push-Location (Build-Path "$($step.work_dir)")
+        - '"Execute step: $($step.name)" | f-log-info'
       onExit:
-        - "Pop-Location"
-      onError:
-        - 'Log-Debug "Invoke-Step:Error:`n$($last_error.Exception)"'
-        - 'if ((Coalesce $step.on_error, "throw") -eq "throw") { throw $last_error } else { Log-Error $last_error 6>&1 | tee-sb | Write-Host -ForegroundColor Red }'
+        - Pop-Location
 
   plugins: {}
 
