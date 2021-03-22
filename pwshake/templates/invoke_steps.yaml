@@ -1,5 +1,6 @@
-actions:
-  invoke_steps:
-    each:
-      items: $[[$step.invoke_steps]]
-      action: Invoke-Step $config $_
+pwshake-context:
+  templates:
+    invoke_steps:
+      each:
+        items: $[[$_.invoke_steps]]
+        action: $_ | Invoke-Step

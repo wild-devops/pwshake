@@ -1,17 +1,31 @@
-actions:
-  file:
-    path: $[[$step.file]]
-    content:
-    append:
-    encoding: UTF8
-    powershell: |
-      if (-not $step.path) { throw "Template 'file:' attribute 'path:' is not specified!" }
-      $path = Join-Path -Path $config.attributes.pwshake_path -ChildPath $step.path
-      if (-not (Test-Path $path)) { New-Item -ItemType File -Path $path }
-      if ($step.content) {
-        if ($step.content -match '^\$\((?<eval>.*?)\)$') { $step.content = Invoke-Expression $step.content }
-        Set-Content -Path (Resolve-Path $path) -Value $step.content -Encoding $step.encoding -Force
-      } elseif ($step.append) {
-        if ($step.append -match '^\$\((?<eval>.*?)\)$') { $step.append = Invoke-Expression $step.append }
-        Add-Content -Path (Resolve-Path $path) -Value $step.append -Encoding $step.encoding -Force
-      }
+pwshake-context:
+  templates:
+    file:
+      path: $[[Build-Path -Path $_.path -Unresolved]]
+      content:
+      append:
+      lines:
+      updates:
+      encoding: UTF8
+      powershell: |
+        if (-not $file.path) { throw "Template 'file:' attribute 'path:' is not specified!" }
+        if (-not (Test-Path $file.path)) { New-Item -ItemType File -Path $file.path | Out-Null }
+        if ($file.content) {
+          if ($file.content -match '^\$\((?<eval>.*?)\)$') { $file.content = Invoke-Expression $file.content }
+          Set-Content -Path (Resolve-Path $file.path) -Value $file.content -Encoding $file.encoding -Force
+        }
+        $file.lines = Coalesce $file.appends, $file.lines, @()
+        foreach ($line in ($file.lines + $file.append)) {
+          if ($line -match '^\$\((?<eval>.*?)\)$') { $line = Invoke-Expression $line }
+          Add-Content -Path (Resolve-Path $file.path) -Value $line -Encoding $file.encoding -Force -PassThru `
+          | ForEach-Object { Write-Host "file-append: '$_' in '$($file.path)'" }
+        }
+        $file.updates = Coalesce $file.replaces, $file.updates, @()
+        foreach ($key in $file.updates.Keys) {
+          $content = (Get-Content -Path (Resolve-Path $file.path) -Raw)
+          $value = $file.updates.$($key)
+          if ($value -match '^\$\((?<eval>.*?)\)$') { $value = Invoke-Expression $value }
+          $content = $content.Replace($key, $value)
+          Write-Host "file-replace: '$key' with '$value' in '$($file.path)'"
+          Set-Content -Path (Resolve-Path $file.path) -Value $content -Encoding $file.encoding -Force
+        }

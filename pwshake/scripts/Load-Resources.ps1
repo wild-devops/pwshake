@@ -1,17 +1,23 @@
 function Load-Resources {
     [CmdletBinding()]
     param (
-        [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
-        [hashtable]$config
+        [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
+        [hashtable]$config = (Coalesce (Peek-Config), @{})
     )
     process {
+        if (-not $config.resources) { return $config }
+
         $verbosity = $config.attributes.pwshake_verbosity
         try {
-            $config.attributes.pwshake_verbosity = "Error"
-            foreach ($step in $config.resources) {
-                Invoke-Step $config $step
+            if ((Peek-Verbosity) -gt [PWSHAKE.VerbosityLevel](${global:pwshake-context}.options.resources_verbosity)) {
+                $config.attributes.pwshake_verbosity = ${global:pwshake-context}.options.resources_verbosity
             }
-        } finally {
+            'PWSHAKE resources:' | f-log-lvl -level ${global:pwshake-context}.options.resources_verbosity
+            foreach ($step in $config.resources) {
+                $step | Invoke-Step
+            }
+        }
+        finally {
             $config.attributes.pwshake_verbosity = $verbosity
         }
 

@@ -86,15 +86,15 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   ```
 
 * ### - `powershell:` element implicit shortenings
-  Since the `powershell:` element contains inline code that can be too long and\or complex to use it as the meaningful name, so the `name:` property for these shortenings is generated from the `.GetHashCode()` method of the supplied inline string to distinct each other inline step  in the **PWSHAKE** execution log.
+  Since the `powershell:` element contains inline code that can be too long and\or complex to use it as the meaningful name, so the `name:` property for these shortenings is generated from the step type and incremented number to distinct each other inline step in the **PWSHAKE** execution log.
 
   Example:
   ```
-  - powershell: rm ./ -recurse -force
+  - pwsh: rm ./ -recurse -force
   ```
   This is the same as:
   ```
-  - name: step_2122574676
+  - name: pwsh_1
     powershell: rm ./ -recurse -force
   ```
 
@@ -125,7 +125,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   ```
   This is the same as:
   ```
-  - name: step_2122574676
+  - name: step_1
     powershell: rm ./ -recurse -force
     when: $true
   ```
@@ -139,7 +139,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   ```
   This is the same as:
   ```
-  - name: step_2122574676
+  - name: powershell_2
     powershell: rm ./ -recurse -force
     when: -not ($env:SOME_VALUE -eq '42')
   ```

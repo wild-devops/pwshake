@@ -1,0 +1,160 @@
+pwshake-context:
+  filters:
+    f-$env: |-
+      { Get-Item env:$_ -ErrorAction SilentlyContinue | % Value }
+
+    f-$teamcity: |-
+      { Get-TeamCityProperty $_ }
+
+    f-$ssm: |-
+      { Get-SSMParameterDecryptedValue $_ }
+
+    f-$encrypt: |-
+      {
+        if ($_ -match '^(?<input>.+?),(?<key>\S+),(?<vector>\S+)$') {
+          $key = [Convert]::FromBase64String($matches.key)
+          $vector = [Convert]::FromBase64String($matches.vector)
+          [PWSHAKE.Cryptography]::Encrypt($matches.input, $key, $vector);
+        }
+      }
+
+    f-$decrypt: |-
+      {
+        if ($_ -match '^(?<input>.+?),(?<key>\S+),(?<vector>\S+)$') {
+          $key = [Convert]::FromBase64String($matches.key)
+          $vector = [Convert]::FromBase64String($matches.vector)
+          [PWSHAKE.Cryptography]::Decrypt($matches.input, $key, $vector);
+        }
+      }
+
+    f-$secured: |-
+      {
+        if ((!!$_) -and (${global:pwshake-context}.secured -notcontains $_)) {
+          ${global:pwshake-context}.secured += $_
+        }
+        $_
+      }
+
+    f-assert: |-
+      { param($is)
+        $actual = (iex $_)
+        if ($is -ne $actual) {
+            throw "$_ = '$actual', but expected '$is'."
+          } else { Write-Host "$_ = '$is'" }
+      }
+
+    f-dir-name: |-
+      { [IO.Path]::GetDirectoryName($_) }
+
+    f-mask-secured: |-
+      { param($mask = '**********')
+        $message = $_
+        ${global:pwshake-context}.secured | ForEach-Object {
+          if ([Regex]::new($([Regex]::Escape($_)), 'IgnoreCase').Match($message).Success) {
+            $message = $message -replace "$([Regex]::Escape($_))", $mask
+          }
+        }
+        $message
+      }
+
+    f-eval: |-
+      { param([regex]$regex='\$\[\[(?<eval>.+?)\]\]')
+        if ($_ -match $regex) { $_ -replace $regex, (Invoke-Expression $matches.eval) }
+      }
+
+    f-wh-iex: |-
+      {  Write-Host $_; Invoke-Expression $_ }
+
+    f-wh-cyan: |-
+      {  Write-Host $_ -ForegroundColor Cyan }
+
+    f-null: |-
+      { param($f = '{0}') $_ | Where-Object { !!$_ } | ForEach-Object { $f -f $_} }
+
+    f-ctj: |-
+      { $_ | ConvertTo-Json -Depth 99 }
+
+    f-ctj-c: |-
+      { $_ | ConvertTo-Json -Compress -Depth 99 }
+
+    f-log-lvl: |-
+      { param([PWSHAKE.VerbosityLevel]$level)
+        if ((Peek-verbosity) -ge $level) {
+          $_ | Log-Output | sb-append
+        }
+      }
+
+    f-log-err: |-
+      {
+        if ((Peek-Verbosity) -lt [PWSHAKE.VerbosityLevel]::Error) { return }
+        if ((Peek-Verbosity) -eq [PWSHAKE.VerbosityLevel]::Debug) { 
+          $_.ScriptStackTrace.Split("`n") | Select-Object -First 5 | ForEach-Object {
+            $Host.UI.WriteLine([ConsoleColor]::DarkYellow,[Console]::BackgroundColor,"TRACE: $_")
+          }
+        }
+        $_ | f-error | f-tmstmp | Add-Content -Path (Peek-Config).attributes.pwshake_log_path -Encoding UTF8
+        $_ | f-error | sb-append
+      }
+
+    f-log-warn: |-
+      { $_ | f-log-lvl -level 'Warning' }
+
+    f-log-min: |-
+      { $_ | f-log-lvl -level 'Minimal' }
+
+    f-log-info: |-
+      { $_ | f-log-lvl -level 'Information' }
+
+    f-log-verb: |-
+      { $_ | f-log-lvl -level 'Verbose' }
+
+    f-log-dbg: |-
+      {
+        if ("$(Peek-verbosity)" -eq 'Debug') {
+          "DEBUG: $_" | Log-Output -ForegroundColor Cyan | Out-Null
+        }
+      }
+
+    f-escape-json: |-
+      { ($_ | ConvertTo-Json -Compress).Trim('"') }
+
+    f-json: |-
+      { param($compress = $true,
+              $format = (Coalesce (Peek-Config).attributes.pwshake_json_log_format, ${global:pwshake-context}.options.json_log_format))
+        $_ | f-null | ForEach-Object { $format | Invoke-Expression | ConvertTo-Json -Depth 99 -Compress:$compress
+        }
+      }
+
+    f-subtract: |-
+      { param([hashtable]$second)
+        $first = $_.Clone()
+        $second.Keys | ForEach-Object { $first.Remove($_) }
+        $first
+      }
+
+    f-xml-append: |-
+      { param([Xml.XmlNode]$node,[string]$value)
+        if ($value -match '^<.+>$') {
+          $appended_xml = [xml]$value
+          $node.AppendChild($_.ImportNode($appended_xml.ChildNodes[0], $true)) | Out-Null
+        } else {
+          if ($value -match "^(?<attr_name>\w+?)=[`"'](?<attr_value>.+)[`"']$") {
+            $attr = $_.CreateAttribute($matches.attr_name)
+            $attr.Value = $matches.attr_value
+            $node.Attributes.SetNamedItem($attr) | Out-Null
+          } else {
+            throw "Malformed xml-attribute string '$value'!"
+          }
+        }
+      }
+
+    f-xml-update: |-
+      { param([string]$value)
+        if ($_.NodeType -eq 'Element') { $_.InnerXml = $value }
+        else { $_.Value = $value }
+      }
+
+    f-xml-remove: |-
+      {
+        $_ | ForEach-Object { $_.ParentNode.RemoveChild($_) } | Out-Null
+      }

@@ -11,19 +11,19 @@ Describe "PWSHAKE public functions" {
             Get-Command -Name pwshake | Should -Not -BeNullOrEmpty
         }
 
-        It "Should not throw on the examples invocation" {
+        It "Should not throw on ./examples/4.complex/v1.0/complex_pwshake.yaml" {
             {
                 Invoke-pwshake (Get-RelativePath "examples\4.complex\v1.0\complex_pwshake.yaml") `
                     @("create_linux_istance","deploy_shake") `
-                    (Get-RelativePath "examples\4.complex\v1.0\metadata")
+                    "$(Get-RelativePath 'examples\4.complex\v1.0\metadata')"
             } | Should -Not -Throw
         }
 
-        It "Should not throw on the examples invocation of create_env_pwshake" {
+        It "Should not throw on .\examples\4.complex\v1.0\create_env_pwshake.yaml" {
             {
                 Invoke-pwshake (Get-RelativePath "examples\4.complex\v1.0\create_env_pwshake.yaml") `
                     @("create_environment") `
-                    (Get-RelativePath "examples\4.complex\v1.0\metadata")
+                    "$(Get-RelativePath 'examples\4.complex\v1.0\metadata')"
             } | Should -Not -Throw
             $pwshake_log = Get-Content (Get-RelativePath "examples\4.complex\v1.0\create_env_pwshake.log")
             $pwshake_log | Select-String '] Here chef step\.' | Should -Not -BeNullOrEmpty
@@ -52,18 +52,32 @@ Describe "PWSHAKE public functions" {
             $pwshake_log = Get-Content (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.log')
             $pwshake_log | Select-String "] start0" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] noerr0" | Should -Not -BeNullOrEmpty
-            $pwshake_log | Select-String "] err0" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] ERROR: err0" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] ERROR: ZeroDivisionError: division by zero" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] Try call file: pwshake0" | Should -BeNullOrEmpty
         }
 
         It 'Should throw on the example invocation of Invoke-Command' {
             {
-                Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'errors' -Metadata @{pwsh_arg='42'}
-            } | Should -Throw "The term 'dir42' is not recognized as the name of a cmdlet"
+                Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') `
+                    -Roles 'errors' -Metadata @{pwsh_arg='42'} -Verbosity 'Minimal'
+            } | Should -Throw -ExceptionType ([Management.Automation.CommandNotFoundException])
             $pwshake_log = Get-Content (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.log')
             $pwshake_log | Select-String "] Try call file: dir42" | Should -Not -BeNullOrEmpty
-            $pwshake_log | Select-String "] ERROR: The term 'dir42' is not recognized as the name of a cmdlet" | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Should throw on the example invocation with logging to json and custom format' {
+            {
+                Invoke-pwshake (Get-RelativePath 'examples\1.hello\v1.5\my_pwshake.yaml') -MetaData @{
+                    on_error='throw'
+                    pwshake_json_log_format='@{msg=$_}'
+                } -Verbosity 'Information'
+            } | Should -Throw 'PWSHAKE is sick!'
+
+            $pwshake_log = (Get-Content (Get-RelativePath 'examples\1.hello\v1.5\my_pwshake.log') -Raw) `
+                          -replace '\[\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\]\s', ''
+            (Get-Content (Get-RelativePath 'examples\1.hello\v1.5\my_pwshake.log.json') `
+              | ConvertFrom-Json | ForEach-Object msg) | Should -Be $pwshake_log
         }
     }
 }

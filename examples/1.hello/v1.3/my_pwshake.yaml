@@ -1,5 +1,5 @@
 attributes:
-  pwshake_verbosity: Normal # Try to change with any of: Error, Warning, Normal, Verbose, Debug
+  pwshake_verbosity: Normal # Try to change with any of: Quiet, Error, Warning, Information, Verbose, Debug
   hello_to: PWSHAKE
 
 tasks:

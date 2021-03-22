@@ -1,4 +1,4 @@
-function Normalize-When {
+function Build-When {
   [CmdletBinding()]
   param (
     [Parameter(Position = 0, Mandatory = $false)]

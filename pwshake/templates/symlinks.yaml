@@ -1,0 +1,14 @@
+pwshake-context:
+  templates:
+    symlinks:
+      powershell: |
+        $symlinks.GetEnumerator() | ForEach-Object {
+          $params = @{
+            ItemType ==: (${is-Linux}) ? 'SymbolicLink' : 'Junction'
+            Path = (Build-Path $_.Key -Unresolved)
+            Target = (Build-Path $_.Value)
+          }
+          New-Item @params | ForEach-Object {
+            Write-Host "$($params.ItemType) created for '$($_.FullName)' >> '$($params.Target)'"
+          }
+        }

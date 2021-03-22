@@ -23,8 +23,7 @@ function Merge-Hashtables
             } elseif (($First.$_ -is [Collections.Generic.List[Object]]) -or ($First.$_ -is [object[]])) {
                 $First.$_ += ($Second.$_ | Where-Object {$First.$key -notcontains $_})
             } else {
-                $First.Remove($_)
-                $First.Add($_, $Second.$_)
+                $First.$_ = $Second.$_
             }
         }
     }

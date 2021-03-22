@@ -9,3 +9,10 @@ resources:
 
 includes:
 - .old_repo/examples/hello_pwshake.yaml
+
+tasks:
+    clean-up:
+    - pwsh: Remove-Item '{{pwshake_path}}/.old_repo' -Recurse -Force
+
+invoke_tasks:
+- clean-up

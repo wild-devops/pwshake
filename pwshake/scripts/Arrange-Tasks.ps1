@@ -11,7 +11,7 @@ function Arrange-Tasks {
     [int]$depth = 0
   )
   process {
-    if ($depth -gt ${pwshake-context}.max_depth) {
+    if ($depth -gt ${global:pwshake-context}.options.max_depth) {
       throw "Circular reference detected for dependant tasks in: $depends_on"
     }
 
@@ -22,7 +22,7 @@ function Arrange-Tasks {
         throw "Task '$name' is undefined in the PWSHAKE config."
       }
 
-      $task = Normalize-Task $config.tasks[$name] $name
+      $task = Build-Task $config.tasks[$name] $name
 
       if ($task.depends_on) {
         $tasks += (Arrange-Tasks $config $task.depends_on ($depth + 1))

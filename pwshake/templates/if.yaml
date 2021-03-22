@@ -1,15 +1,16 @@
-actions:
-  if:
-    condition: $[[$step.if]]
-    then:
-    else:
-    powershell: |
-      if ($step.condition) {
-        if ($step.then) {
-          (@() + $step.then) | ForEach-Object { Invoke-Step $config $_ }
+pwshake-context:
+  templates:
+    if:
+      condition:
+      then:
+      else:
+      powershell: |
+        if ($if.condition) {
+          if ($if.then) {
+            (@() + $if.then) | ForEach-Object { $_ | Invoke-Step }
+          }
+        } else {
+          if ($if.else) {
+            (@() + $if.else) | ForEach-Object { $_ | Invoke-Step }
+          }
         }
-      } else {
-        if ($step.else) {
-          (@() + $step.else) | ForEach-Object { Invoke-Step $config $_ }
-        }
-      }

@@ -1,18 +1,19 @@
 $ErrorActionPreference = "Stop"
 
-Context "Normalize-Step" {
+Context "Build-Step" {
     $scriptPath = Get-RelativePath 'tools/publish.ps1'
 
     function Ensure-Step {
         param(
             [hashtable]$actual,
-            [string]$powershell=$null,
-            [string]$name='step_*',
-            [string]$when='$true',
-            [string]$work_dir=$null,
-            [string]$on_error='throw'
+            [string]$powershell = $null,
+            [string]$name = 'step_*',
+            [string]$when = '$true',
+            [string]$work_dir = $null,
+            [string]$on_error = 'throw'
         )
         process {
+            # Write-Host "`$actual:`n$(cty $actual)"
             $actual | Should -BeOfType System.Collections.Hashtable
             $actual.Keys | Should -Contain "name"
             $actual.Keys | Should -Contain "when"
@@ -23,53 +24,55 @@ Context "Normalize-Step" {
             $actual.when | Should -Be $when
             if ($work_dir) {
                 $actual.work_dir | Should -Be $work_dir
-            } else {
+            }
+            else {
                 $actual.work_dir | Should -BeNullOrEmpty
             }
             $actual.on_error | Should -Be $on_error
             if ($powershell) {
                 $actual.powershell | Should -BeLike $powershell
-            } else {
+            }
+            else {
                 $actual.powershell | Should -BeNullOrEmpty
             }
         }
     }
 
     It "Should return `$null on `$null " {
-        Normalize-Step $null | Should -BeNullOrEmpty
+        Build-Step $null | Should -BeNullOrEmpty
     }
 
-    It "Should return an empty Hashtable" {
-        $actual = Normalize-Step @{}
+    It "Should return on empty Hashtable" {
+        $actual = Build-Step @{}
 
         Ensure-Step $actual
     }
 
     It "Should return $scriptPath in 'script' key" {
-        $actual = Normalize-Step $scriptPath
+        $actual = Build-Step $scriptPath
 
         Ensure-Step $actual '$paths = $config.scripts_directories | *' $scriptPath
         $actual.script | Should -Be $scriptPath
     }
 
     It "Should return $scriptPath by given 'script' key" {
-        $actual = Normalize-Step @{script = $scriptPath}
+        $actual = Build-Step @{script = $scriptPath }
 
-        Ensure-Step $actual '$paths = $config.scripts_directories | *'
+        Ensure-Step $actual '$paths = $config.scripts_directories | *' -name 'script_*'
         $actual.script | Should -Be $scriptPath
     }
 
     It "Should find path relative to `$PWD" {
-        $actual = Normalize-Step @{script = 'pwshake.ps1'}
+        $actual = Build-Step @{script = 'pwshake.ps1' }
 
-        Ensure-Step $actual '$paths = $config.scripts_directories | *'
+        Ensure-Step $actual '$paths = $config.scripts_directories | *' -name 'script_*'
         $actual.script | Should -Be 'pwshake.ps1'
     }
 
     It "Should return non empty Hashtable" {
-        $actual = Normalize-Step @{
+        $actual = Build-Step @{
             script = $scriptPath;
-            name = "Mock";
+            name   = "Mock";
         }
 
         Ensure-Step $actual '$paths = $config.scripts_directories | *' 'Mock'
@@ -81,7 +84,7 @@ Context "Normalize-Step" {
 name: Mock
 powershell: pwsh
 "@ | ConvertFrom-Yaml
-        $actual = Normalize-Step $mock
+        $actual = Build-Step $mock
 
         Ensure-Step $actual 'pwsh' 'Mock'
     }
@@ -91,9 +94,9 @@ powershell: pwsh
 run_list:
 - Mock
 "@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
-        $actual = Normalize-Step $mock
+        $actual = Build-Step $mock
 
-        Ensure-Step $actual '$paths = $config.scripts_directories | *' "Mock"
+        Ensure-Step $actual '$paths = $config.scripts_directories | *' 'Mock'
         $actual.script | Should -Be "Mock"
     }
 
@@ -102,9 +105,9 @@ run_list:
 run_list:
 - powershell: Mock
 "@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
-        $actual = Normalize-Step $mock
+        $actual = Build-Step $mock
 
-        Ensure-Step $actual "Mock"
+        Ensure-Step $actual 'Mock' -name 'powershell_*'
     }
 
     It "Should normalize a 'cmd' key with default 'name'" {
@@ -112,9 +115,9 @@ run_list:
 run_list:
 - cmd: Mock
 "@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
-        $actual = Normalize-Step $mock
+        $actual = Build-Step $mock
 
-        Ensure-Step $actual '$cmd = ""*'
+        Ensure-Step $actual 'Cmd-Shell "$($_.cmd -split*' -name 'cmd_*'
         $actual.cmd | Should -Be 'Mock'
     }
 
@@ -124,7 +127,7 @@ run_list:
 - mock me:
     powershell: Mock
 "@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
-        $actual = Normalize-Step $mock
+        $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' 'mock me'
     }
@@ -135,7 +138,7 @@ run_list:
 - mock me:
     pwsh: Mock
 "@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
-        $actual = Normalize-Step $mock
+        $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' 'mock me'
     }
@@ -146,9 +149,9 @@ run_list:
 - mock me:
     cmd: Mock
 "@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
-        $actual = Normalize-Step $mock
+        $actual = Build-Step $mock
 
-        Ensure-Step $actual '$cmd = ""*' 'mock me'
+        Ensure-Step $actual 'Cmd-Shell "$($_.cmd -split*' 'mock me'
         $actual.cmd | Should -Be 'Mock'
     }
 
@@ -158,9 +161,9 @@ run_list:
 - name: mock me
   cmd: Mock
 "@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
-        $actual = Normalize-Step $mock
+        $actual = Build-Step $mock
 
-        Ensure-Step $actual '$cmd = ""*' 'mock me'
+        Ensure-Step $actual 'Cmd-Shell "$($_.cmd -split*' 'mock me'
         $actual.cmd | Should -Be 'Mock'
     }
 
@@ -171,7 +174,7 @@ run_list:
     name: mock me
     powershell: Mock
 "@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
-        $actual = Normalize-Step $mock
+        $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' 'mock me'
     }
@@ -182,7 +185,7 @@ run_list:
 - name: mock me
   powershell: Mock
 "@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
-        $actual = Normalize-Step $mock
+        $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' 'mock me'
     }
@@ -193,7 +196,7 @@ run_list:
 - name: mock me
   pwsh: Mock
 "@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
-        $actual = Normalize-Step $mock
+        $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' 'mock me'
     }
@@ -207,7 +210,7 @@ run_list:
   on_error: continue
   powershell: Mock
 '@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
-        $actual = Normalize-Step $mock
+        $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' -name 'mock me' -when '$false' -work_dir './' -on_error 'continue'
     }
@@ -221,20 +224,8 @@ run_list:
     on_error: continue
     powershell: Mock
 '@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
-        $actual = Normalize-Step $mock
+        $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' -name 'mock me' -when '$false' -work_dir './' -on_error 'continue'
-    }
-
-    It "Should normalize implicit template with an implicit template" {
-        $mock = (@'
-run_list:
-- 'mock me':
-    cmd:
-'@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
-        $actual = Normalize-Step $mock
-
-        Ensure-Step $actual '$cmd = ""*' 'mock me'
-        $actual.cmd | Should -BeNullOrEmpty
     }
 }

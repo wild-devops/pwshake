@@ -1,10 +1,11 @@
-templates:
-  script:
-    powershell: |
-      $paths = $config.scripts_directories | ForEach-Object { Join-Path $config.attributes.pwshake_path -ChildPath $_ }
-      $script_path = Get-ChildItem $paths -File `
-          | Where-Object BaseName -eq $step.script `
-          | Select-Object -ExpandProperty FullName
-      Log-Verbose "Script file: $script_path" $config
-      if (-not $script_path) { throw "Script file: $($step.script).ps1 not found." }
-      & $script_path -attributes $config.attributes
+pwshake-context:
+  templates:
+    script:
+      powershell: |
+        $paths = $config.scripts_directories | ForEach-Object { Join-Path $config.attributes.pwshake_path -ChildPath $_ }
+        $script_path = Get-ChildItem $paths -File `
+            | Where-Object BaseName -eq $step.script `
+            | Select-Object -ExpandProperty FullName
+        "Script file: $script_path" | f-log-info
+        if (-not $script_path) { throw "Script file: $($step.script).* not found." }
+        & $script_path -attributes $config.attributes

@@ -5,7 +5,7 @@ templates:
     updates:
     removes:
     powershell: |
-      $path = Normalize-Path (Coalesce $step.transform_xml_file, $step.path) $config
+      $path = Build-Path (Coalesce $step.transform_xml_file, $step.path) $config
       $appends = $step.appends
       $updates = $step.updates
       $removes = $step.removes

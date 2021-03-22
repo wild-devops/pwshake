@@ -1,0 +1,28 @@
+attributes:
+  crypto_key: '{{$([PWSHAKE.Cryptography]::GenerateKey())}}'
+  crypto_iv: '{{$([PWSHAKE.Cryptography]::GenerateIV())}}'
+  secret: '{{$encrypt:PWSHAKE,{{crypto_key}},{{crypto_iv}}}}'
+  name: '{{$decrypt:{{secret}},{{crypto_key}},{{crypto_iv}}}}'
+  hello: 'Hello {{name}}!'
+  my_attr: '{{$capsed:my_attr_value}}'
+  sq_braced: '{{$("{{my_attr}}" | sq-braced)}}'
+
+filters:
+  f-$capsed: |-
+    { "$_".ToUpper() }
+  sq-braced: |-
+    { "[$_]" }
+
+tasks:
+  hello:
+  - echo: '{{hello}}'
+  - pwsh: |-
+      [IO.File]::WriteAllBytes('key.log', [Convert]::FromBase64String('{{crypto_key}}'))
+      [IO.File]::WriteAllBytes('iv.log', [Convert]::FromBase64String('{{crypto_iv}}'))
+      $hello = [PWSHAKE.Cryptography]::Decrypt('{{secret}}', [IO.File]::ReadAllBytes('key.log'), [IO.File]::ReadAllBytes('iv.log'))
+      if ($hello -ne '{{name}}') { throw "`$hello -ne '{{name}}'" }
+      Write-Host "Hello decrypted $hello!"
+      @('key.log','iv.log') | Remove-Item -Force
+
+invoke_tasks:
+- hello

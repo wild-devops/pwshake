@@ -3,37 +3,41 @@ function Interpolate-Attributes {
   param (
     [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
     [hashtable]$config
-)    
+)
   process {
-      $ErrorActionPreference = "Stop"
-
-      $yaml = $config | ConvertTo-Yaml
-      $regex = [regex]"{{(?<subst>([^{{.*}}]|[.*])*?)}}"
+      $json = $config | ConvertTo-Json -Depth 99 -Compress
+      $regex = [regex]'{{(?<subst>(?:(?!{{).)+?)}}'
       $counter = 0
+      "Interpolate-Attributes:In:$($counter):`$json:$json" | f-log-dbg
 
       do {
-        foreach ($substitute in (Get-Matches $yaml $regex 'subst')) {
-          if ($substitute -match '^\$\((?<eval>.*?)\)$') {
-            $eval = Get-Matches $substitute '^\$\((?<eval>.*?)\)$' 'eval'
-            $value = Invoke-Expression $eval
-            $yaml = $yaml.Replace("{{$substitute}}", "$value")
-          } elseif ($substitute -match '^\$env:') {
-            $value = Invoke-Expression $substitute
-            $yaml = $yaml.Replace("{{$substitute}}", "$value")
+        foreach ($substitute in (Get-Matches $json $regex 'subst')) {
+          "Interpolate-Attributes:$($counter):`$substitute:$substitute" | f-log-dbg
+          if ($substitute -match '^\$\((?<eval>.*)\)$') {
+            "Interpolate-Attributes:$($counter):`$eval:{$($matches.eval)}" | f-log-dbg
+            $value = Invoke-Expression (ConvertFrom-Json "`"$($matches.eval)`"")
+          } elseif ($substitute -match '^(?<filter>\$\S+):(?<input>.*)') {
+            "Interpolate-Attributes:$($counter):`$filter:{$($matches.filter)}:`$input:{$($matches.input)}" | f-log-dbg
+            $value = $matches.input | & "f-$($matches.filter)"
+            "Interpolate-Attributes:$($counter):`$value:{$value}" | f-log-dbg
           } else {
             $value = Invoke-Expression "`$config.attributes.$substitute" -ErrorAction Stop
-            if (-not $regex.Match($value).Success) {
-              $yaml = $yaml.Replace("{{$substitute}}", "$value")
+            if ($regex.Match($value).Success) {
+                continue;
             }
           }
+          $value = $value | f-null | ForEach-Object {(ConvertTo-Json $_ -Compress -Depth 99).Trim('"')}
+          "Interpolate-Attributes:$($counter):`$value:{$value}" | f-log-dbg
+          $json = $json.Replace("{{$substitute}}", "$value")
         }
-        if ($counter++ -ge ${pwshake-context}.max_depth) {
-          throw "Circular reference detected for substitutions: $($regex.Matches($yaml) | Sort-Object -Property Value)"
+        if ($counter++ -ge ${global:pwshake-context}.options.max_depth) {
+          throw "Circular reference detected for substitutions: $($regex.Matches($json) | Sort-Object -Property Value)"
         }
-        $config = ConvertFrom-Yaml $yaml
-        $yaml = ConvertTo-Yaml $config
-      } while ($regex.Match($yaml).Success)
+        "Interpolate-Attributes:$($counter):`$json:`n$json" | f-log-dbg
+        $config = ConvertFrom-Yaml $json
+        $json = ConvertTo-Json $config -Depth 99 -Compress
+      } while ($regex.Match($json).Success)
 
-      return ConvertFrom-Yaml $yaml
+      return ConvertFrom-Yaml $json
   }
 }
