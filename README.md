@@ -1,7 +1,7 @@
-![GitHub workflows (all tests)](https://github.com/wild-devops/pwshake/workflows/all%20tests/badge.svg)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/wild-devops/pwshake)
-![PowerShell Gallery](https://img.shields.io/powershellgallery/v/pwshake)
-![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/pwshake)
+[![GitHub workflows (all tests)](https://github.com/wild-devops/pwshake/workflows/all%20tests/badge.svg)](/actions/workflows/tests.yml)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/wild-devops/pwshake)](/releases/tag/v1.5.0)
+[![PowerShell Gallery](https://img.shields.io/powershellgallery/v/pwshake)](https://www.powershellgallery.com/packages/pwshake)
+[![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/pwshake)](https://www.powershellgallery.com/packages/pwshake)
 
 # PWSHAKE
 Yet another maker based on modern **Powershell** (aka `pwsh` in `Linux` world) and `yaml` configurations.
