@@ -1,14 +1,14 @@
 templates:
   python:
-    options:
+    options: $[[$_.python]]
     inline:
     powershell: |
-      if ($step.python) {
-        iex "python3 $($step.python)"
-      } elseif ($step.options) {
-        iex "python3 $($step.options)"
-      } elseif ($step.inline) {
-        python3 -c $step.inline
+      if ($_.python -is [string]) {
+        iex "python3 $($_.python)"
+      } elseif ($python.inline) {
+        python3 -c $python.inline
+      } elseif ($python.options) {
+        iex "python3 $($python.options)"
       } else {
         python3 --version
       }

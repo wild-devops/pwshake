@@ -10,10 +10,10 @@ tasks:
   - 'Inline python':
       python:
         inline: print('Hello pwshake!');
-  - 'Explicit file':
+  - 'Explicit options':
       python:
         options: '{{pwshake_path}}/hello.py again'
-  - 'Implicit file':
+  - 'Implicit options':
       python: '{{pwshake_path}}/hello.py twice'
   - python:
       inline: print('Hello pwshake!');
