@@ -52,12 +52,12 @@
     ```
     templates:
       cmd:
-        cmd: echo do_nothing
+        text: echo do_nothing
         powershell: |
           if (${is-Windows}) {
-            cmd /c "$($step.cmd)" *>&1
+            cmd /c "$($cmd.text)" *>&1
           } else {
-            bash -c "$($step.cmd)" *>&1
+            bash -c "$($cmd.text)" *>&1
           }
     ```
     Contains named `yaml` structures that **PWSHAKE** engine substitutes in `[step:]` elements to short steps definitions or to reuse in frequent cases.
@@ -75,16 +75,16 @@
   tasks:
     clean:
       steps:
-      - powershell: rm ./results -r -force
+      - powershell: rm ./results -recurse -force
     build:
     - run_build_script
     test:
     - powershell: dotnet test
     publish:
     - cmd: |
-      python.exe ./tools/some_script.py --with long ^
-      --list of --options that --doesnt feet ^
-      --to single_line
+        python.exe ./tools/some_script.py --with long ^
+        --list of --options that --doesnt feet ^
+        --to single_line
   ```
   Contains definition of composed and interdependent tasks that will be performed by **PWSHAKE** engine by executing `steps:` which are defined as `tasks:` items.
 
@@ -112,8 +112,7 @@
 
     ```
     scripts_directories:
-    - .
-    - test
+    - tests
     - tools
     ```
     Tells to **PWSHAKE** engine where to find scripts defined as items of the `tasks:` element.
@@ -145,7 +144,7 @@
   - git:
       repo: https://github.com/wild-devops/pwshake.git
       ref: v1.0.0
-      sparses:
+      directories:
       - examples
       - doc
       target: .old_repo
