@@ -1,6 +1,6 @@
 ## `attributes:` **element**
 
-**Required**
+**Optional**
 
 Contains definition of data that passed into executable scripts as a single parameter.
 
