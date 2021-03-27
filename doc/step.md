@@ -166,9 +166,10 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
     build:
     test:
     deploy:
-    'Do all stuff if solution file is present':
-      scripts:
+      name: 'Do all stuff if solution file is present'
+      steps:
       - powershell: $script:skip_it_all = -not (Test-Path MySolution.sln)
+      # using $script: scope above is essential for further variable usage, since the each 'powershell:' item is executed in its own scope
       - skip_on: $skip_it_all
         invoke_tasks:
         - clean
