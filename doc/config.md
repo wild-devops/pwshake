@@ -1,7 +1,7 @@
 # Main elements of **PWSHAKE** configuration file
 
 * ### **`attributes:` element**
-    Required
+    Optional
 
     ```
     attributes:
@@ -69,7 +69,7 @@
 
   Aliases: **`run_lists:`**, **`roles:`**
 
-  Required
+  Optional
 
   ```
   tasks:
@@ -94,7 +94,7 @@
 
   Aliases: **`invoke_run_lists:`**, **`apply_roles:`**
 
-  Required
+  Optional
 
   ```
   invoke_tasks:
