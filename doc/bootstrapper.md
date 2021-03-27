@@ -1,6 +1,6 @@
 ## `pwshake.ps1` **bootstrapper**
 
-The `pwshake.ps1` bootstrapper script contains commands to load all required parts to install the **PWSHAKE** engine from the source of `PSGallery`.
+The `pwshake.ps1` bootstrapper script contains commands to load all required parts to install the **PWSHAKE** engine from the source of [PSGallery](https://www.powershellgallery.com/packages/pwshake).
 
 It imports **PWSHAKE** engine as a **Powershell** module (named `pwshake`, surprisingly) that exports a single function `Invoke-pwshake` and its alias `pwshake` as well.
 
