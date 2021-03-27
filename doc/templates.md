@@ -13,15 +13,15 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     PS>cat python.yaml
     templates:
       python:
-        file:
+        file: $[[$_.python]]
         inline:
         powershell: |
-          if ($step.python) {
-            "python $($step.python)" | Cmd-Shell
-          } elseif ($step.file) {
-            "python $($step.file)" | Cmd-Shell
-          } elseif ($step.inline) {
-            python -c $step.inline
+          if ($_.python -is [string]) {
+            "python $($_.python)" | Cmd-Shell
+          } elseif ($python.inline) {
+            python -c $python.inline
+          } elseif ($python.file) {
+            "python $($python.file)" | Cmd-Shell
           } else {
             python --version
           }
@@ -87,8 +87,8 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
       - directory: .test_results
       - each:
           items:
-            - Hello
-            - PWSHAKE
+          - Hello
+          - PWSHAKE
           action: echo $_
       - echo: 'Hello PWSHAKE!'
       - file:
@@ -99,32 +99,32 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
           source: https://github.com/wild-devops/pwshake.git
           ref: v1.0.0
           directories:
-            - examples
-            - doc
+          - examples
+          - doc
           target: .old_repo
       - if:
           condition: true
           then:
-            - echo: true
+          - echo: true
           else:
-            - echo: false
-            - pwsh: throw 'Good bye!'
+          - echo: false
+          - pwsh: throw 'Good bye!'
       - invoke_steps:
-          - echo: List
-          - cmd: echo of
-          - pwsh: echo other
-          - shell: echo steps
+        - echo: List
+        - cmd: echo of
+        - pwsh: echo other
+        - shell: echo steps
       - invoke_tasks:
-          - list_of
-          - tasks_to_execute
+        - list_of
+        - tasks_to_execute
       - msbuild:
           project: 'MySolution.sln'
           targets:
-            - Clean
-            - Build
+          - Clean
+          - Build
           properties:
-            - Configuration=Release
-            - SolutionDir=.
+          - Configuration=Release
+          - SolutionDir=.
           options: /m
       - script: tasks_to_execute
       - shell: 'ls .'
