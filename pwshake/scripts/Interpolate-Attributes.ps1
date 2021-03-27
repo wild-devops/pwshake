@@ -15,10 +15,10 @@ function Interpolate-Attributes {
           "Interpolate-Attributes:$($counter):`$substitute:$substitute" | f-log-dbg
           if ($substitute -match '^\$\((?<eval>.*)\)$') {
             "Interpolate-Attributes:$($counter):`$eval:{$($matches.eval)}" | f-log-dbg
-            $value = Invoke-Expression (ConvertFrom-Json "`"$($matches.eval)`"")
+            $value = "`"$($matches.eval)`"" | ConvertFrom-Json | Invoke-Expression
           } elseif ($substitute -match '^(?<filter>\$\S+):(?<input>.*)') {
             "Interpolate-Attributes:$($counter):`$filter:{$($matches.filter)}:`$input:{$($matches.input)}" | f-log-dbg
-            $value = $matches.input | & "f-$($matches.filter)"
+            $value = "`"$($matches.input)`"" | ConvertFrom-Json | & f-$($matches.filter)
             "Interpolate-Attributes:$($counter):`$value:{$value}" | f-log-dbg
           } else {
             $value = Invoke-Expression "`$config.attributes.$substitute" -ErrorAction Stop

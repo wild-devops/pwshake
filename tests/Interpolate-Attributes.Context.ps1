@@ -121,4 +121,16 @@ Context "Interpolate-Attributes" {
             }
         } | Should -Throw "Circular reference detected for substitutions: {{a}} {{b}} {{c}}"
     }
+
+    It "Should substitute special characters" {
+        $chars = '`~!@#$qwest%^&*()_-=+\|][}{";?.,></№' + "'"
+
+        Interpolate-Attributes @{
+            attributes = @{a="{{b}}";b='{{$secured:{{c}}}}';c=$chars};
+        } | Interpolate-Attributes | New-Variable -Name actual
+
+        $actual.attributes.a | Should -Be $chars
+        $actual.attributes.b | Should -Be $chars
+        $actual.attributes.c | Should -Be $chars
+    }
 }

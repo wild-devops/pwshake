@@ -61,15 +61,14 @@ function Invoke-pwshake {
                 }
             }
 
-            $arranged_tasks = Arrange-Tasks (Peek-Config)
+            $arranged_tasks = (Peek-Config).invoke_tasks | Arrange-Tasks
             "Invoke-pwshake:`$arranged_tasks:`n$(ConvertTo-Yaml $arranged_tasks)" | f-log-dbg
 
             Push-Location (Peek-Config).attributes.work_dir
-            foreach ($task in $arranged_tasks) {
-                Invoke-Task $task
-            }
+            $arranged_tasks | Invoke-Task
+            
         } catch {
-            if (-not (Peek-Context).thrown) {
+            if (-not (Peek-Context).caught) {
                 # if it was not thrown in execution context, it should be logged
                 $_ | f-log-err
             }

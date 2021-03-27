@@ -2,19 +2,10 @@ pwshake-context:
   templates:
     invoke_tasks:
       powershell: |
-        $tasks = Arrange-Tasks $config $_.invoke_tasks
-        foreach ($task in $tasks) {
-            Invoke-Task $task $config
-        }
+        $_.invoke_tasks | Arrange-Tasks | Invoke-Task
     apply_roles:
       powershell: |
-        $tasks = Arrange-Tasks $config $_.apply_roles
-        foreach ($task in $tasks) {
-            Invoke-Task $task $config
-        }
+        $_.apply_roles | Arrange-Tasks | Invoke-Task
     invoke_run_lists:
       powershell: |
-        $tasks = Arrange-Tasks $config $_.invoke_run_lists
-        foreach ($task in $tasks) {
-            Invoke-Task $task $config
-        }
+        $_.invoke_run_lists | Arrange-Tasks | Invoke-Task

@@ -138,11 +138,10 @@ Context "Build-Template" {
 '@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -sb { param($actual)
       $actual.on_error | Should -Be 'continue'
-      $actual.powershell | Should -BeLike 'if (-not $each.items) { throw*'
-      $actual.items[0].echo | Should -Be 'say'
-      $actual.items[1].invoke_steps[0].echo | Should -Be 'hello'
-      $actual.action | Should -Be '$_ | Invoke-Step'
-      $actual['$context'].template_key | Should -Be 'each'
+      $actual.powershell | Should -BeLike '$_.invoke_steps | Invoke-Step'
+      $actual.invoke_steps[0].echo | Should -Be 'say'
+      $actual.invoke_steps[1].invoke_steps[0].echo | Should -Be 'hello'
+      $actual['$context'].template_key | Should -Be 'invoke_steps'
     }
   }
 

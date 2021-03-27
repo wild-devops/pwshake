@@ -1,13 +1,13 @@
 function Arrange-Tasks {
   [CmdletBinding()]
   param (
-    [Parameter(Position = 0, Mandatory = $true)]
-    [hashtable]$config,
+    [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
+    [object[]]$depends_on,
 
-    [Parameter(Position = 1, Mandatory = $false)]
-    [object[]]$depends_on = $config.invoke_tasks,
+    [Parameter(Mandatory = $false)]
+    [hashtable]$config = (Peek-Config),
 
-    [Parameter(Position = 2, Mandatory = $false)]
+    [Parameter(Mandatory = $false)]
     [int]$depth = 0
   )
   process {
@@ -18,6 +18,7 @@ function Arrange-Tasks {
     $tasks = @()
 
     foreach ($name in $depends_on) {
+      "Arrange-Tasks:foreach:`$name:`n$(cty $name)" | f-log-dbg
       if (-not ($config.tasks.Keys -contains $name)) {
         throw "Task '$name' is undefined in the PWSHAKE config."
       }
@@ -25,12 +26,13 @@ function Arrange-Tasks {
       $task = Build-Task $config.tasks[$name] $name
 
       if ($task.depends_on) {
-        $tasks += (Arrange-Tasks $config $task.depends_on ($depth + 1))
+        $tasks += ($task.depends_on | Arrange-Tasks -depth ($depth + 1))
       }
 
       $tasks += $task
     }
 
+    "Arrange-Tasks:Out:`$tasks:`n$(cty $tasks)" | f-log-dbg
     return $tasks
   }
 }

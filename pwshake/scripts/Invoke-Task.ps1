@@ -4,7 +4,7 @@ function Invoke-Task {
         [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
         [hashtable]$task,
 
-        [Parameter(Position = 1, Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [hashtable]$config = (Coalesce (Peek-Config), @{})
     )
     process {
@@ -21,11 +21,11 @@ function Invoke-Task {
             Push-Location (Build-Path "$($task.work_dir)" $config)
 
             foreach ($step in $task.steps) {
-                (Peek-Context).thrown = $false
+                (Peek-Context).caught = $false
                 $step | Invoke-Step -work_dir $task.work_dir
             }
         } catch {
-            if (-not (Peek-Context).thrown) {
+            if (-not (Peek-Context).caught) {
                 # if it was not thrown in execution context, it should be logged
                 $_ | f-log-err
             }

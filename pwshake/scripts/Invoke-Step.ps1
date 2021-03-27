@@ -15,8 +15,8 @@ function Invoke-Step {
 
     try {
       "Invoke-Step:In:$(@{'$_'=$_} | ConvertTo-Yaml)" | f-log-dbg
-      $step = $step | Build-Step
-      "Invoke-Step:Build-Step:$(@{'$step'=$step} | ConvertTo-Yaml)" | f-log-dbg
+      $step = $_ = $_ | Build-Step
+      "Invoke-Step:Build-Step:$(@{'$_'=$_} | ConvertTo-Yaml)" | f-log-dbg
 
       if ($step['$context'].template_key) {
         # add alias to simplify templates definition
@@ -59,7 +59,7 @@ function Invoke-Step {
     } catch {
       $_ | f-log-err
       if ($step.on_error -eq 'throw') {
-        (Peek-Context).thrown = $true
+        (Peek-Context).caught = $true
         throw $_
       }
     } finally {

@@ -1,6 +1,4 @@
 pwshake-context:
   templates:
     invoke_steps:
-      each:
-        items: $[[$_.invoke_steps]]
-        action: $_ | Invoke-Step
+      powershell: $_.invoke_steps | Invoke-Step

@@ -8,7 +8,7 @@ Context "Arrange-Tasks" {
     $config.invoke_tasks = @('role1')
 
     It "Should return an Object[]" {
-        (Arrange-Tasks $config) -is [Object[]] | Should -BeTrue
+        ($config.invoke_tasks | Arrange-Tasks) -is [Object[]] | Should -BeTrue
     }
 
     It "Should throw on circular reference in depends_on" {
@@ -18,7 +18,7 @@ Context "Arrange-Tasks" {
             depends_on = @('role1')
         }
 
-        { Arrange-Tasks $config } `
+        { $config.invoke_tasks | Arrange-Tasks } `
             | Should -Throw "Circular reference detected for dependant tasks in:"
     }
 }

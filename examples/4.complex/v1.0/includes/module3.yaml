@@ -2,7 +2,7 @@ roles:
   role2: role2
   role3: role3
 apply_roles:
-  - role1
-  - role2
-  - role5
-  - role6
+- role1
+- role2
+- role5
+- role6
