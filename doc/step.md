@@ -44,7 +44,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
 * ## - `[step]:` element implicit shortenings
   Since the actual payload in the executed structure have only the two elements:
   * `name:`
-  * first non empty of `[script: | powershell: | cmd:]`
+  * first non empty of `[script: | powershell:]`
 
   There are allowed some implicit shortenings in the `[step]:` element `yaml` syntax.
 
@@ -106,12 +106,12 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
 
   Example:
   ```
-  - Build:
+  - 'Do build':
       msbuild: some_project_file_name
   ```
   This is actually the same as:
   ```
-  - name: Build
+  - name: Do build
     msbuild:
       project: some_project_file_name
   ```
@@ -135,11 +135,11 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   Example:
   ```
   - powershell: rm ./ -recurse -force
-    skip_on: $env:SOME_VALUE -eq '42'
+    skip_on: ($env:SOME_VALUE -eq '42')
   ```
   This is the same as:
   ```
-  - name: powershell_2
+  - name: powershell_1
     powershell: rm ./ -recurse -force
     when: -not ($env:SOME_VALUE -eq '42')
   ```
