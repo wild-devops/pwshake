@@ -17,6 +17,7 @@ Example:
 PS>cat pwshake.yaml
 attributes:
     my_attr: '{{$capsed:my_attr_value}}'
+    the_same_as: '{{$("my_attr_value" | f-$capsed)}}'
     sq_braced: '{{$("{{my_attr}}" | sq-braced)}}'
 filters:
   f-$capsed: |-
@@ -30,6 +31,7 @@ PS>Invoke-pwshake
 PWSHAKE config:
 attributes:
     my_attr: MY_ATTR_VALUE
+    the_same_as: MY_ATTR_VALUE
     sq_braced: '[MY_ATTR_VALUE]'
 ...
 ```

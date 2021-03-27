@@ -15,7 +15,7 @@ resources:
 - git:
     repo: https://github.com/wild-devops/pwshake.git
     ref: v1.0.0
-    sparses:
+    directories:
     - examples
     - doc
     target: .old_repo
@@ -26,7 +26,7 @@ includes:
 In the example above the initial step described in the `resources:` element invokes built-in `git:` step template that performs the following:
 * initiates an empty git repo in the `target:` directory relational to the `{{pwshake_path}}` (the current `yaml` config file location)
 * checkouts the particular `ref:` (tag v1.0.0 in this case) from the given `repo:`
-* if there are `sparses:` list elements - makes sparse checkout for the listed directories.
+* if there are `directories:` list elements - makes sparse checkout only for the listed directories.
 
 Further the regular `includes:` element can use  the result of resources loading, in this case reusage by including any file that exists in the `.old_repo` directory.
 

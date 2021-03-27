@@ -34,7 +34,9 @@ Every named element of the `tasks:` can contain some definitions to provide more
   ...
   ```
 
-* ### `when:` **element** (aliases: `only:`, `except:`, `skip_on:`)
+* ### `when:` **element**
+
+  Aliases: **`only:`**, **`except:`**, **`skip_on:`**
 
   Contains an expression in **powershell** syntax that determine if the task should be either invoked or bypassed.
 

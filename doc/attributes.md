@@ -1,6 +1,6 @@
 ## `attributes:` **element**
 
-**Required**
+**Optional**
 
 Contains definition of data that passed into executable scripts as a single parameter.
 
@@ -24,8 +24,8 @@ This parameter should be of type **Powershell** `[hashtable]` that allows to **m
     @{
       attributes=@{
         some_attribute=@{
-        nested_attribute1="this is 1";
-        nested_attribute2="that is 2";
+          nested_attribute1="this is 1";
+          nested_attribute2="that is 2";
         };
         composed_attribute=@(1,2,3);
       }

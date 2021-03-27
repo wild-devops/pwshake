@@ -44,7 +44,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
 * ## - `[step]:` element implicit shortenings
   Since the actual payload in the executed structure have only the two elements:
   * `name:`
-  * first non empty of `[script: | powershell: | cmd:]`
+  * first non empty of `[script: | powershell:]`
 
   There are allowed some implicit shortenings in the `[step]:` element `yaml` syntax.
 
@@ -106,12 +106,12 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
 
   Example:
   ```
-  - Build:
+  - 'Do build':
       msbuild: some_project_file_name
   ```
   This is actually the same as:
   ```
-  - name: Build
+  - name: Do build
     msbuild:
       project: some_project_file_name
   ```
@@ -135,11 +135,11 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   Example:
   ```
   - powershell: rm ./ -recurse -force
-    skip_on: $env:SOME_VALUE -eq '42'
+    skip_on: ($env:SOME_VALUE -eq '42')
   ```
   This is the same as:
   ```
-  - name: powershell_2
+  - name: powershell_1
     powershell: rm ./ -recurse -force
     when: -not ($env:SOME_VALUE -eq '42')
   ```
@@ -166,9 +166,10 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
     build:
     test:
     deploy:
-    'Do all stuff if solution file is present':
-      scripts:
+      name: 'Do all stuff if solution file is present'
+      steps:
       - powershell: $script:skip_it_all = -not (Test-Path MySolution.sln)
+      # using $script: scope above is essential for further variable usage, since the each 'powershell:' item is executed in its own scope
       - skip_on: $skip_it_all
         invoke_tasks:
         - clean

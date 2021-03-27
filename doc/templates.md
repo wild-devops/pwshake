@@ -13,15 +13,15 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     PS>cat python.yaml
     templates:
       python:
-        file:
+        options: $[[$_.python]]
         inline:
         powershell: |
-          if ($step.python) {
-            "python $($step.python)" | Cmd-Shell
-          } elseif ($step.file) {
-            "python $($step.file)" | Cmd-Shell
-          } elseif ($step.inline) {
-            python -c $step.inline
+          if ($_.python -is [string]) {
+            "python $($_.python)" | Cmd-Shell
+          } elseif ($python.inline) {
+            python -c $python.inline
+          } elseif ($python.options) {
+            "python $($python.options)" | Cmd-Shell
           } else {
             python --version
           }
@@ -38,15 +38,18 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
 
     tasks:
       test_python_template:
-      - python:
-      - 'Run python':
+      - 'All defaults':
+          python:
+      - 'Give me a version please':
           python: --version
-      - python:
-          inline: print('Hello pwshake!');
-      - python:
-          file: |
-            {{pwshake_path}}/hello.py again
-      - python: '{{pwshake_path}}/hello.py twice'
+      - 'Inline python':
+          python:
+            inline: print('Hello pwshake!');
+      - 'Explicit options':
+          python:
+            file: '{{pwshake_path}}/hello.py again'
+      - 'Implicit options':
+          python: '{{pwshake_path}}/hello.py twice'
 
     invoke_tasks:
     - test_python_template
@@ -56,18 +59,18 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     PS>Invoke-pwshake ./python_pwshake.yaml
     ...
     Invoke task: test_python_template
-    Execute step: python_1
+    Execute step: All defaults
     Python 3.6.8
-    Execute step: Run python
+    Execute step: Give me a version please
     bash: python --version
     Python 3.6.8
-    Execute step: python_2
+    Execute step: Inline python
     Hello pwshake!
-    Execute step: python_3
+    Execute step: Explicit options
     bash: python /workdir/examples/5.templates/v1.2/hello.py again
 
     Hello again!
-    Execute step: python_4
+    Execute step: Implicit options
     bash: python /workdir/examples/5.templates/v1.2/hello.py twice
     Hello twice!
     ```
@@ -87,8 +90,8 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
       - directory: .test_results
       - each:
           items:
-            - Hello
-            - PWSHAKE
+          - Hello
+          - PWSHAKE
           action: echo $_
       - echo: 'Hello PWSHAKE!'
       - file:
@@ -99,32 +102,32 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
           source: https://github.com/wild-devops/pwshake.git
           ref: v1.0.0
           directories:
-            - examples
-            - doc
+          - examples
+          - doc
           target: .old_repo
       - if:
           condition: true
           then:
-            - echo: true
+          - echo: true
           else:
-            - echo: false
-            - pwsh: throw 'Good bye!'
+          - echo: false
+          - pwsh: throw 'Good bye!'
       - invoke_steps:
-          - echo: List
-          - cmd: echo of
-          - pwsh: echo other
-          - shell: echo steps
+        - echo: List
+        - cmd: echo of
+        - pwsh: echo other
+        - shell: echo steps
       - invoke_tasks:
-          - list_of
-          - tasks_to_execute
+        - list_of
+        - tasks_to_execute
       - msbuild:
           project: 'MySolution.sln'
           targets:
-            - Clean
-            - Build
+          - Clean
+          - Build
           properties:
-            - Configuration=Release
-            - SolutionDir=.
+          - Configuration=Release
+          - SolutionDir=.
           options: /m
       - script: tasks_to_execute
       - shell: 'ls .'
