@@ -13,15 +13,15 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     PS>cat python.yaml
     templates:
       python:
-        file: $[[$_.python]]
+        options: $[[$_.python]]
         inline:
         powershell: |
           if ($_.python -is [string]) {
             "python $($_.python)" | Cmd-Shell
           } elseif ($python.inline) {
             python -c $python.inline
-          } elseif ($python.file) {
-            "python $($python.file)" | Cmd-Shell
+          } elseif ($python.options) {
+            "python $($python.options)" | Cmd-Shell
           } else {
             python --version
           }
@@ -38,15 +38,18 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
 
     tasks:
       test_python_template:
-      - python:
-      - 'Run python':
+      - 'All defaults':
+          python:
+      - 'Give me a version please':
           python: --version
-      - python:
-          inline: print('Hello pwshake!');
-      - python:
-          file: |
-            {{pwshake_path}}/hello.py again
-      - python: '{{pwshake_path}}/hello.py twice'
+      - 'Inline python':
+          python:
+            inline: print('Hello pwshake!');
+      - 'Explicit options':
+          python:
+            file: '{{pwshake_path}}/hello.py again'
+      - 'Implicit options':
+          python: '{{pwshake_path}}/hello.py twice'
 
     invoke_tasks:
     - test_python_template
@@ -56,18 +59,18 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     PS>Invoke-pwshake ./python_pwshake.yaml
     ...
     Invoke task: test_python_template
-    Execute step: python_1
+    Execute step: All defaults
     Python 3.6.8
-    Execute step: Run python
+    Execute step: Give me a version please
     bash: python --version
     Python 3.6.8
-    Execute step: python_2
+    Execute step: Inline python
     Hello pwshake!
-    Execute step: python_3
+    Execute step: Explicit options
     bash: python /workdir/examples/5.templates/v1.2/hello.py again
 
     Hello again!
-    Execute step: python_4
+    Execute step: Implicit options
     bash: python /workdir/examples/5.templates/v1.2/hello.py twice
     Hello twice!
     ```
