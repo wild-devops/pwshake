@@ -47,7 +47,7 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
             inline: print('Hello pwshake!');
       - 'Explicit options':
           python:
-            file: '{{pwshake_path}}/hello.py again'
+            options: '{{pwshake_path}}/hello.py again'
       - 'Implicit options':
           python: '{{pwshake_path}}/hello.py twice'
 
@@ -131,6 +131,23 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
           options: /m
       - script: tasks_to_execute
       - shell: 'ls .'
+      - symlinks:
+          link1: target1
+          'link 2': target 2
+      - xml-file:
+          path: test.xml
+          # xmlns:
+          # - 'q': 'uri:my-config-xml-file'
+          inserts:
+          - '/xml': '<five six="seven"/>'
+          - '/xml/five[1]': '<eight nine="wrong"/>'
+          - '//one': 'count="zero"'
+          transforms:
+          - '/xml/two/@three': 'four'
+          - '//@nine': 'ten'
+          deletes:
+          - '/xml/six[@seven="wrong"]':
+
     ```
     All these steps above are actually substituted templates which are loaded from [this location](/pwshake/templates).
 

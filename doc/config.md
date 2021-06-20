@@ -35,9 +35,9 @@
     Optional
     ```
     includes:
-      - attributes.json
-      - pwshake-ci\start-stage.yaml
-      - pwshake-ci\stop-stage.yaml
+    - attributes.json
+    - pwshake-ci\start-stage.yaml
+    - pwshake-ci\stop-stage.yaml
     ```
     Contains list of file paths relational to the main `pwshake.yaml` that will be merged into the main config before **PWSHAKE** engine starts execution. It's useful for splitting long configurations to several meaningful parts.
 
@@ -74,6 +74,7 @@
   ```
   tasks:
     clean:
+      only: (Test-Path ./results)
       steps:
       - powershell: rm ./results -recurse -force
     build:

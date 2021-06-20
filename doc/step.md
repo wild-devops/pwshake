@@ -125,7 +125,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   ```
   This is the same as:
   ```
-  - name: step_1
+  - name: powershell_1
     powershell: rm ./ -recurse -force
     when: $true
   ```
@@ -175,5 +175,4 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
         - clean
         - build
         - test
-        - deploy
   ```

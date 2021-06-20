@@ -27,7 +27,7 @@ So, below are a few shortenings that can be useful in the `pwshake.yaml` configu
 * `cmd.yaml` - with `shell:` alias inside, redirects the input shell command text to built-in function that cares about exit codes, **stderr** output, exception handling, etc
 * `directory.yaml` - to ensure that given directory exists
 * `each.yaml` - simple iterator
-* `echo.yaml` - just for fun
+* `echo.yaml` - just for fun, `pwshake.yaml` config file scaffolding and alert-style debugging
 * `file.yaml` - simplification of files content manipulations
 * `git.yaml` - simplification of git checkout operation, from the v1.4 implemented as real **DSL** via other templates composition
 * `if.yaml` - for conditional templates composition
@@ -35,6 +35,8 @@ So, below are a few shortenings that can be useful in the `pwshake.yaml` configu
 * `invoke_tasks.yaml` - to invoke other tasks from the step inside of the current task
 * `msbuild.yaml` - yes, it's our legacy tribute since we still have to use tons of **MsBuild** projects
 * `script.yaml` - calling **Powershell** scripts, in the v1.0.0 this was an awful part of main code
+* `symlinks.yaml` - creating symlinks for files and directories
+* `xml-file.yaml` - simplification of `xml` files content manipulations using for several configs transformations
 
 [See more about `templates:` element](../../doc/templates.md) 
 
@@ -79,7 +81,7 @@ Invoke task: print_me_in_cyan
 Execute step: echo_3
 I'm not cyan
 ```
-By those three dots you can see that your new inline template works correctly, but unfortunately **PWSHAKE** engine (at least in the current version) captures all commands outputs to save them into the log file and redirects the captured strings to user console via the dumb non-colored `$Host.UI.WriteLine()` (sorry).
+By those three dots (as default input text) you can see that your new inline template works correctly, but unfortunately **PWSHAKE** engine (at least in the current version) captures all commands outputs to save them into the log file and redirects the captured strings to user console via the dumb non-colored `$Host.UI.WriteLine()` (sorry).
 
 Anyway, there are good news:
 ## The **PWSHAKE**'s **DSL** is really in your own hands!
