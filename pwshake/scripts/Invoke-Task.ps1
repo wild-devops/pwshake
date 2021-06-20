@@ -15,7 +15,7 @@ function Invoke-Task {
 
             if (-not (Invoke-Expression $task.when)) {
                 "`t`tBypassed because of: [$($task.when)] = $(Invoke-Expression $task.when)" | f-log-info
-                continue;
+                return;
             }
 
             Push-Location (Build-Path "$($task.work_dir)" $config)

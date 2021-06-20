@@ -2,7 +2,7 @@
 
 **Optional**
 
-Aliase: **`actions:`**
+Alias: **`actions:`**
 
 Contains definitions of `[step:]` elements structure for reusing and syntax shortenings in the whole `pwshake.yaml` config.
 
@@ -26,7 +26,7 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
             python --version
           }
     ```
-    The given example can be used with regular `pwshake.yaml` config by including the template file `python.yaml` and using a new `python:` element as a regular step in tasks definition.
+    The given example can be used with regular `pwshake.yaml` config by including the template file `python.yaml` and using a new `python:` element as a regular step in `tasks:` definition.
     ```
     PS>cat hello.py
     import sys
@@ -47,7 +47,7 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
             inline: print('Hello pwshake!');
       - 'Explicit options':
           python:
-            file: '{{pwshake_path}}/hello.py again'
+            options: '{{pwshake_path}}/hello.py again'
       - 'Implicit options':
           python: '{{pwshake_path}}/hello.py twice'
 
@@ -86,18 +86,24 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     PS>cat some_pwshake.yaml
     ...
     tasks:
+      # execute cmd.exe shell command on Windows host
       - cmd: 'dir /b'
+      # ensure that given directory exists in the current work_dir
       - directory: .test_results
+      # iterates items: elements and pass each of them to the action: as Powershell command or template call
       - each:
           items:
           - Hello
           - PWSHAKE
           action: echo $_
+      # writes text to stdout
       - echo: 'Hello PWSHAKE!'
+      # writes text to the given file by path:, content: and optionally encoding: values
       - file:
           path: 'test.json'
           content: '{"I":"m","a":"test"}'
           encoding: Ascii # default is UTF8
+      # performs git checkout from the given source: repo to the relational target: directory
       - git:
           source: https://github.com/wild-devops/pwshake.git
           ref: v1.0.0
@@ -105,6 +111,7 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
           - examples
           - doc
           target: .old_repo
+      # performs conditional executing for lists of provided steps
       - if:
           condition: true
           then:
@@ -112,14 +119,17 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
           else:
           - echo: false
           - pwsh: throw 'Good bye!'
+      # performs unconditional executing for list of provided steps
       - invoke_steps:
         - echo: List
         - cmd: echo of
         - pwsh: echo other
         - shell: echo steps
+      # performs unconditional executing for list of provided tasks
       - invoke_tasks:
         - list_of
         - tasks_to_execute
+      # run msbuild.exe with given attributes
       - msbuild:
           project: 'MySolution.sln'
           targets:
@@ -129,8 +139,29 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
           - Configuration=Release
           - SolutionDir=.
           options: /m
+      # run Powershell script with name tasks_to_execute.ps1 found in work_dir or scripts_directories: items
       - script: tasks_to_execute
+      # execute bash shell command on Linux host
       - shell: 'ls .'
+      # create symbolic links for each key of provided hashtable with target of its values
+      - symlinks:
+          link1: target1
+          'link 2': target 2
+      # transform xml file by given path: and items of hashtables with XPath keys and [string] values to apply
+      - xml-file:
+          path: test.xml
+          # xmlns:
+          # - 'q': 'uri:my-config-xml-file'
+          inserts:
+          - '/xml': '<five six="seven"/>'
+          - '/xml/five[1]': '<eight nine="wrong"/>'
+          - '//one': 'count="zero"'
+          transforms:
+          - '/xml/two/@three': 'four'
+          - '//@nine': 'ten'
+          deletes:
+          - '/xml/six[@seven="wrong"]':
+
     ```
     All these steps above are actually substituted templates which are loaded from [this location](/pwshake/templates).
 

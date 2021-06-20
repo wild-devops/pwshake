@@ -38,7 +38,7 @@ Every named element of the `tasks:` can contain some definitions to provide more
 
   Aliases: **`only:`**, **`except:`**, **`skip_on:`**
 
-  Contains an expression in **powershell** syntax that determine if the task should be either invoked or bypassed.
+  Contains an expression in **Powershell** syntax that determine if the task should be either invoked or bypassed.
 
   Example:
   ```
@@ -49,7 +49,7 @@ Every named element of the `tasks:` can contain some definitions to provide more
   ...
   ```
 
-  Example (aliased):
+  Examples (aliased):
   ```
   tasks:
     do_something:
