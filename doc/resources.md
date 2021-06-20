@@ -6,7 +6,7 @@ Alias: **`repositories:`**
 
 Contains list of executable steps that all invoked before the current `yaml` config processing starts by the **PWSHAKE** engine.
 
-The results of these invokations can be used in the current `yaml` config file processing.
+The results of these invocations can be used in the current `yaml` config file processing.
 
 Example:
 ```

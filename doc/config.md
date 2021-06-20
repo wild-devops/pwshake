@@ -46,7 +46,7 @@
 
 * ### **`templates:` element**
 
-  Aliase: **`actions:`**
+  Alias: **`actions:`**
 
     Optional
     ```

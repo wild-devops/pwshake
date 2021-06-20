@@ -1,4 +1,4 @@
-# Simple task invokation and attributes interpolation
+# Simple task invocation and attributes interpolation
 attributes:
   hello_to: PWSHAKE
 
