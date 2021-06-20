@@ -1,5 +1,5 @@
 [![GitHub workflows (all tests)](https://github.com/wild-devops/pwshake/workflows/all%20tests/badge.svg)](../../actions/workflows/tests.yml)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/wild-devops/pwshake)](../../releases/tag/v1.5.1)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/wild-devops/pwshake)](../../releases/tag/v1.6.0)
 [![PowerShell Gallery](https://img.shields.io/powershellgallery/v/pwshake)](https://www.powershellgallery.com/packages/pwshake)
 [![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/pwshake)](https://www.powershellgallery.com/packages/pwshake)
 
@@ -123,7 +123,7 @@ invoke_tasks:
 attributes:
   pwshake_module_path: /path/to/pwshake/module/source
   pwshake_path: /absolute/path/to/your/working/directory
-  pwshake_version: 1.5.1
+  pwshake_version: 1.6.0
   work_dir: /absolute/path/to/process/working/directory
   pwshake_log_path: /absolute/path/to/your/working/directory/my_pwshake.log
   some_attribute: this is an attribute value
