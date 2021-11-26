@@ -1,7 +1,7 @@
 attributes:
   crypto_key: '{{$([PWSHAKE.Cryptography]::GenerateKey())}}'
   crypto_iv: '{{$([PWSHAKE.Cryptography]::GenerateIV())}}'
-  secret: '{{$encrypt:PWSHAKE,{{crypto_key}},{{crypto_iv}}}}'
+  secret: '{{$encrypt:PWSHAKE,PWSHAKE,PWSHAKE,{{crypto_key}},{{crypto_iv}}}}'
   name: '{{$decrypt:{{secret}},{{crypto_key}},{{crypto_iv}}}}'
   hello: 'Hello {{name}}!'
   my_attr: '{{$capsed:my_attr_value}}'

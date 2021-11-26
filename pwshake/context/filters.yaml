@@ -11,7 +11,7 @@ pwshake-context:
 
     f-$encrypt: |-
       {
-        if ($_ -match '^(?<input>.+?),(?<key>\S+),(?<vector>\S+)$') {
+        if ($_ -match '^(?<input>.+),(?<key>\S+?),(?<vector>\S+?)$') {
           $key = [Convert]::FromBase64String($matches.key)
           $vector = [Convert]::FromBase64String($matches.vector)
           [PWSHAKE.Cryptography]::Encrypt($matches.input, $key, $vector);
@@ -20,7 +20,7 @@ pwshake-context:
 
     f-$decrypt: |-
       {
-        if ($_ -match '^(?<input>.+?),(?<key>\S+),(?<vector>\S+)$') {
+        if ($_ -match '^(?<input>.+),(?<key>\S+?),(?<vector>\S+?)$') {
           $key = [Convert]::FromBase64String($matches.key)
           $vector = [Convert]::FromBase64String($matches.vector)
           [PWSHAKE.Cryptography]::Decrypt($matches.input, $key, $vector);

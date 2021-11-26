@@ -37,7 +37,7 @@ function Invoke-Step {
 
       if (-not (Invoke-Expression $step.when)) {
         "`tBypassed because of: [$($step.when)] = $(Invoke-Expression $step.when)" | f-log-info | Out-Null
-        return
+        return;
       }
 
       $logOutputs = @()
