@@ -35,7 +35,7 @@ function Build-Context {
     }
 
     $context.types | ForEach-Object type | ForEach-Object {
-      Add-Type -IgnoreWarnings -TypeDefinition $_ -Language CSharp
+      Add-Type -IgnoreWarnings -TypeDefinition $_ -Language CSharp -WarningAction Ignore
     }
 
     return $context

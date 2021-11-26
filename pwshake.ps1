@@ -64,7 +64,7 @@ if (Test-Path $PSScriptRoot\pwshake\pwshake.psd1) {
   if (-not (Get-Module -Name pwshake -ListAvailable | Where-Object Version -eq $version)) {
     Install-Module -Name pwshake -Repository PSGallery -RequiredVersion $version -Force -Scope CurrentUser | Out-Null
   }
-  Import-Module -Name pwshake -RequiredVersion $version -Force -Global -DisableNameChecking
+  Import-Module -Name pwshake -RequiredVersion $version -Force -Global -DisableNameChecking -WarningAction Ignore
 }
 
 $params = @{
