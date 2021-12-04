@@ -62,7 +62,7 @@ Context "Interpolate-Attributes" {
         @{When='{{a}}';And='dev';Then='.dev'}
         @{When='{{b}}';And='dev';Then='.dev'}
     ) {param($When, $And, $Then)
-        $subst = '{{$("' + $When + '" | ? {$_} | % {".$_"})}}'
+        $subst = '{{$("' + $When + '" | ? {$_} | % {' + [Environment]::NewLine + '".$_"})}}'
         (Interpolate-Attributes @{
             attributes = @{
                 a = $And
@@ -132,5 +132,17 @@ Context "Interpolate-Attributes" {
         $actual.attributes.a | Should -Be $chars
         $actual.attributes.b | Should -Be $chars
         $actual.attributes.c | Should -Be $chars
+    }
+
+    It "Should substitute filters with multiple ':' separators and multiline input" {
+        $expected = "https://some.url/?other`nvalue1:value2"
+
+        Interpolate-Attributes @{
+            attributes = @{a="{{b}}";b='{{$secured:{{c}}}}';c=$expected};
+        } | New-Variable -Name actual
+
+        $actual.attributes.a | Should -Be $expected
+        $actual.attributes.b | Should -Be $expected
+        $actual.attributes.c | Should -Be $expected
     }
 }

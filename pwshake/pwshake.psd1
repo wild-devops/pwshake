@@ -12,7 +12,7 @@
     RootModule        = 'pwshake.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '1.5.2'
+    ModuleVersion     = '1.5.3'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -52,7 +52,7 @@
 
     # Modules that must be imported into the global environment prior to importing this module
     RequiredModules   = @(
-        @{ModuleName = "powershell-yaml"; RequiredVersion = "0.4.0"; Guid = "6a75a662-7f53-425a-9777-ee61284407da" }
+        @{ModuleName = "powershell-yaml"; RequiredVersion = "0.4.2"; Guid = "6a75a662-7f53-425a-9777-ee61284407da" }
     )
 
     # Assemblies that must be loaded prior to importing this module
