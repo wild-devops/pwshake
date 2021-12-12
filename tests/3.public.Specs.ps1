@@ -50,9 +50,15 @@ Describe "PWSHAKE public functions" {
                 Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'errors' -Metadata @{py_arg='0'}
             } | Should -Throw 'ZeroDivisionError: division by zero'
             $pwshake_log = Get-Content (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.log')
+            $pwshake_log | Select-String "] simulate error0" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] simulate error1" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] ERROR: simulate error1" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] simulate error2" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] simulate error3" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] ERROR: simulate error4" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] start0" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] noerr0" | Should -Not -BeNullOrEmpty
-            $pwshake_log | Select-String "] ERROR: err0" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] err0" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] ERROR: ZeroDivisionError: division by zero" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] Try call file: pwshake0" | Should -BeNullOrEmpty
         }
@@ -63,6 +69,24 @@ Describe "PWSHAKE public functions" {
                     -Roles 'errors' -Metadata @{pwsh_arg='42'} -Verbosity 'Minimal'
             } | Should -Throw -ExceptionType ([Management.Automation.CommandNotFoundException])
             $pwshake_log = Get-Content (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.log')
+            $pwshake_log | Select-String "] simulate error0" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] simulate error1" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] ERROR: simulate error1" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] simulate error2" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] simulate error3" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] ERROR: simulate error4" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] start42" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] noerr0" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] err0" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] noerr1" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] err1" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] noerr2" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] err2" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] noerr3" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] err3" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] noerr4" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] err4" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] end" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] Try call file: dir42" | Should -Not -BeNullOrEmpty
         }
 

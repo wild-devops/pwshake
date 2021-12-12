@@ -87,6 +87,7 @@ pwshake-context:
     f-log-err: |-
       {
         if ((Peek-Verbosity) -lt [PWSHAKE.VerbosityLevel]::Error) { return }
+        $Host.UI.WriteLine([ConsoleColor]'Red',[Console]::BackgroundColor,($_ | f-error))
         if ((Peek-Verbosity) -eq [PWSHAKE.VerbosityLevel]::Debug) { 
           $_.ScriptStackTrace.Split("`n") | Select-Object -First 5 | ForEach-Object {
             $Host.UI.WriteLine([ConsoleColor]::DarkYellow,[Console]::BackgroundColor,"TRACE: $_")
