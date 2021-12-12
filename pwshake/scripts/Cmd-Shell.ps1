@@ -20,20 +20,20 @@ function Cmd-Shell {
             $errorMessage = "cmd-shell: '$cmd' failed."
         }
 
-        $lastErr = $null
+        $lastErr = $null; ${log-Err} = @(); ${log-Out} = @()
         if (${is-Windows}) {
             Write-Host "cmd: $cmd"
-            cmd /c $cmd *>&1 | Tee-Object -Variable cmdOut
+            & cmd /c $cmd *>&1 -ErrorVariable log-Err | Tee-Object -Variable log-Out
         } else {
             Write-Host "bash: $cmd"
-            bash -c $cmd *>&1 | Tee-Object -Variable cmdOut
+            & bash -c $cmd *>&1 -ErrorVariable log-Err | Tee-Object -Variable log-Out
         }
 
         if ($LASTEXITCODE -ne 0) {
             if ($retries -gt 1) {
                 $cmd | Cmd-Shell -errorMessage $errorMessage -retries ($retries - 1) -throwOnError $throwOnError
             } elseif ($throwOnError) {
-                $lastErr = $cmdOut | Where-Object {$_ -is [System.Management.Automation.ErrorRecord]} | Select-Object -Last 1
+                $lastErr = (${log-Err} + ${log-Out}) | Where-Object {$_ -is [System.Management.Automation.ErrorRecord]} | Select-Object -Last 1
                 if ($lastErr) {
                     $errorMessage = $lastErr.Exception.Message
                 }

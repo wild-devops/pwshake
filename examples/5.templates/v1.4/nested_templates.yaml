@@ -22,8 +22,8 @@ tasks:
   - 'deep nested version':
       msbuild_version:
   - 'circular reference error':
-    on_error: continue
-    circular1:
+      on_error: continue
+      circular1:
 
   test_all:
     depends_on:

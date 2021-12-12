@@ -20,10 +20,6 @@ function Build-Template {
             $step = $step.Clone()
         }
 
-        if ($depth -gt ${global:pwshake-context}.options.max_depth) {
-            throw "Circular reference detected for template:`n$($step | ConvertTo-Yaml)"
-        }
-
         $template_key = Compare-Object (@() + $step.Keys) (@() + ${global:pwshake-context}.templates.Keys) `
             -PassThru -IncludeEqual -ExcludeDifferent # intersection
         "Build-Template:`$template_key = '$template_key'" | f-log-dbg
@@ -34,6 +30,11 @@ function Build-Template {
         else {
             $step['$context'] = Coalesce $step['$context'], @{}
             $step['$context'].template_key = "$template_key"
+        }
+
+        if ($depth -gt ${global:pwshake-context}.options.max_depth) {
+            "Build-Template:Circular-reference:`n$($step | ConvertTo-Yaml)" | f-log-dbg
+            throw "Circular reference detected for template: $template_key"
         }
 
         $template = ${global:pwshake-context}.templates.$($template_key).Clone()

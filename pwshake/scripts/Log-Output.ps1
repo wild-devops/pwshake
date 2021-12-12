@@ -13,13 +13,11 @@ function Log-Output {
     process {
         if ((Peek-Verbosity) -eq [PWSHAKE.VerbosityLevel]::Quiet) { return }
 
-        if ($message -is [Management.Automation.ErrorRecord]) {
-            $message = "$message" | f-mask-secured
-            "ERROR: ${message}" | f-tmstmp | Add-Content -Path $config.attributes.pwshake_log_path
+        $message = "$message" | f-mask-secured
+        $message | f-tmstmp | Add-Content -Path $config.attributes.pwshake_log_path
+        if ($_ -is [Management.Automation.ErrorRecord]) {
             $Host.UI.WriteLine([ConsoleColor]"Red",[Console]::BackgroundColor,$message)
         } else {
-            $message = "$message" | f-mask-secured
-            $message | f-tmstmp | Add-Content -Path $config.attributes.pwshake_log_path
             if ($ForegroundColor) {
                 $Host.UI.WriteLine([ConsoleColor]"$ForegroundColor",[Console]::BackgroundColor,$message)
             } else {

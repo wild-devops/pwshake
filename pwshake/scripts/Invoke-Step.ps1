@@ -40,29 +40,30 @@ function Invoke-Step {
         return;
       }
 
-      $logOutputs = @()
-      $global:LASTEXITCODE = 0
+    ${log-Out} = @(); ${log-Err} = @(); $global:LASTEXITCODE = 0
       "Invoke-Step:powershell: {`n$($step.powershell)}" | f-log-dbg
       if ($config.attributes.pwshake_dry_run) {
         "`tBypassed because of -DryRun: $($config.attributes.pwshake_dry_run)" | f-log-info
-        return
+        return;
       }
-      Invoke-Expression $step.powershell -ErrorAction 'Continue' *>&1 | Tee-Object -Variable logOutputs `
+      Invoke-Expression $step.powershell *>&1 -ErrorVariable log-Err | Tee-Object -Variable log-Out `
       | f-log-min
       if ((($LASTEXITCODE -ne 0) -or (-not $?)) -and ($step.on_error -eq 'throw')) {
-        $lastErr = $logOutputs | Where-Object { $_ -is [Management.Automation.ErrorRecord] } | Select-Object -Last 1
+        $lastErr = (${log-Err} + ${log-Out}) | Where-Object { $_ -is [Management.Automation.ErrorRecord] } | Select-Object -Last 1
         if (-not $lastErr) {
           $lastErr = "$($step.name) failed."
         }
         throw $lastErr
       }
-    } catch {
+    }
+    catch {
       $_ | f-log-err
       if ($step.on_error -eq 'throw') {
         (Peek-Context).caught = $true
         throw $_
       }
-    } finally {
+    }
+    finally {
       ${global:pwshake-context}.hooks['invoke-step'].onExit | ForEach-Object {
         "Invoke-Step:finally:{$_}" | f-log-dbg; Invoke-Expression $_
       }
