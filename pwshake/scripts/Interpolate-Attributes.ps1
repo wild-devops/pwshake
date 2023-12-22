@@ -34,10 +34,10 @@ function Interpolate-Attributes {
           throw "Circular reference detected for substitutions: $($regex.Matches($json) | Sort-Object -Property Value)"
         }
         "Interpolate-Attributes:$($counter):`$json:`n$json" | f-log-dbg
-        $config = ConvertFrom-Yaml $json
+        $config = ConvertFrom-Yaml -AsHashTable $json
         $json = ConvertTo-Json $config -Depth 99 -Compress
       } while ($regex.Match($json).Success)
 
-      return ConvertFrom-Yaml $json
+      return ConvertFrom-Yaml -AsHashTable $json
   }
 }

@@ -1,14 +1,16 @@
 $ErrorActionPreference = "Stop"
 
 Context "Arrange-Tasks" {
-    $configPath = Get-RelativePath 'examples/4.complex/v1.0/module/pwshake.yaml'
-    (Peek-Invocation).config = $config =  Load-Config -config @{} -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
+    BeforeAll {
+        $configPath = Join-Path $PSScriptRoot\.. -ChildPath 'examples/4.complex/v1.0/module/pwshake.yaml'
+        (Peek-Invocation).config = $config = Load-Config -config @{} -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
 
-    $config.tasks.role1 = @{name = 'role1';depends_on=@('errors')}
-    $config.invoke_tasks = @('role1')
+        $config.tasks.role1 = @{name = 'role1';depends_on=@('errors')}
+        $config.invoke_tasks = @('role1')
+    }
 
     It "Should return an Object[]" {
-        ($config.invoke_tasks | Arrange-Tasks) -is [Object[]] | Should -BeTrue
+        ($config.invoke_tasks | Arrange-Tasks) -is [object[]] | Should -BeTrue
     }
 
     It "Should throw on circular reference in depends_on" {
@@ -18,7 +20,8 @@ Context "Arrange-Tasks" {
             depends_on = @('role1')
         }
 
-        { $config.invoke_tasks | Arrange-Tasks } `
-            | Should -Throw "Circular reference detected for dependant tasks in:"
+        {
+            $config.invoke_tasks | Arrange-Tasks
+        } | Should -Throw "Circular reference detected for dependant tasks in: role1"
     }
 }

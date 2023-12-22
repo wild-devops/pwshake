@@ -1,8 +1,10 @@
 $ErrorActionPreference = "Stop"
 
 Context "Interpolate-Attributes" {
-    $configPath = Get-RelativePath 'examples/4.complex/v1.0/complex_pwshake.yaml'
-    (Peek-Invocation).config = $config = Load-Config -config @{} -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
+    BeforeAll {
+        $configPath = Join-Path $PSScriptRoot\.. -ChildPath 'examples/4.complex/v1.0/complex_pwshake.yaml'
+        (Peek-Invocation).config = $config = Load-Config -config @{} -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
+    }
 
     It "Should return a Hashtable" {
         Interpolate-Attributes $config | Should -BeOfType [Hashtable]
@@ -36,14 +38,14 @@ Context "Interpolate-Attributes" {
     }
 
     It "Should substitute `$teamcity:build.number" {
-        $env:TEAMCITY_BUILD_PROPERTIES_FILE = Get-RelativePath 'examples/4.complex/v1.0/build.properties'
+        $env:TEAMCITY_BUILD_PROPERTIES_FILE = Join-Path $PSScriptRoot\.. -ChildPath 'examples/4.complex/v1.0/build.properties'
         (Interpolate-Attributes @{
             c="{{`$teamcity:build.number}}"
         }).c | Should -Be "101"
     }
 
     It "Should substitute `$teamcity:build.counter" {
-        $env:TEAMCITY_BUILD_PROPERTIES_FILE = Get-RelativePath 'examples/4.complex/v1.0/build.properties'
+        $env:TEAMCITY_BUILD_PROPERTIES_FILE = Join-Path $PSScriptRoot\.. -ChildPath 'examples/4.complex/v1.0/build.properties'
         (Interpolate-Attributes @{
             c="{{`$teamcity:build.counter}}"
         }).c | Should -Be "101"
@@ -92,7 +94,7 @@ Context "Interpolate-Attributes" {
         }).attributes.build_number | Should -Be $result
     }
 
-    It -Ignore "Should substitute string literals as strings" {
+    It -Skip "Should substitute string literals as strings" {
         $date_str = "$(Get-Date -f 'yyyy-MM-dd')"
         $path_str = '$("$env:PATH".Substring(0,4))' | Invoke-Expression
         @{

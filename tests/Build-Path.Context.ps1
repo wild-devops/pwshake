@@ -1,9 +1,13 @@
+$ErrorActionPreference = "Stop"
+
 Context "Build-Path" {
-    $config = @{
-        attributes = @{
-            work_dir      = "$PWD/tests"
-            pwshake_path     = "$PWD/pwshake"
-            pwshake_log_path = "TestDrive:/mock.log"
+    BeforeAll {
+        $config = @{
+            attributes = @{
+                work_dir         = "$PWD/tests"
+                pwshake_path     = "$PWD/pwshake"
+                pwshake_log_path = "TestDrive:/mock.log"
+            }
         }
     }
 

@@ -1,11 +1,13 @@
 $ErrorActionPreference = "Stop"
 
 Context "Coalesce" {
-    $context = @{
-        existed='existed'
-        expected='Mock'
-        array=@('one')
-        hashtable=@{'four'='two+two'}
+    BeforeAll {
+        $context = @{
+            existed   = 'existed'
+            expected  = 'Mock'
+            array     = @('one')
+            hashtable = @{'four' = 'two+two' }
+        }
     }
 
     It "Should return `$null on `$null" {

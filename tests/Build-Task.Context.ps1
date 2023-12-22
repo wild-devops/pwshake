@@ -16,7 +16,7 @@ Context "Build-Task" {
     $mock = @"
 run_lists:
   Mock:
-"@ | ConvertFrom-Yaml
+"@ | ConvertFrom-Yaml -AsHashTable
     $key = $mock.run_lists.Keys | Select-Object -First 1
     $actual = Build-Task $mock.run_lists[$key] $key
 
@@ -35,7 +35,7 @@ run_lists:
     except: "except"
   Mock3:
     skip_on: "skip_on"
-"@ | ConvertFrom-Yaml
+"@ | ConvertFrom-Yaml -AsHashTable
     foreach ($key in $mock.run_lists.Keys) {
       $actual = Build-Task $mock.run_lists[$key] $key
 
@@ -61,7 +61,7 @@ depends_on:
 scripts:
   - Mock
 when: 1 -eq 2
-"@ | ConvertFrom-Yaml
+"@ | ConvertFrom-Yaml -AsHashTable
     $actual = Build-Task $mock
 
     $actual.name | Should -Be 'Mock'
@@ -80,7 +80,7 @@ run_lists:
       - Mock
     scripts:
       - Mock
-"@ | ConvertFrom-Yaml
+"@ | ConvertFrom-Yaml -AsHashTable
     $key = $mock.run_lists.Keys | Select-Object -First 1
     $actual = Build-Task $mock.run_lists[$key] $key
 
@@ -98,7 +98,7 @@ run_lists:
   Mock:
     - Mock1
     - Mock2
-"@ | ConvertFrom-Yaml
+"@ | ConvertFrom-Yaml -AsHashTable
 
     $key = $mock.run_lists.Keys | Select-Object -First 1
     $actual = Build-Task $mock.run_lists[$key] $key

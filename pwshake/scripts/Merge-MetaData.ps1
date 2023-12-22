@@ -38,7 +38,7 @@ function Merge-Metadata {
                     }
                 }
                 elseif ($metadata -match '^{.+}$') {
-                    $metadata = $metadata | ConvertFrom-Yaml
+                    $metadata = $metadata | ConvertFrom-Yaml -AsHashTable
                 }
                 else {
                     foreach ($item in ($metadata -split '\n')) {

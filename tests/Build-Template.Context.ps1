@@ -1,35 +1,38 @@
 $ErrorActionPreference = "Stop"
 
 Context "Build-Template" {
-  function Ensure-Template {
-    param (
-      [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
-      [hashtable]$actual,
-      [hashtable]$expected = @{},
-      [scriptblock]$sb = $null
-    )
-    process {
-      $actual | Should -Not -BeNullOrEmpty
-      $actual | Should -BeOfType [hashtable]
-      if ($expected.Keys.Count) {
-        $actual.Keys.Count | Should -Be $expected.Keys.Count
-      }
-      if ($null -ne $sb) {
-        & $sb $actual
-        return
-      }
-      foreach ($key in $expected.Keys) {
-        if ($expected.$($key) -match '\*$') {
-          $actual.$($key) |  Should -BeLike $expected.$($key)
+  
+  BeforeAll {
+    function Ensure-Template {
+      param (
+        [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
+        [hashtable]$actual,
+        [hashtable]$expected = @{},
+        [scriptblock]$sb = $null
+      )
+      process {
+        $actual | Should -Not -BeNullOrEmpty
+        $actual | Should -BeOfType [hashtable]
+        if ($expected.Keys.Count) {
+          $actual.Keys.Count | Should -Be $expected.Keys.Count
         }
-        elseif ($null -eq $expected.$($key)) {
-          $actual.$($key) |  Should -BeNullOrEmpty
+        if ($null -ne $sb) {
+          & $sb $actual
+          return
         }
-        elseif ($expected.$($key) -is [hashtable]) {
+        foreach ($key in $expected.Keys) {
+          if ($expected.$($key) -match '\*$') {
+            $actual.$($key) |  Should -BeLike $expected.$($key)
+          }
+          elseif ($null -eq $expected.$($key)) {
+            $actual.$($key) |  Should -BeNullOrEmpty
+          }
+          elseif ($expected.$($key) -is [hashtable]) {
           (cty $actual.$($key)) |  Should -Be (cty $expected.$($key))
-        }
-        else {
-          $actual.$($key) |  Should -Be $expected.$($key)
+          }
+          else {
+            $actual.$($key) |  Should -Be $expected.$($key)
+          }
         }
       }
     }
@@ -43,7 +46,7 @@ Context "Build-Template" {
     @'
       steps:
       - echo:
-'@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1 | `
+'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -expected @{
       powershell = 'if ($_.echo -match*'
       echo       = $null
@@ -55,7 +58,7 @@ Context "Build-Template" {
     @'
         steps:
         - echo: payload
-'@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1 | `
+'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -expected @{
       powershell = 'if ($_.echo -match*'
       echo       = 'payload'
@@ -68,7 +71,7 @@ Context "Build-Template" {
       steps:
       - echo: something
         name: Say something, Mia
-'@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1 | `
+'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -expected @{
       powershell = 'if ($_.echo -match*'
       echo       = 'something'
@@ -81,7 +84,7 @@ Context "Build-Template" {
     @"
       steps:
       - msbuild:
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1 | `
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -expected @{
       powershell = '$cmd = if (${is-Linux})*'
       msbuild    = $null
@@ -97,7 +100,7 @@ Context "Build-Template" {
     @'
       steps:
       - msbuild: payload.csproj
-'@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1 | `
+'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -expected @{
       powershell = '$cmd = if (${is-Linux})*'
       msbuild    = 'payload.csproj'
@@ -114,7 +117,7 @@ Context "Build-Template" {
       steps:
       - msbuild: payload.csproj
         name: Build it all
-'@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1 | `
+'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -expected @{
       name       = 'Build it all'
       powershell = '$cmd = if (${is-Linux})*'
@@ -135,7 +138,7 @@ Context "Build-Template" {
         - echo: say
         - invoke_steps:
           - echo: hello
-'@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1 | `
+'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -sb { param($actual)
       $actual.on_error | Should -Be 'continue'
       $actual.powershell | Should -BeLike '$_.invoke_steps | Invoke-Step'
@@ -163,14 +166,14 @@ Context "Build-Template" {
             AppService:
               Locations: '[[.Files]]'
               Executable: '[[.Key]]\[[.Value]].exe'
-'@  | ConvertFrom-Yaml | ForEach-Object steps | ForEach-Object {
-        $_.each.context | Interpolate-Item -step ($_ | Build-Template) | Ensure-Template -sb { param($actual)
+'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | ForEach-Object {
+      $_.each.context | Interpolate-Item -step ($_ | Build-Template) | Ensure-Template -sb { param($actual)
         $actual.powershell | Should -BeLike 'if (-not $each.items) { throw*'
         $actual.items.Key | Should -Be 'PWSHAKE'
         $actual.items.Value | Should -Be 'PWSHAKE'
-        $actual.items.Files | Should -Be @('PWSHAKE.txt','PWSHAKE.log','PWSHAKE.key')
+        $actual.items.Files | Should -Be @('PWSHAKE.txt', 'PWSHAKE.log', 'PWSHAKE.key')
         $actual.items.ListOfFiles | Should -Be 'PWSHAKE.txt PWSHAKE.log PWSHAKE.key'
-        $actual.items.AppService.Locations | Should -Be @('PWSHAKE.txt','PWSHAKE.log','PWSHAKE.key')
+        $actual.items.AppService.Locations | Should -Be @('PWSHAKE.txt', 'PWSHAKE.log', 'PWSHAKE.key')
         $actual.items.AppService.Executable | Should -Be 'PWSHAKE\PWSHAKE.exe'
         $actual.action.echo | Should -Be 'PWSHAKE files: PWSHAKE.txt PWSHAKE.log PWSHAKE.key'
         $actual['$context'].template_key | Should -Be 'each'

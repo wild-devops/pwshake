@@ -2,13 +2,15 @@ $ErrorActionPreference = "Stop"
 
 Context "Log-Output" {
 
-    $config = @{
-        attributes = @{
-            pwshake_log_path = "TestDrive:\mock.log"
+    BeforeAll {
+        $config = @{
+            attributes = @{
+                pwshake_log_path = "TestDrive:\mock.log"
+            }
         }
-    }
 
-    $files = @("TestDrive:\mock.log", "TestDrive:\mock.log.json" )
+        $files = @("TestDrive:\mock.log", "TestDrive:\mock.log.json" )
+    }
 
     BeforeEach {
         $files | ForEach-Object { New-Item -Path $_ -ItemType File -Force }

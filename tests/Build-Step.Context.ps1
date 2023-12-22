@@ -1,39 +1,41 @@
 $ErrorActionPreference = "Stop"
 
 Context "Build-Step" {
-    $scriptPath = Get-RelativePath 'tools/publish.ps1'
+    BeforeAll {
+        $scriptPath = Join-Path $PSScriptRoot\.. -ChildPath 'tools/publish.ps1'
 
-    function Ensure-Step {
-        param(
-            [hashtable]$actual,
-            [string]$powershell = $null,
-            [string]$name = 'step_*',
-            [string]$when = '$true',
-            [string]$work_dir = $null,
-            [string]$on_error = 'throw'
-        )
-        process {
-            # Write-Host "`$actual:`n$(cty $actual)"
-            $actual | Should -BeOfType System.Collections.Hashtable
-            $actual.Keys | Should -Contain "name"
-            $actual.Keys | Should -Contain "when"
-            $actual.Keys | Should -Contain "work_dir"
-            $actual.Keys | Should -Contain "on_error"
-            $actual.Keys | Should -Contain "powershell"
-            $actual.name | Should -BeLike $name
-            $actual.when | Should -Be $when
-            if ($work_dir) {
-                $actual.work_dir | Should -Be $work_dir
-            }
-            else {
-                $actual.work_dir | Should -BeNullOrEmpty
-            }
-            $actual.on_error | Should -Be $on_error
-            if ($powershell) {
-                $actual.powershell | Should -BeLike $powershell
-            }
-            else {
-                $actual.powershell | Should -BeNullOrEmpty
+        function Ensure-Step {
+            param(
+                [hashtable]$actual,
+                [string]$powershell = $null,
+                [string]$name = 'step_*',
+                [string]$when = '$true',
+                [string]$work_dir = $null,
+                [string]$on_error = 'throw'
+            )
+            process {
+                # Write-Host "`$actual:`n$(cty $actual)"
+                $actual | Should -BeOfType System.Collections.Hashtable
+                $actual.Keys | Should -Contain "name"
+                $actual.Keys | Should -Contain "when"
+                $actual.Keys | Should -Contain "work_dir"
+                $actual.Keys | Should -Contain "on_error"
+                $actual.Keys | Should -Contain "powershell"
+                $actual.name | Should -BeLike $name
+                $actual.when | Should -Be $when
+                if ($work_dir) {
+                    $actual.work_dir | Should -Be $work_dir
+                }
+                else {
+                    $actual.work_dir | Should -BeNullOrEmpty
+                }
+                $actual.on_error | Should -Be $on_error
+                if ($powershell) {
+                    $actual.powershell | Should -BeLike $powershell
+                }
+                else {
+                    $actual.powershell | Should -BeNullOrEmpty
+                }
             }
         }
     }
@@ -83,7 +85,7 @@ Context "Build-Step" {
         $mock = @"
 name: Mock
 powershell: pwsh
-"@ | ConvertFrom-Yaml
+"@ | ConvertFrom-Yaml -AsHashTable
         $actual = Build-Step $mock
 
         Ensure-Step $actual 'pwsh' 'Mock'
@@ -93,7 +95,7 @@ powershell: pwsh
         $mock = (@"
 run_list:
 - Mock
-"@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
+"@ | ConvertFrom-Yaml -AsHashTable).run_list | Select-Object -First 1
         $actual = Build-Step $mock
 
         Ensure-Step $actual '$paths = $config.scripts_directories | *' 'Mock'
@@ -104,7 +106,7 @@ run_list:
         $mock = (@"
 run_list:
 - powershell: Mock
-"@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
+"@ | ConvertFrom-Yaml -AsHashTable).run_list | Select-Object -First 1
         $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' -name 'powershell_*'
@@ -114,7 +116,7 @@ run_list:
         $mock = (@"
 run_list:
 - cmd: Mock
-"@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
+"@ | ConvertFrom-Yaml -AsHashTable).run_list | Select-Object -First 1
         $actual = Build-Step $mock
 
         Ensure-Step $actual 'Cmd-Shell "$($_.cmd -split*' -name 'cmd_*'
@@ -126,7 +128,7 @@ run_list:
 run_list:
 - mock me:
     powershell: Mock
-"@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
+"@ | ConvertFrom-Yaml -AsHashTable).run_list | Select-Object -First 1
         $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' 'mock me'
@@ -137,7 +139,7 @@ run_list:
 run_list:
 - mock me:
     pwsh: Mock
-"@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
+"@ | ConvertFrom-Yaml -AsHashTable).run_list | Select-Object -First 1
         $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' 'mock me'
@@ -148,7 +150,7 @@ run_list:
 run_list:
 - mock me:
     cmd: Mock
-"@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
+"@ | ConvertFrom-Yaml -AsHashTable).run_list | Select-Object -First 1
         $actual = Build-Step $mock
 
         Ensure-Step $actual 'Cmd-Shell "$($_.cmd -split*' 'mock me'
@@ -160,7 +162,7 @@ run_list:
 run_list:
 - name: mock me
   cmd: Mock
-"@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
+"@ | ConvertFrom-Yaml -AsHashTable).run_list | Select-Object -First 1
         $actual = Build-Step $mock
 
         Ensure-Step $actual 'Cmd-Shell "$($_.cmd -split*' 'mock me'
@@ -173,7 +175,7 @@ run_list:
 - step:
     name: mock me
     powershell: Mock
-"@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
+"@ | ConvertFrom-Yaml -AsHashTable).run_list | Select-Object -First 1
         $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' 'mock me'
@@ -184,7 +186,7 @@ run_list:
 run_list:
 - name: mock me
   powershell: Mock
-"@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
+"@ | ConvertFrom-Yaml -AsHashTable).run_list | Select-Object -First 1
         $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' 'mock me'
@@ -195,7 +197,7 @@ run_list:
 run_list:
 - name: mock me
   pwsh: Mock
-"@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
+"@ | ConvertFrom-Yaml -AsHashTable).run_list | Select-Object -First 1
         $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' 'mock me'
@@ -209,7 +211,7 @@ run_list:
   work_dir: ./
   on_error: continue
   powershell: Mock
-'@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
+'@ | ConvertFrom-Yaml -AsHashTable).run_list | Select-Object -First 1
         $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' -name 'mock me' -when '$false' -work_dir './' -on_error 'continue'
@@ -223,7 +225,7 @@ run_list:
     work_dir: ./
     on_error: continue
     powershell: Mock
-'@ | ConvertFrom-Yaml).run_list | Select-Object -First 1
+'@ | ConvertFrom-Yaml -AsHashTable).run_list | Select-Object -First 1
         $actual = Build-Step $mock
 
         Ensure-Step $actual 'Mock' -name 'mock me' -when '$false' -work_dir './' -on_error 'continue'

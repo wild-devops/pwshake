@@ -63,7 +63,7 @@ function Interpolate-Evals {
           throw "Circular reference detected for evaluations: $($regex.Matches($json) | Sort-Object -Property Value)"
         }
 
-        $step = $json | ConvertFrom-Yaml
+        $step = $json | ConvertFrom-Yaml -AsHashTable
         if ($template_key) {
           Set-Variable -Name $template_key -Value $step -Force
         }

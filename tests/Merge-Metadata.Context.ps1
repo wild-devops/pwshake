@@ -1,8 +1,10 @@
 $ErrorActionPreference = "Stop"
 
 Context "Merge-MetaData" {
-    $metadataPath = Get-RelativePath 'examples/4.complex/v1.0/metadata'
-    $mock = @{}
+    BeforeAll {
+        $metadataPath = Join-Path $PSScriptRoot\.. -ChildPath 'examples/4.complex/v1.0/metadata'
+        $mock = @{}
+    }
 
     It "Should return a Hashtable" {
         $mock, @{} | Merge-MetaData | Should -BeOfType System.Collections.Hashtable

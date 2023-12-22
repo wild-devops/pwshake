@@ -13,19 +13,19 @@ Describe "PWSHAKE public functions" {
 
         It "Should not throw on ./examples/4.complex/v1.0/complex_pwshake.yaml" {
             {
-                Invoke-pwshake (Get-RelativePath "examples\4.complex\v1.0\complex_pwshake.yaml") `
+                Invoke-pwshake (Join-Path $PSScriptRoot\.. -ChildPath "examples\4.complex\v1.0\complex_pwshake.yaml") `
                     @("create_linux_istance","deploy_shake") `
-                    "$(Get-RelativePath 'examples\4.complex\v1.0\metadata')"
+                    "$(Join-Path $PSScriptRoot\.. -ChildPath 'examples\4.complex\v1.0\metadata')"
             } | Should -Not -Throw
         }
 
         It "Should not throw on .\examples\4.complex\v1.0\create_env_pwshake.yaml" {
             {
-                Invoke-pwshake (Get-RelativePath "examples\4.complex\v1.0\create_env_pwshake.yaml") `
+                Invoke-pwshake (Join-Path $PSScriptRoot\.. -ChildPath "examples\4.complex\v1.0\create_env_pwshake.yaml") `
                     @("create_environment") `
-                    "$(Get-RelativePath 'examples\4.complex\v1.0\metadata')"
+                    "$(Join-Path $PSScriptRoot\.. -ChildPath 'examples\4.complex\v1.0\metadata')"
             } | Should -Not -Throw
-            $pwshake_log = Get-Content (Get-RelativePath "examples\4.complex\v1.0\create_env_pwshake.log")
+            $pwshake_log = Get-Content (Join-Path $PSScriptRoot\.. -ChildPath "examples\4.complex\v1.0\create_env_pwshake.log")
             $pwshake_log | Select-String '] Here chef step\.' | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String '] Deploy role webui' | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String '] Here firewall rules for webui' | Should -Not -BeNullOrEmpty
@@ -33,23 +33,23 @@ Describe "PWSHAKE public functions" {
             $pwshake_log | Select-String '] Here firewall rules for api' | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String '] Deploy role static' | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String '] Here firewall rules for static' | Should -Not -BeNullOrEmpty
-            $pwshake_log | Select-String "] $((Get-RelativePath 'examples\4.complex\v1.0\attributes_overrides\local.yaml').Replace('\','\\'))" | Should -Not -BeNullOrEmpty
+            $pwshake_log | Select-String "] $((Join-Path $PSScriptRoot\.. -ChildPath 'examples\4.complex\v1.0\attributes_overrides\local.yaml').Replace('\','\\'))" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] 00000000-0000-0000-0000-000000000000" | Should -Not -BeNullOrEmpty
         }
 
         It 'Should not throw on the example invocation of nested includes' {
             {
-                Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'deep'
+                Invoke-pwshake (Join-Path $PSScriptRoot\.. -ChildPath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'deep'
             } | Should -Not -Throw
-            $pwshake_log = Get-Content (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.log')
+            $pwshake_log = Get-Content (Join-Path $PSScriptRoot\.. -ChildPath 'examples\4.complex\v1.0\module\pwshake.log')
             $pwshake_log | Select-String "] Hello from 'Deep buried role'" | Should -Not -BeNullOrEmpty
         }
 
         It 'Should throw on the example invocation of generated errors' {
             {
-                Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'errors' -Metadata @{py_arg='0'}
+                Invoke-pwshake (Join-Path $PSScriptRoot\.. -ChildPath 'examples\4.complex\v1.0\module\pwshake.yaml') -Roles 'errors' -Metadata @{py_arg='0'}
             } | Should -Throw 'ZeroDivisionError: division by zero'
-            $pwshake_log = Get-Content (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.log')
+            $pwshake_log = Get-Content (Join-Path $PSScriptRoot\.. -ChildPath 'examples\4.complex\v1.0\module\pwshake.log')
             $pwshake_log | Select-String "] simulate error0" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] simulate error1" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] ERROR: simulate error1" | Should -Not -BeNullOrEmpty
@@ -65,10 +65,10 @@ Describe "PWSHAKE public functions" {
 
         It 'Should throw on the example invocation of Invoke-Command' {
             {
-                Invoke-pwshake (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.yaml') `
+                Invoke-pwshake (Join-Path $PSScriptRoot\.. -ChildPath 'examples\4.complex\v1.0\module\pwshake.yaml') `
                     -Roles 'errors' -Metadata @{pwsh_arg='42'} -Verbosity 'Minimal'
             } | Should -Throw -ExceptionType ([Management.Automation.CommandNotFoundException])
-            $pwshake_log = Get-Content (Get-RelativePath 'examples\4.complex\v1.0\module\pwshake.log')
+            $pwshake_log = Get-Content (Join-Path $PSScriptRoot\.. -ChildPath 'examples\4.complex\v1.0\module\pwshake.log')
             $pwshake_log | Select-String "] simulate error0" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] simulate error1" | Should -Not -BeNullOrEmpty
             $pwshake_log | Select-String "] ERROR: simulate error1" | Should -Not -BeNullOrEmpty
@@ -92,15 +92,15 @@ Describe "PWSHAKE public functions" {
 
         It 'Should throw on the example invocation with logging to json and custom format' {
             {
-                Invoke-pwshake (Get-RelativePath 'examples\1.hello\v1.5\my_pwshake.yaml') -MetaData @{
+                Invoke-pwshake (Join-Path $PSScriptRoot\.. -ChildPath 'examples\1.hello\v1.5\my_pwshake.yaml') -MetaData @{
                     on_error='throw'
                     pwshake_json_log_format='@{msg=$_}'
                 } -Verbosity 'Information'
             } | Should -Throw 'PWSHAKE is sick!'
 
-            $pwshake_log = (Get-Content (Get-RelativePath 'examples\1.hello\v1.5\my_pwshake.log') -Raw) `
+            $pwshake_log = (Get-Content (Join-Path $PSScriptRoot\.. -ChildPath 'examples\1.hello\v1.5\my_pwshake.log') -Raw) `
                           -replace '\[\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\]\s', ''
-            (Get-Content (Get-RelativePath 'examples\1.hello\v1.5\my_pwshake.log.json') `
+            (Get-Content (Join-Path $PSScriptRoot\.. -ChildPath 'examples\1.hello\v1.5\my_pwshake.log.json') `
               | ConvertFrom-Json | ForEach-Object msg) | Should -Be $pwshake_log
         }
     }

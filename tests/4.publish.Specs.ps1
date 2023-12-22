@@ -1,6 +1,14 @@
-$ErrorActionPreference = "Stop"
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory = $false)]
+    [string]$Context = '',
 
-Describe "PWSHAKE publication" {
+    [Parameter(Mandatory = $false)]
+    [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default')]
+    [string]$Verbosity = 'Error'
+)
+
+Context "PWSHAKE publication" {
 
     BeforeEach {
         Mock Write-Host {}
@@ -12,7 +20,7 @@ Describe "PWSHAKE publication" {
         Mock Publish-Module {}
 
         # Act
-        & (Get-RelativePath "tools/publish.ps1")
+        & (Join-Path $PSScriptRoot\.. -ChildPath "tools/publish.ps1")
         # Assert
         Assert-MockCalled Write-Host -Exactly 1 -Scope It -ParameterFilter { $Object -eq "Publishing the PWSHAKE module`n" }
         Assert-MockCalled Publish-Module -Exactly 1 -Scope It -ParameterFilter { 
@@ -24,7 +32,7 @@ Describe "PWSHAKE publication" {
     It "Should twrow if `$env:PSGALLERY_API_TOKEN is empty" {
         $env:PSGALLERY_API_TOKEN = ""
         {
-            & (Get-RelativePath "tools/publish.ps1")
-        } | Should -Throw "`$attributes['api_token'] is empty."
+            & (Join-Path $PSScriptRoot\.. -ChildPath "tools\publish.ps1")
+        } | Should -Throw '$attributes[''api_token''] is empty.'
     }
 }

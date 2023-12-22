@@ -2,10 +2,12 @@ $ErrorActionPreference = "Stop"
 
 Context "Build-Item" {
 
-  $reserved_keys = (@{msbuild = ''; pwsh = '' }).Keys
-  $config = @{attributes = @{
-      pwshake_verbosity = 'Default'
-      pwshake_log_path  = "$PWD/pwshake.log"
+  BeforeAll {
+    $reserved_keys = (@{msbuild = ''; pwsh = '' }).Keys
+    $config = @{attributes = @{
+        pwshake_verbosity = 'Default'
+        pwshake_log_path  = "$PWD/pwshake.log"
+      }
     }
   }
 
@@ -35,7 +37,7 @@ Context "Build-Item" {
     $mock = @"
         steps:
         - Mock:
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'Mock'
@@ -45,7 +47,7 @@ Context "Build-Item" {
     $mock = @"
         steps:
         - Mock: payload
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'Mock' -count 2 -sb { param($actual)
@@ -58,7 +60,7 @@ Context "Build-Item" {
         steps:
         - Mock:
             msbuild:
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'Mock' -count 2 -sb { param($actual)
@@ -71,7 +73,7 @@ Context "Build-Item" {
         steps:
         - Mock:
             msbuild: payload.csproj
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'Mock' -count 2 -sb { param($actual)
@@ -83,7 +85,7 @@ Context "Build-Item" {
     $mock = @"
         steps:
         - Mock me:
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'Mock me'
@@ -93,7 +95,7 @@ Context "Build-Item" {
     $mock = @"
         steps:
         - Mock me: payload
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'Mock me' -count 2 -sb { param($actual)
@@ -106,7 +108,7 @@ Context "Build-Item" {
         steps:
         - Mock me:
             msbuild:
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'Mock me' -count 2 -sb { param($actual)
@@ -119,7 +121,7 @@ Context "Build-Item" {
         steps:
         - Mock me:
             msbuild: payload.csproj
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'Mock me' -count 2 -sb { param($actual)
@@ -142,7 +144,7 @@ Context "Build-Item" {
               deeper:
                 - payload1
                 - payload2
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'Full payload' -count 3 -sb { param($actual)
@@ -164,7 +166,7 @@ Context "Build-Item" {
     $mock = @"
         steps:
         - msbuild:
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'msbuild_*' -count 2 -sb { param($actual)
@@ -177,7 +179,7 @@ Context "Build-Item" {
         steps:
         - msbuild:
           name: Build it all
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'Build it all' -count 2 -sb { param($actual)
@@ -189,7 +191,7 @@ Context "Build-Item" {
     $mock = @"
         steps:
         - msbuild: payload.csproj
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'msbuild_*' -count 2 -sb { param($actual)
@@ -202,7 +204,7 @@ Context "Build-Item" {
         steps:
         - msbuild: payload.csproj
           name: Build it all
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'Build it all' -count 2 -sb { param($actual)
@@ -225,7 +227,7 @@ Context "Build-Item" {
             deeper:
               - payload1
               - payload2
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'Build it all' -count 3 -sb { param($actual)
@@ -250,7 +252,7 @@ Context "Build-Item" {
             name: Build it all
             msbuild:
               project: payload.csproj
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'Build it all' -count 2 -sb { param($actual)
@@ -263,7 +265,7 @@ Context "Build-Item" {
     $mock = @"
         steps:
         - pwsh: echo 42
-"@  | ConvertFrom-Yaml | ForEach-Object steps | Select-Object -First 1
+"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1
 
     $mock | Build-Item -config $config -reserved-keys $reserved_keys `
     | Ensure-Item -name 'pwsh_*' -count 2 -sb { param($actual)

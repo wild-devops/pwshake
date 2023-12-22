@@ -1,27 +1,17 @@
-$ErrorActionPreference = "Stop"
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory = $false)]
+    [string]$Context = '',
 
-Describe "PWSHAKE internal functions" {
+    [Parameter(Mandatory = $false)]
+    [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default')]
+    [string]$Verbosity = 'Error'
+)
 
-    try {
-        # since all internal functions need to peek some existing config and then change it
-        ${global:pwshake-context}.invocations.Push(@{
-                arguments = @{}
-                config    = @{
-                    attributes = @{
-                        pwshake_verbosity = ${global:pwshake-context}.options.tests_verbosity
-                        work_dir       = "$PWD"
-                        pwshake_path      = "$PWD"
-                        pwshake_log_path  = "TestDrive:\mock.log"
-                    }
-                }
-                context = @{json_sb=(New-Object 'Text.StringBuilder');thrown=$false}
-            })
+BeforeDiscovery {
+    $tests = Get-ChildItem -Path $PSScriptRoot -Filter *$Context*.Context.ps1 -Recurse | ForEach-Object FullName | Sort-Object
+}
 
-        Get-ChildItem -Path $PSScriptRoot -Filter "*$(${global:pwshake-context}.options.tests_context)*.Context.ps1" | ForEach-Object {
-            . $_.FullName
-        }
-    }
-    finally {
-        ${global:pwshake-context}.invocations.Pop() | Out-Null
-    }
+Describe "<_>" -Tag 'internal' -ForEach $tests {
+    . $_
 }

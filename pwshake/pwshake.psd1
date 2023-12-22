@@ -52,7 +52,8 @@
 
     # Modules that must be imported into the global environment prior to importing this module
     RequiredModules   = @(
-        @{ModuleName = "powershell-yaml"; RequiredVersion = "0.4.2"; Guid = "6a75a662-7f53-425a-9777-ee61284407da" }
+        @{ModuleName = "psyml"; RequiredVersion = "1.0.0"; Guid = "a88e2e67-a937-4d98-a4d3-0b03d3ade169" }
+        @{ModuleName = "functional"; RequiredVersion = "0.0.4"; Guid = "91dd1b87-d0cf-4831-8806-3e5d1033c857" }
     )
 
     # Assemblies that must be loaded prior to importing this module

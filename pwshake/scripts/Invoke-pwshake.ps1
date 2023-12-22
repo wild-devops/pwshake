@@ -85,17 +85,51 @@ function Invoke-pwshake {
 }
 
 function Peek-Invocation {
-    return ${global:pwshake-context}.invocations.Peek()
-}
-
-function Peek-Context{
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
+    param()
+    if (${pwshake-context}.invocations.Count -eq 0) {
+        return $null
+    }
+    return ${pwshake-context}.invocations.Peek()
+  }
+  
+  function Peek-Context {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
+    param()
     return (Peek-Invocation).context
-}
-
-function Peek-Config {
+  }
+  
+  function Peek-Config {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
+    param()
     return (Peek-Invocation).config
-}
-
-function Peek-Verbosity {
-    return [PWSHAKE.VerbosityLevel](Peek-Invocation).config.attributes.pwshake_verbosity
-}
+  }
+  
+  function Peek-Data {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
+    param()
+    return (Peek-Context).data
+  }
+  
+  function Peek-Options {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
+    param()
+    return (Peek-Context).options
+  }
+  
+  function Peek-Pipelines {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
+    param()
+    return (Peek-Context).pipelines
+  }
+  
+  function Peek-Verbosity {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
+    param()
+    return [PWSHAKE.VerbosityLevel](Coalesce (Peek-Config).attributes.pwshake_verbosity, 'Default')
+  }
+  function Peek-LogPath {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
+    param()
+    return (Coalesce (Peek-Config).attributes.pwshake_log_path, ("$PWD/pwshake.log" | f-cnvp))
+  }

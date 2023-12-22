@@ -1,11 +1,13 @@
 $ErrorActionPreference = "Stop"
 
 Context "NullFormat" {
-    $context = @{
-        value='expected'
-        format=' -f $_'
+    BeforeAll {
+        $context = @{
+            value  = 'expected'
+            format = ' -f $_'
+        }
+        $expected = ' -f expected'
     }
-    $expected=' -f expected'
 
     It "Should return `$null on `$null" {
         (NullFormat) | Should -BeNullOrEmpty
