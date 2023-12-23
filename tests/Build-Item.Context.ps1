@@ -9,23 +9,23 @@ Context "Build-Item" {
         pwshake_log_path  = "$PWD/pwshake.log"
       }
     }
-  }
 
-  function Ensure-Item {
-    param (
-      [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
-      [hashtable]$item,
-      $count = 1,
-      $name,
-      [scriptblock]$sb = {}
-    )
-    process {
-      $item | Should -Not -BeNullOrEmpty
-      $item | Should -BeOfType [hashtable]
-      $item.Keys.Count | Should -Be $count
-      $item.Keys | Should -Contain 'name'
-      $item.name | Should -BeLike $name
-      & $sb $item
+    function Ensure-Item {
+      param (
+        [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
+        [hashtable]$item,
+        $count = 1,
+        $name,
+        [scriptblock]$sb = {}
+      )
+      process {
+        $item | Should -Not -BeNullOrEmpty
+        $item | Should -BeOfType [hashtable]
+        $item.Keys.Count | Should -Be $count
+        $item.Keys | Should -Contain 'name'
+        $item.name | Should -BeLike $name
+        & $sb $item
+      }
     }
   }
 
