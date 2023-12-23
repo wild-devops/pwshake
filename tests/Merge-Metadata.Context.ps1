@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 Context "Merge-MetaData" {
     BeforeAll {
-        $metadataPath = Join-Path $PSScriptRoot\.. -ChildPath 'examples/4.complex/v1.0/metadata'
+        $metadataPath = "$PWD/examples/4.complex/v1.0/metadata"
         $mock = @{}
     }
 
@@ -17,15 +17,15 @@ Context "Merge-MetaData" {
         
     }
 
-    It "Should read from a file '$metadataPath'" {
+    It "Should read from a file '<metadataPath>'" {
         (Merge-MetaData $mock $metadataPath).attributes.base_path | Should -Be "c:\qwe\rty\u\n#escaped"
     }
 
-    It "Should read from a file '$metadataPath.yaml'" {
+    It "Should read from a file '<metadataPath>.yaml'" {
         (Merge-MetaData $mock "$metadataPath.yaml").attributes.base_path | Should -Be "c:\qwe\rty\u\n#escaped\yaml"
     }
 
-    It "Should read from a file '$metadataPath.json'" {
+    It "Should read from a file '<metadataPath>.json'" {
         (Merge-MetaData $mock "$metadataPath.json").attributes.base_path | Should -Be "c:\qwe\rty\u\n#escaped\json"
     }
 

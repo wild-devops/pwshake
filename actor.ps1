@@ -149,11 +149,11 @@ $pwshake = Merge-PipeLine @(
         $value = $value | f-null | ForEach-Object { (ConvertTo-Json $_ -Compress -Depth 99).Trim('"') }
         $json = $json.Replace("{{$substitute}}", "$value")
       }
-      $context = ConvertFrom-Yaml -AsHashTable $json
+      $context = $json | f-cfj
       $json = ConvertTo-Json $context -Depth 99 -Compress
     } while ($regex.Match($json).Success)
 
-      ($json | ConvertFrom-Yaml -AsHashTable) | &$next
+    $json | f-cfj | &$next
   }
   , { param([Parameter(Mandatory, ValueFromPipeline)]$config, $next)
     Write-Line "Process config"

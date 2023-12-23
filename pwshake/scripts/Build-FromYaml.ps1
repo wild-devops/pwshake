@@ -9,7 +9,7 @@ function Build-FromYaml {
 
         try {
             $path = Resolve-Path $path
-            return Get-Content $path -Raw | ConvertFrom-Yaml -AsHashTable
+            return Get-Content $path -Raw | f-cfy
         }
         catch [YamlDotNet.Core.YamlException] {
             throw "File '$path' is corrupted: $($_.Exception.InnerException.ToString().Split("`n")[0])"

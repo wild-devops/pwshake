@@ -2,8 +2,8 @@ $ErrorActionPreference = "Stop"
 
 Context "Override-Attributes" {
     BeforeAll {
-        $configPath = Join-Path $PSScriptRoot\.. -ChildPath 'examples/4.complex/v1.0/complex_pwshake.yaml'
-        (Peek-Invocation).config = $config = Load-Config -config @{} -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
+        $configPath = "$PWD/examples/4.complex/v1.0/complex_pwshake.yaml"
+        (Peek-Invocation).config = $config = Load-Config -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
     }
 
     It "Should return a Hashtable" {

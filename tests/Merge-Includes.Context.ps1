@@ -2,8 +2,8 @@ $ErrorActionPreference = "Stop"
 
 Context "Merge-Includes" {
     BeforeAll {
-        $configPath = Join-Path $PSScriptRoot\.. -ChildPath 'examples/4.complex/v1.0/includes/module1.yaml'
-        (Peek-Invocation).config = $config = Load-Config -config @{} -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
+        $configPath = "$PWD/examples/4.complex/v1.0/includes/module1.yaml"
+        (Peek-Invocation).config = $config = Load-Config -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
 
         $config.includes = @(
             "module2.json"
@@ -56,6 +56,6 @@ Context "Merge-Includes" {
         )
     
         { $config | Merge-Includes -yamlPath $configPath } `
-        | Should -Throw "Circular reference detected for includes in:"
+        | Should -Throw "Circular reference detected for includes in: $('module3.json' | Build-Path -config $config)"
     }
 }

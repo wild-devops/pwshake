@@ -2,10 +2,10 @@ $ErrorActionPreference = "Stop"
 
 Context "Arrange-Tasks" {
     BeforeAll {
-        $configPath = Join-Path $PSScriptRoot\.. -ChildPath 'examples/4.complex/v1.0/module/pwshake.yaml'
-        (Peek-Invocation).config = $config = Load-Config -config @{} -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
+        $configPath = "$PWD/examples/4.complex/v1.0/module/pwshake.yaml"
+        (Peek-Invocation).config = $config = Load-Config -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
 
-        $config.tasks.role1 = @{name = 'role1';depends_on=@('errors')}
+        $config.tasks.role1 = @{name = 'role1'; depends_on = @('errors') }
         $config.invoke_tasks = @('role1')
     }
 
@@ -16,7 +16,7 @@ Context "Arrange-Tasks" {
     It "Should throw on circular reference in depends_on" {
         $config.tasks.role1.depends_on = @('role1')
         $config.tasks.role2 = @{
-            name = 'role2'
+            name       = 'role2'
             depends_on = @('role1')
         }
 

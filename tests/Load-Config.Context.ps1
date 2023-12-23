@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 Context "Load-Config" {
     BeforeAll {
-        $configPath = Join-Path $PSScriptRoot\.. -ChildPath 'examples/4.complex/v1.0/complex_pwshake.yaml'
+        $configPath = "$PWD/examples/4.complex/v1.0/complex_pwshake.yaml"
         (Peek-Invocation).config = $actual = Load-Config -config @{} -ConfigPath $configPath | Merge-Metadata -yamlPath $configPath
     }
 
@@ -26,7 +26,9 @@ Context "Load-Config" {
         $actual.attributes.pwshake_log_path | Should -Be "$(($configPath).Replace('yaml','log'))"
     }
 
-    It "Should throw if $configPath.mock file doesn't exist" {
-        { Load-Config "$configPath.mock" } | Should -Throw "$configPath.mock"
+    It "Should throw if <configPath>.mock file doesn't exist" {
+        {
+            Load-Config -config @{} -ConfigPath "$configPath.mock"
+        } | Should -Throw "Cannot find path '$configPath.mock' because it does not exist."
     }
 }

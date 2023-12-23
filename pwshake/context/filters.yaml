@@ -71,11 +71,20 @@ pwshake-context:
     f-null: |-
       { param($f = '{0}') $_ | Where-Object { !!$_ } | ForEach-Object { $f -f $_} }
 
+    f-cfy: |-
+      { $_ | ConvertFrom-Yaml -AsHashtable }
+
+    f-cty: |-
+      { $_ | ConvertTo-Yaml }
+
+    f-cfj: |-
+      { $_ | ConvertFrom-Json -Depth 99 -AsHashtable }
+
     f-ctj: |-
       { $_ | ConvertTo-Json -Depth 99 }
 
     f-ctj-c: |-
-      { $_ | ConvertTo-Json -Compress -Depth 99 }
+      { $_ | ConvertTo-Json -Depth 99 -Compress }
 
     f-log-lvl: |-
       { param([PWSHAKE.VerbosityLevel]$level)
@@ -110,8 +119,8 @@ pwshake-context:
       { $_ | f-log-lvl -level 'Verbose' }
 
     f-log-dbg: |-
-      {
-        if ("$(Peek-verbosity)" -eq 'Debug') {
+      { param([switch]$force)
+        if (("$(Peek-verbosity)" -eq 'Debug') -or $force) {
           "DEBUG: $_" | Log-Output -ForegroundColor Cyan | Out-Null
         }
       }

@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 Context "Build-MsBuild" {
     BeforeAll {
-        $msbuildPath = Join-Path $PSScriptRoot\.. -ChildPath 'examples/5.templates/example.msbuild.proj'
+        $msbuildPath = "$PWD/examples/5.templates/example.msbuild.proj"
     }
 
     It "Should return `$null on `$null " {
@@ -10,7 +10,7 @@ Context "Build-MsBuild" {
     }
 
     It "Should return a full step structure with default template items" {
-        $actual = Build-Step ("msbuild:" | ConvertFrom-Yaml -AsHashTable)
+        $actual = Build-Step ("msbuild:" | f-cfy)
 
         $actual | Should -BeOfType System.Collections.Hashtable
         $actual.Keys | Should -Contain "msbuild"
@@ -36,13 +36,13 @@ Context "Build-MsBuild" {
     }
 
     It "Should return $msbuildPath in 'msbuild' key" {
-        $actual = Build-Step ("msbuild: $msbuildPath" | ConvertFrom-Yaml -AsHashTable)
+        $actual = Build-Step ("msbuild: $msbuildPath" | f-cfy)
 
         $actual.project | Should -Be $msbuildPath
     }
 
     It "Should return $msbuildPath by given 'project' key" {
-        $actual = Build-Step ("msbuild:`n  project: $msbuildPath" | ConvertFrom-Yaml -AsHashTable)
+        $actual = Build-Step ("msbuild:`n  project: $msbuildPath" | f-cfy)
 
         $actual.project | Should -Be $msbuildPath
     }
@@ -60,7 +60,7 @@ Context "Build-MsBuild" {
           options:
           - Option1
           - Option2
-"@ | ConvertFrom-Yaml -AsHashTable)
+"@ | f-cfy)
 
         $actual.project | Should -Be $msbuildPath
         "$($actual.targets)" | Should -Be "Mock1 Mock2"
@@ -69,7 +69,7 @@ Context "Build-MsBuild" {
     }
 
     It "Should throw if project file does not exist" {
-        { "msbuild: mock1" | ConvertFrom-Yaml -AsHashTable | Invoke-Step } | Should -Throw 'Unknown path: mock1'
-        { "msbuild:`n  project: mock2" | ConvertFrom-Yaml -AsHashTable | Invoke-Step } | Should -Throw 'Unknown path: mock2'
+        { "msbuild: mock1" | f-cfy | Invoke-Step } | Should -Throw 'Unknown path: mock1'
+        { "msbuild:`n  project: mock2" | f-cfy | Invoke-Step } | Should -Throw 'Unknown path: mock2'
     }
 }

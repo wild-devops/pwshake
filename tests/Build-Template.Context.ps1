@@ -46,7 +46,7 @@ Context "Build-Template" {
     @'
       steps:
       - echo:
-'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@  | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -expected @{
       powershell = 'if ($_.echo -match*'
       echo       = $null
@@ -58,7 +58,7 @@ Context "Build-Template" {
     @'
         steps:
         - echo: payload
-'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@  | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -expected @{
       powershell = 'if ($_.echo -match*'
       echo       = 'payload'
@@ -71,7 +71,7 @@ Context "Build-Template" {
       steps:
       - echo: something
         name: Say something, Mia
-'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@  | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -expected @{
       powershell = 'if ($_.echo -match*'
       echo       = 'something'
@@ -84,7 +84,7 @@ Context "Build-Template" {
     @"
       steps:
       - msbuild:
-"@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+"@  | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -expected @{
       powershell = '$cmd = if (${is-Linux})*'
       msbuild    = $null
@@ -100,7 +100,7 @@ Context "Build-Template" {
     @'
       steps:
       - msbuild: payload.csproj
-'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@  | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -expected @{
       powershell = '$cmd = if (${is-Linux})*'
       msbuild    = 'payload.csproj'
@@ -117,7 +117,7 @@ Context "Build-Template" {
       steps:
       - msbuild: payload.csproj
         name: Build it all
-'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@  | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -expected @{
       name       = 'Build it all'
       powershell = '$cmd = if (${is-Linux})*'
@@ -138,7 +138,7 @@ Context "Build-Template" {
         - echo: say
         - invoke_steps:
           - echo: hello
-'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@  | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
       Build-Template | Ensure-Template -sb { param($actual)
       $actual.on_error | Should -Be 'continue'
       $actual.powershell | Should -BeLike '$_.invoke_steps | Invoke-Step'
@@ -166,7 +166,7 @@ Context "Build-Template" {
             AppService:
               Locations: '[[.Files]]'
               Executable: '[[.Key]]\[[.Value]].exe'
-'@  | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | ForEach-Object {
+'@  | f-cfy | ForEach-Object steps | ForEach-Object {
       $_.each.context | Interpolate-Item -step ($_ | Build-Template) | Ensure-Template -sb { param($actual)
         $actual.powershell | Should -BeLike 'if (-not $each.items) { throw*'
         $actual.items.Key | Should -Be 'PWSHAKE'

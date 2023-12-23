@@ -12,9 +12,12 @@ param (
 )
 
 BeforeDiscovery {
+    
+    # filter f-cfy { $_ | ConvertFrom-Yaml -AsHashtable }
+
     if (-not ${pwshake-context}.invocations.Count) {
         Get-Module pwshake -ListAvailable | Remove-Module -Force | Out-Null
-        Import-Module $PSScriptRoot\..\pwshake\pwshake.psm1 -Force -DisableNameChecking -WarningAction SilentlyContinue
+        Import-Module $PWD/pwshake/pwshake.psm1 -Force -DisableNameChecking -WarningAction SilentlyContinue
     }
 
     $specs = Get-ChildItem -Path $PSScriptRoot -Filter *$Group*.Specs.ps1 | Sort-Object | ForEach-Object {

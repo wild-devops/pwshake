@@ -75,7 +75,7 @@ function Interpolate-Item {
             throw "Circular reference detected for evaluations: $($regex.Matches($json) | Sort-Object -Property Value)"
           }
 
-          $context = $json | ConvertFrom-Yaml -AsHashTable
+          $context = $json | f-cfj
         }
       }
       "Interpolate-Item:Loop-Out:$(@{'$context'=$context} | ConvertTo-Yaml)" | f-log-dbg

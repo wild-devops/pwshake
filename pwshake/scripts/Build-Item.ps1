@@ -36,9 +36,9 @@ function Build-Item {
     if (($item.Keys.Count -eq 1) -and ($null -eq $temlate_key)) {
       $key = "$($item.Keys)"
       $content = $item.$($key)
-      "Build-Item:`$content:`n$(cty $content)" | f-log-dbg
+      "Build-Item:`$content:`n$($content | f-ctj)" | f-log-dbg
       if (${reserved-keys} -notcontains $key) {
-        if ($null -eq $content) {
+        if (($null -eq $content) -or ('' -eq $content)) {
           # 'Some name':
           $item = @{name = $key }
         }

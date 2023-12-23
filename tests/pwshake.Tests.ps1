@@ -5,7 +5,7 @@ param (
     [string]$Group = '',
 
     [Parameter(Mandatory = $false)]
-    [ValidateSet('Arrange-Tasks', 'Build-Config', 'Build-Item', 'Build-MsBuild', 'Build-Path', 'Build-Pipeline', 'Build-Step', 'Build-Task', 'Build-Template', 'Interpolate-Attributes', 'Interpolate-Evals', 'Interpolate-Item', 'Load-Config', 'Log-Output', 'Merge-Arguments', 'Merge-Includes', 'Override-Attributes', 'Process-Output', 'Process-Pipeline', 'Process-Step', 'Process-Task', 'Validate-ScriptBlock')]
+    [ValidateSet('Arrange-Tasks', 'Build-Config', 'Build-Item', 'Build-MsBuild', 'Build-Path', 'Build-Pipeline', 'Build-Step', 'Build-Task', 'Build-Template', 'Interpolate-Attributes', 'Interpolate-Evals', 'Interpolate-Item', 'Load-Config', 'Log-Output', 'Merge-Arguments', 'Merge-Includes', 'Merge-MetaData', 'Override-Attributes', 'Process-Output', 'Process-Pipeline', 'Process-Step', 'Process-Task', 'Validate-ScriptBlock')]
     [string]$Context = '',
 
     [Parameter(Mandatory = $false)]
@@ -22,7 +22,7 @@ foreach ($dep in $mod.RequiredModules) {
   $aval = Get-Module -Name  $dep.ModuleName -ListAvailable | ? Version -eq $dep.RequiredVersion
   if (-not $aval) {
     $options = @{
-      Name            = '$dep.ModuleName'
+      Name            = $dep.ModuleName
       Repository      = 'PsGallery'
       RequiredVersion = $dep.RequiredVersion
       Scope           = 'CurrentUser'

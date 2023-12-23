@@ -1,7 +1,7 @@
 pwshake-context:
   templates:
     msbuild:
-      project: $[[Coalesce $_.msbuild, '/version']]
+      project: $[[Coalesce ($_.msbuild | ? {!!$_}), '/version']]
       targets:
       properties:
       options:

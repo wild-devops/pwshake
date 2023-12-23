@@ -10,7 +10,7 @@ Context "Interpolate-Evals" {
         @'
 steps:
 - echo:
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@ | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
             Interpolate-Evals | Should -BeOfType [Hashtable]
     }
 
@@ -18,7 +18,7 @@ steps:
         @'
 steps:
 - echo: $[[$true]]
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@ | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
             Interpolate-Evals | ForEach-Object echo | Should -Be 'True'
     }
 
@@ -26,7 +26,7 @@ steps:
         @'
 steps:
 - echo: $[["$($true)"]]
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@ | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
             Interpolate-Evals | ForEach-Object echo | Should -Be 'True'
     }
 
@@ -35,7 +35,7 @@ steps:
 steps:
 - version: 1.2.3.4
   echo: $[[$step.version.Replace('.','_')]]
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@ | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
             Interpolate-Evals | ForEach-Object echo | Should -Be '1_2_3_4'
     }
 
@@ -44,7 +44,7 @@ steps:
 steps:
 - version: 1.2.3.4
   echo: $[["$($step.version.Replace('.','_'))"]]
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@ | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
             Interpolate-Evals | ForEach-Object echo | Should -Be '1_2_3_4'
     }
 
@@ -58,7 +58,7 @@ steps:
   - '4'
   echo: $[[$step.semver -join '.']]
   version: $[echo["$($step.echo.Replace('.','_'))"]]
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@ | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
             Interpolate-Evals | ForEach-Object {
             $_.echo | Should -Be '1.2.3.4'
             $_.version | Should -Be '1_2_3_4'
@@ -74,7 +74,7 @@ steps:
   - 3
   - 4
   version: '{{$step.semver -join "."}}'
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@ | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
             Interpolate-Evals -regex '{{(?<eval>.*?)}}' | ForEach-Object {
             $_.version | Should -Be '1.2.3.4'
             $_ | Should -BeOfType [Hashtable]
@@ -98,7 +98,7 @@ steps:
   - 4
   echo: $[[$step.semver]]
   version: $[echo[$step.echo -join '.']]
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1)
+'@ | f-cfy | ForEach-Object steps | Select-Object -First 1)
         $mock['$context'].json_sb = New-Object 'Text.StringBuilder'
         $mock['$context'].json_sb.Append('mock')
 
@@ -133,7 +133,7 @@ steps:
   - 4
   echo: $[[$mock.semver]]
   version: $[echo[$mock.echo -join '.']]
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@ | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
             Interpolate-Evals | ForEach-Object {
             # Assert
             $_ | Should -BeOfType [Hashtable]

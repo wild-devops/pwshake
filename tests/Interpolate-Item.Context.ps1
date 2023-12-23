@@ -10,7 +10,7 @@ Context "Interpolate-Item" {
         @'
         steps:
         - echo:
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | `
+'@ | f-cfy | ForEach-Object steps | Select-Object -First 1 | `
         Interpolate-Item | Should -BeOfType [Hashtable]
     }
 
@@ -18,7 +18,7 @@ Context "Interpolate-Item" {
         @'
         steps:
         - echo: '[[.]]'
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | ForEach-Object {
+'@ | f-cfy | ForEach-Object steps | Select-Object -First 1 | ForEach-Object {
             'mock' | Interpolate-Item -step $_ | ForEach-Object echo | Should -Be 'mock'
         }
     }
@@ -27,7 +27,7 @@ Context "Interpolate-Item" {
         @'
         steps:
         - echo: '[[.Key]]'
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | ForEach-Object {
+'@ | f-cfy | ForEach-Object steps | Select-Object -First 1 | ForEach-Object {
             (@{mock=$true}.GetEnumerator() | Select-Object -First 1) `
             | Interpolate-Item -step $_ | ForEach-Object echo | Should -Be 'mock'
         }
@@ -36,8 +36,8 @@ Context "Interpolate-Item" {
     It "Should evaluate member expression on hashtable" {
         @'
         steps:
-        - echo: '[[.Mock]]'
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object steps | Select-Object -First 1 | ForEach-Object {
+        - echo: '[[.mock]]'
+'@ | f-cfy | ForEach-Object steps | Select-Object -First 1 | ForEach-Object {
             @{mock=$true} | Interpolate-Item -step $_ | ForEach-Object echo | Should -BeTrue
         }
     }
@@ -50,7 +50,7 @@ Context "Interpolate-Item" {
         - three
         steps:
         - echo: '[[.]]'
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object {
+'@ | f-cfy | ForEach-Object {
             $echo = $_ | ForEach-Object steps | Select-Object -First 1
             $_ | ForEach-Object input | ForEach-Object {
                 $_ | Interpolate-Item -step $echo | ForEach-Object echo | Should -Be $_
@@ -66,7 +66,7 @@ Context "Interpolate-Item" {
             five: six
         steps:
         - echo: '[[.Key]]:[[.Value]]'
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object {
+'@ | f-cfy | ForEach-Object {
             $echo = $_ | ForEach-Object steps | Select-Object -First 1
             $_.input.GetEnumerator() | ForEach-Object {
                 $_ | Interpolate-Item -step $echo | ForEach-Object echo | Should -Be "$($_.Key)`:$($_.Value)"
@@ -94,7 +94,7 @@ Context "Interpolate-Item" {
             items: $[[$_.Files]]
             action:
                 echo: '[[.Key]] files: [[.ListOfFiles]]'
-'@ | ConvertFrom-Yaml -AsHashTable | ForEach-Object {
+'@ | f-cfy | ForEach-Object {
             $item = $_.context
             ($item | Interpolate-Item -step $_.tasks[0]).echo | Should -Be 'Hello PWSHAKE!'
              $item | Interpolate-Item -step $_.tasks[1] | ForEach-Object each | ForEach-Object {
