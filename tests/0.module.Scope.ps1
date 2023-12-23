@@ -1,7 +1,6 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $false)]
-    [ValidateSet('internal', 'examples', 'public', 'asserts', 'publish')]
     [string]$Group = '',
 
     [Parameter(Mandatory = $false)]
@@ -15,32 +14,38 @@ param (
 BeforeDiscovery {
     if (-not ${pwshake-context}.invocations.Count) {
         Get-Module pwshake -ListAvailable | Remove-Module -Force | Out-Null
-        Import-Module $PSScriptRoot\..\pwshake\pwshake.psm1 -Force -DisableNameChecking -WarningAction SilentlyContinue -Verbose
+        Import-Module $PSScriptRoot\..\pwshake\pwshake.psm1 -Force -DisableNameChecking -WarningAction SilentlyContinue
     }
 
     $specs = Get-ChildItem -Path $PSScriptRoot -Filter *$Group*.Specs.ps1 | Sort-Object | ForEach-Object {
-        @{ path = $_.FullName; cntx = $Context }
+        @{ path = $_.FullName; context = $context; verbosity = $verbosity }
     }
-    ${pwshake-context}.invocations.Push(@{
-        arguments = @{}
-        options   = @{
-            max_depth = 15
-        }
-        config    = @{
-            attributes = @{
-                pwshake_verbosity = $Verbosity
-                work_dir          = "$PWD"
-                pwshake_path      = "$PWD"
-                pwshake_log_path  = "TestDrive:\mock.log"
+}
+
+BeforeAll {
+    InModuleScope pwshake { param($group, $context, $verbosity)
+        # to use in internal specs
+        ${pwshake-context}.invocations.Push(@{
+            arguments = @{}
+            config    = @{
+                attributes = @{
+                    pwshake_verbosity = $verbosity
+                    work_dir       = "$PWD"
+                    pwshake_path      = "$PWD"
+                    pwshake_log_path  = "TestDrive:\mock.log"
+                }
             }
-        }
-    })
+            context = Build-Context
+        })
+        # to speed up testing of recursions
+        (Peek-Options).max_depth = 15
+    } -Parameters @{ group = $Group; context = $Context; verbosity = $Verbosity }
 }
 
 Describe "<path>" -ForEach $specs {
-    InModuleScope pwshake { param([string]$path, [string]$cntx)
+    InModuleScope pwshake { param($path, $context, $verbosity)
         # dot source actual tests
-        . $path -Context $cntx
+        . $path -context $context -verbosity $verbosity
     } -Parameters $_
 }
 
