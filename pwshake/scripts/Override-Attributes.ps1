@@ -1,4 +1,5 @@
 function Override-Attributes {
+  [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
   [CmdletBinding()]
   param (
     [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
@@ -15,9 +16,11 @@ function Override-Attributes {
         }
         $type = $item.Keys[0]
         $path = Build-Path -Path "$($item.$($type))"
-      } elseif ($item -is [string]) {
+      }
+      elseif ($item -is [string]) {
         $path = Resolve-Path -Path "$($config.attributes.pwshake_path)\attributes_overrides\$item.yaml"
-      } else {
+      }
+      else {
         throw "Unknown type of 'attributes_overrides:' item: '$($item.GetType())'."
       }
 

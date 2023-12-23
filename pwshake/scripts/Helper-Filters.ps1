@@ -1,3 +1,6 @@
+filter script:f-cfy {
+  $_ | psyml\ConvertFrom-Yaml -AsHashtable
+}
 filter script:tee-wh-yaml {
   Write-Host "tee-wh-yaml:`n$(ConvertTo-Yaml $_)"; $_
 }

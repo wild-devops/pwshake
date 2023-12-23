@@ -22,9 +22,9 @@ function Process-Step { param([Parameter(Mandatory, ValueFromPipeline)]$step, $n
 function Start-Pipeline { param([Parameter(Mandatory, ValueFromPipeline)]$context, $next)
   process {
     Write-Line "Start pipeline"
-    Write-Host "`$context:`n$($_ | cty)" -ForegroundColor DarkGreen
+    Write-Host "`$context:`n$($_ | psyml\ConvertTo-Yaml)" -ForegroundColor DarkGreen
     try {
-      Get-Content -Path $context -Raw | cfy | &$next
+      Get-Content -Path $context -Raw | psyml\ConvertFrom-Yaml -AsHashtable | &$next
     }
     catch {
       $_.ScriptStackTrace.Split([Environment]::NewLine) | f-null | Select-Object -First 5 | ForEach-Object {

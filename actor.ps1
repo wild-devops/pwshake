@@ -124,7 +124,7 @@ $pwshake = Merge-PipeLine @(
   (Get-Item function:$($f_list[0])).ScriptBlock
   , { param([Parameter(Mandatory, ValueFromPipeline)]$context, $next)
     Write-Line "Load resources"
-    Write-Host "`$context:`n$($context.resources | cty)" -ForegroundColor DarkGreen
+    Write-Host "`$context:`n$($context.resources | psyml\ConvertTo-Yaml)" -ForegroundColor DarkGreen
     $context.resources | ForEach-Object pwsh | ForEach-Object {
       &([scriptblock]::Create($_)) *>&1
     }
@@ -132,7 +132,7 @@ $pwshake = Merge-PipeLine @(
   }
   , { param([Parameter(Mandatory, ValueFromPipeline)]$context, $next)
     Write-Line "Interpolate attributes"
-    Write-Host "`$context:`n$($context | cty)" -ForegroundColor DarkGreen
+    Write-Host "`$context:`n$($context | psyml\ConvertTo-Yaml)" -ForegroundColor DarkGreen
     $json = $context | ConvertTo-Json -Depth 99 -Compress
     $regex = [regex]'{{(?<subst>(?:(?!{{).)+?)}}'
     do {
@@ -149,15 +149,15 @@ $pwshake = Merge-PipeLine @(
         $value = $value | f-null | ForEach-Object { (ConvertTo-Json $_ -Compress -Depth 99).Trim('"') }
         $json = $json.Replace("{{$substitute}}", "$value")
       }
-      $context = $json | f-cfj
+      $context = $json | ConvertFrom-Json
       $json = ConvertTo-Json $context -Depth 99 -Compress
     } while ($regex.Match($json).Success)
 
-    $json | f-cfj | &$next
+    $json | ConvertFrom-Json | &$next
   }
   , { param([Parameter(Mandatory, ValueFromPipeline)]$config, $next)
     Write-Line "Process config"
-    Write-Host "Config:`n$($config | cty)"
+    Write-Host "Config:`n$($config | psyml\ConvertTo-Yaml)"
     foreach ($task_key in $config.invoke_tasks) {
       Write-Line "Task: $task_key"
       # Write-Line (''.PadRight(38 - "$task_key".Length,' ') + "$task_key".PadRight(38,' '))
@@ -167,7 +167,7 @@ $pwshake = Merge-PipeLine @(
     }
   }
   , { param([Parameter(Mandatory, ValueFromPipeline)]$task, $next)
-    Write-Host "Task:`n$($task | cty)"
+    Write-Host "Task:`n$($task | psyml\ConvertTo-Yaml)"
     foreach ($step in $task) {
       $step | &$next
     }
@@ -175,7 +175,7 @@ $pwshake = Merge-PipeLine @(
   , { param([Parameter(Mandatory, ValueFromPipeline)]$step, $next)
     process {
       '' | Write-Line 6>&1 | Write-Host -ForegroundColor Yellow
-      Write-Host "Step:`n$($_ | cty)"
+      Write-Host "Step:`n$($_ | psyml\ConvertTo-Yaml)"
       try {
         $step | &$next
       }

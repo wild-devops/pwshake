@@ -1,4 +1,5 @@
 function Build-Path {
+  [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
   [CmdletBinding()]
   [OutputType([string])]
   param (

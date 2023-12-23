@@ -9,7 +9,9 @@ tasks:
       python: --version
   - 'Inline python':
       python:
-        inline: print('Hello pwshake!');
+        inline: >-
+          import sys;
+          print('Hello pwshake!', file=sys.stdout, flush=True)
   - 'Explicit options':
       python:
         options: '{{pwshake_path}}/hello.py again'

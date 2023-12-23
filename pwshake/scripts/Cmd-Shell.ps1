@@ -1,4 +1,5 @@
 function Cmd-Shell {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
     [CmdletBinding()]
     param(
         [Parameter(Position=0, Mandatory=$false, ValueFromPipeline=$true)]

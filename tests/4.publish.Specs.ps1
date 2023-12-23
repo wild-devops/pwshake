@@ -20,7 +20,7 @@ Context "PWSHAKE publication" {
         Mock Publish-Module {}
 
         # Act
-        & (Join-Path $PSScriptRoot\.. -ChildPath "tools/publish.ps1")
+        & "$PWD\tools\publish.ps1"
         # Assert
         Assert-MockCalled Write-Host -Exactly 1 -Scope It -ParameterFilter { $Object -eq "Publishing the PWSHAKE module`n" }
         Assert-MockCalled Publish-Module -Exactly 1 -Scope It -ParameterFilter { 
@@ -32,7 +32,7 @@ Context "PWSHAKE publication" {
     It "Should twrow if `$env:PSGALLERY_API_TOKEN is empty" {
         $env:PSGALLERY_API_TOKEN = ""
         {
-            & (Join-Path $PSScriptRoot\.. -ChildPath "tools\publish.ps1")
-        } | Should -Throw '$attributes[''api_token''] is empty.'
+            & "$PWD\tools\publish.ps1"
+        } | Should -Throw '$attributes.api_token is empty'
     }
 }

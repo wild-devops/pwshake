@@ -10,7 +10,7 @@ $ErrorActionPreference = "Stop"
 Write-Host "Publishing the PWSHAKE module`n"
 
 if (-not $attributes['api_token']) {
-  throw "`$attributes['api_token'] is empty."
+  throw '$attributes.api_token is empty'
 }
 
 Publish-Module -Path "$PSScriptRoot/../pwshake" -Repository PSGallery -NuGetApiKey $attributes['api_token'] -ErrorAction Stop -Force

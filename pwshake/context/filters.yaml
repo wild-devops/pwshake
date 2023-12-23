@@ -72,10 +72,10 @@ pwshake-context:
       { param($f = '{0}') $_ | Where-Object { !!$_ } | ForEach-Object { $f -f $_} }
 
     f-cfy: |-
-      { $_ | ConvertFrom-Yaml -AsHashtable }
+      { $_ | psyml\ConvertFrom-Yaml -AsHashtable }
 
     f-cty: |-
-      { $_ | ConvertTo-Yaml }
+      { $_ | psyml\ConvertTo-Yaml }
 
     f-cfj: |-
       { $_ | ConvertFrom-Json -Depth 99 -AsHashtable }

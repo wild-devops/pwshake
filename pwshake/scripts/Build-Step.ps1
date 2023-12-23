@@ -1,4 +1,5 @@
 function Build-Step {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
     [CmdletBinding()]
     [OutputType([hashtable])]
     param (

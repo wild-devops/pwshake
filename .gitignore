@@ -1,3 +1,4 @@
+*.dll
 *.log
 *.log.json
 .*/

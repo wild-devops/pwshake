@@ -1,7 +1,7 @@
 function Coalesce {
     [CmdletBinding()]
     param (
-      [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
+      [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $false)]
       [object[]]$values = $null
     )    
     process {

@@ -15,8 +15,6 @@ foreach ($script in $scripts) {
 [bool]${is-Windows} = ([System.Environment]::OSVersion.Platform -match 'Win')
 [bool]${is-Linux} = (-not ${is-Windows})
 
-filter f-cfy { $_ | ConvertFrom-Yaml -AsHashtable }
-
 $PSScriptRoot_ = $PSScriptRoot # to use inside Build-Context
 [hashtable]${global:pwshake-context} = Build-Context
 
