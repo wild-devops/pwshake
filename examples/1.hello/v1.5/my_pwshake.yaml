@@ -1,16 +1,16 @@
 resources:
 - pwsh: |-
-    $env:PWSHAKE='PWSHAKE'
+    $script:hello_to='PWSHAKE'
 
 attributes:
   pwshake_verbosity: Normal
-  hello_to: '{{$($env:PWSHAKE)}}'
+  hello_to: '{{$($hello_to)}}'
   on_error: continue
   pwshake_log_to_json: true
 
 tasks:
   say_hello:
-  - echo: "Hello {{hello_to}}!"
+  - echo: 'Hello {{hello_to}}!'
   - pwsh: throw '{{hello_to}} is sick!'
     on_error: '{{on_error}}'
   - msbuild: myproj.csproj

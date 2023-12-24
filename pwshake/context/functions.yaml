@@ -1,0 +1,31 @@
+pwshake-context:
+  functions:
+    $teamcity-block-opened: |-
+      { param(
+          [Parameter(Mandatory, ValueFromPipeline)]
+          [hashtable]${@context},
+          [scriptblock]${@next}
+        )
+        $formatted = "##teamcity[blockOpened name='$(Escape-TeamCityText ${@context}.Value)']"
+        "@teamcity-block-opened:`${is-teamcity}:${is-teamcity}`n`${@context}.Value:$(${@context}.Value)`n`${@next}:${@next}" | f-log-dbg
+        if (${is-teamcity}) {
+          $formatted | f-log-min | &${@next}
+        }  else {
+          ${@context} | &${@next}
+        }
+      }
+
+    $teamcity-block-closed: |-
+      { param(
+          [Parameter(Mandatory, ValueFromPipeline)]
+          [hashtable]${@context},
+          [scriptblock]${@next}
+        )
+        $formatted = "##teamcity[blockClosed name='$(Escape-TeamCityText ${@context}.Value)']"
+        "@teamcity-block-closed:`${is-teamcity}:${is-teamcity}`n`${@context}.Value:$(${@context}.Value)`n`${@next}:${@next}" | f-log-dbg
+        if (${is-teamcity}) {
+          $formatted | f-log-min | &${@next}
+        }  else {
+          ${@context} | &${@next}
+        }
+      }

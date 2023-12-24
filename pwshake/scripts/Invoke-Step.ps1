@@ -46,8 +46,7 @@ function Invoke-Step {
         "`tBypassed because of -DryRun: $($config.attributes.pwshake_dry_run)" | f-log-info
         return;
       }
-      Invoke-Expression $step.powershell *>&1 -ErrorVariable log-Err | Tee-Object -Variable log-Out `
-      | f-log-min
+      &([scriptblock]::Create($step.powershell)) *>&1 -ErrorVariable log-Err | Tee-Object -Variable log-Out | f-log-min
       if ((($LASTEXITCODE -ne 0) -or (-not $?)) -and ($step.on_error -eq 'throw')) {
         $lastErr = (${log-Err} + ${log-Out}) | Where-Object { $_ -is [Management.Automation.ErrorRecord] } | Select-Object -Last 1
         if (-not $lastErr) {
@@ -65,7 +64,7 @@ function Invoke-Step {
     }
     finally {
       ${global:pwshake-context}.hooks['invoke-step'].onExit | ForEach-Object {
-        "Invoke-Step:finally:{$_}" | f-log-dbg; Invoke-Expression $_
+        "Invoke-Step:finally:{$_}" | f-log-dbg -f; Invoke-Expression $_
       }
     }
   }

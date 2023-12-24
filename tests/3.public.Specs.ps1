@@ -1,4 +1,12 @@
-$ErrorActionPreference = "Stop"
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory = $false)]
+    [string]$Context = '',
+
+    [Parameter(Mandatory = $false)]
+    [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default')]
+    [string]$Verbosity = 'Error'
+)
 
 Describe "PWSHAKE public functions" {
 

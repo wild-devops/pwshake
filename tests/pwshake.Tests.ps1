@@ -70,7 +70,7 @@ filter f-log-err {
 }
 
 if ($result.FailedCount) {
-    $result.Failed | ConvertTo-Json -Depth 3 | Set-Content $PSScriptRoot/../tools/pester-result.log.json -Force
+    # $result.Failed | ConvertTo-Json -Depth 33 | Set-Content $PSScriptRoot/../tools/pester-result.log.json -Force
     $result.Failed | ForEach-Object {
       "Describing $($_.Block.Parent.Root.Blocks[0].ExpandedPath)" | f-log-err -c 'DarkGreen'
       "  Context $($_.Block.ExpandedName)" | f-log-err -c 'DarkCyan'

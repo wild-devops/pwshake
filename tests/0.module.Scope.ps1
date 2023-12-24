@@ -2,8 +2,10 @@
 param (
     [Parameter(Mandatory = $false)]
     [string]$Group = '',
+
     [Parameter(Mandatory = $false)]
     [string]$Context = '',
+    
     [Parameter(Mandatory = $false)]
     [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default')]
     [string]$Verbosity = 'Error'

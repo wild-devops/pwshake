@@ -59,7 +59,7 @@ curl -O https://raw.githubusercontent.com/wild-devops/pwshake/master/pwshake.ps1
 ```
 touch my_pwshake.yaml
 ```
-* Populate the `my_pwshake.yaml` with required configuration
+* Populate the `my_pwshake.yaml` with required configuration:
 
 ```
 # Attributes are used as common parameters source for executable scripts

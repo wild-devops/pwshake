@@ -85,8 +85,8 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
       cmd: npm publish
   ```
 
-* ### - `powershell:` element implicit shortenings
-  Since the `powershell:` element contains inline code that can be too long and\or complex to use it as the meaningful name, so the `name:` property for these shortenings is generated from the step type and incremented number to distinct each other inline step in the **PWSHAKE** execution log.
+* ### - `[powershell|pwsh]:` element implicit shortenings
+  Since the `powershell:` (or `pwsh:` alias) element contains inline code that can be too long and\or complex to use it as the meaningful name, so the `name:` property for these shortenings is generated from the step type and incremented number suffix to distinct each other inline step in the **PWSHAKE** execution log.
 
   Example:
   ```
@@ -117,31 +117,31 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   ```
 
 * ### - `[when|only|except|skip_on]:` element implicit shortenings
-  Since the `[when|only|except|skip_on]:` elements contain inline code that evaluated by **PWSHAKE** engine to make a decision whether or not to execute a particular **step** they can be omitted in general because of the default value is always set to `$true` (`-not ($true) ` for negation aliases `except:`, `skip_on:`).
+  Since the `when:`, `only:`, `except:`, `skip_on:` elements contain inline code that evaluated by **PWSHAKE** engine to make a decision whether or not to execute a particular **step** they can be omitted in general because of the default value is always set to `$true` (`-not $true` for negative aliases `except:`, `skip_on:`).
 
   Example:
   ```
-  - powershell: rm ./ -recurse -force
+  - pwsh: rm ./ -recurse -force
   ```
   This is the same as:
   ```
-  - name: powershell_1
+  - name: pwsh_1
     powershell: rm ./ -recurse -force
-    when: $true
+    when: '$true'
   ```
 
   The only case when `[when|only|except|skip_on]:` elements should be populated is the requirement to evaluate some condition for the **step** execution.
   
   Example:
   ```
-  - powershell: rm ./ -recurse -force
+  - pwsh: rm ./ -recurse -force
     skip_on: ($env:SOME_VALUE -eq '42')
   ```
   This is the same as:
   ```
-  - name: powershell_1
+  - name: pwsh_1
     powershell: rm ./ -recurse -force
-    when: -not ($env:SOME_VALUE -eq '42')
+    when: "-not ($env:SOME_VALUE -eq '42')"
   ```
 
 * ### - `invoke_tasks:` element explicit content

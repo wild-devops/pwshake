@@ -7,7 +7,6 @@ param (
     [ValidateSet('Error', 'Warning', 'Minimal', 'Information', 'Verbose', 'Debug', 'Normal', 'Default')]
     [string]$Verbosity = 'Error'
 )
-$ErrorActionPreference = "Stop"
 
 BeforeDiscovery {
     $examples = Get-ChildItem -Path "$PWD\examples" -File -Filter "*${Context}*_pwshake.yaml" -Recurse | ForEach-Object FullName | Sort-Object

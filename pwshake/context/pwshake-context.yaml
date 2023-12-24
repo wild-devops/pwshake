@@ -2,7 +2,7 @@ pwshake-context:
   module:
     name: pwshake
     path: $[[$PSScriptRoot_]]
-    version: $[[(Get-Content $PSScriptRoot_/pwshake.psd1 -Raw | Invoke-Expression).ModuleVersion]]
+    version: $[[(Get-Content $PSScriptRoot_\pwshake.psd1 -Raw | Invoke-Expression).ModuleVersion]]
 
   options:
     max_depth: 100
@@ -33,3 +33,5 @@ pwshake-context:
   secured: []
 
   invocations: $[[New-Object Collections.Stack]]
+
+  parent: null # DO NOT REMOVE!!!

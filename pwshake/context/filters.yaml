@@ -71,21 +71,6 @@ pwshake-context:
     f-null: |-
       { param($f = '{0}') $_ | Where-Object { !!$_ } | ForEach-Object { $f -f $_} }
 
-    f-cfy: |-
-      { $_ | psyml\ConvertFrom-Yaml -AsHashtable }
-
-    f-cty: |-
-      { $_ | psyml\ConvertTo-Yaml }
-
-    f-cfj: |-
-      { $_ | ConvertFrom-Json -Depth 99 -AsHashtable }
-
-    f-ctj: |-
-      { $_ | ConvertTo-Json -Depth 99 }
-
-    f-ctj-c: |-
-      { $_ | ConvertTo-Json -Depth 99 -Compress }
-
     f-log-lvl: |-
       { param([PWSHAKE.VerbosityLevel]$level)
         if ((Peek-verbosity) -ge $level) {

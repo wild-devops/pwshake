@@ -4,7 +4,7 @@ pwshake-context:
       powershell: |
         $symlinks.GetEnumerator() | ForEach-Object {
           $params = @{
-            ItemType ==: (${is-Linux}) ? 'SymbolicLink' : 'Junction'
+            ItemType = &{if (${is-Linux}) {'SymbolicLink'} else {'Junction'}}
             Path = (Build-Path $_.Key -Unresolved)
             Target = (Build-Path $_.Value)
           }

@@ -19,6 +19,7 @@ filter script:f-tmstmp {
 filter script:sb-append {
   param([Text.StringBuilder]$sb = (Peek-Context).json_sb)
   if (!!$sb) {
+    # Write-Host -ForegroundColor DarkMagenta ":sb-append: $_"
     $sb.AppendLine("$_") | Out-Null
   }
 }
