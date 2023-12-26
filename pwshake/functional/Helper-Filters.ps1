@@ -18,13 +18,14 @@ filter f-log-err { [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseAppr
   ":In:" | f-log-dbg #'(Peek-Verbosity)', '$_'
   if ((Peek-Verbosity) -lt [VerbosityLevel]::Error) { return }
   $Host.UI.WriteLine([ConsoleColor]::Red, [Console]::BackgroundColor, "$($_ | f-error)")
-  if ((Peek-Verbosity) -eq [VerbosityLevel]::Debug) { 
-    $_.ScriptStackTrace.Split([Environment]::NewLine) | Select-Object -First 5 | ForEach-Object {
+  if ((Peek-Verbosity) -le [VerbosityLevel]::Debug) { 
+    $_.ScriptStackTrace.Split([Environment]::NewLine) | Select-Object -First 3 | ForEach-Object {
       $Host.UI.WriteLine([ConsoleColor]::DarkYellow, [Console]::BackgroundColor, "TRACE: $_")
     }
   }
   ":Out:" | f-log-dbg #'(Peek-Verbosity)'
 }
+
 filter f-error { [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]param()
 @"
 ERROR: $_

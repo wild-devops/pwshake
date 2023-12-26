@@ -1,3 +1,6 @@
+[CmdletBinding()]
+param ([string]$Verbosity='Normal')
+
 $ErrorActionPreference = "Stop"
 
 . ./f-tag-c.ps1
@@ -93,12 +96,12 @@ $arguments = @{
   ConfigPath = '.\examples\1.hello\v1.5\my_pwshake.yaml'
   Tasks      = @()
   MetaData   = @{}
-  Verbosity  = 'Debug'
+  Verbosity  = $Verbosity
   DryRun     = $false
 }
 
 $script:PSScriptRoot_ = '/workdir/pwshake'
-Invoke-actor @arguments -ErrorAction Continue
+Invoke-actor @arguments
 @(
   'gci variable:actor*'
 ) | f-wh-iex

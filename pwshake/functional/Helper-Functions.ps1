@@ -50,7 +50,7 @@ function Peek-Verbosity {
   [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
   param()
   "Peek-Verbosity:In:`n$((Peek-Config).attributes | f-cty)" | f-wh-r -skip
-  return [VerbosityLevel](Coalesce (Peek-Config).attributes.pwshake_verbosity, (Peek-Context).options.pwshake_verbosity, 'Default')
+  return [VerbosityLevel](Coalesce (Peek-Config).attributes.pwshake_verbosity, (Peek-Context).options.pwshake_verbosity, 'Debug')
 }
 function Peek-LogPath {
   [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]

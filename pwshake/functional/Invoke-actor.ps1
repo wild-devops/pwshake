@@ -50,8 +50,7 @@ function Invoke-actor {
   Process {
     ":In:" | f-log-dbg
     try {
-      ${global:actor-context} | f-cty | Tee-Object -FilePath $PWD\actor-context.yaml `
-        | f-cfy | ForEach-Object { $_.Remove('parent'); $_ } | % arguments | % ConfigPath | f-wh-b
+      ${global:actor-context} | % { $_.Remove('parent'); $_ } | % arguments | % ConfigPath | f-wh-c
       throw 'qu-qu'
     }
     catch {
@@ -74,7 +73,9 @@ function Invoke-actor {
       $_ | f-log-err
     }
     finally {
-      ":Out:" | f-log-dbg -skip # <<< skipped because of ${global:actor-context} already doesn't exist
+      if (${global:actor-context}) {
+        ":Out:" | f-log-dbg '${global:actor-context}' # inform about unexpected behaviour
+      }
     }
   }
 }
