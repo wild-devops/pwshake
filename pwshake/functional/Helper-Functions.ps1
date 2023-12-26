@@ -18,7 +18,7 @@ function Peek-Context {
   while ($null -ne $context.parent) {
     $context = $context.parent
   }
-  "Peek-Context:Out:`n$('$context' | f-vars-cty)" | f-wh-g
+  "$(Peek-Caller-Name):Out:`n$('$context' | f-vars-cty)" | f-wh-g -skip
   return $context
 }
 
@@ -49,12 +49,19 @@ function Peek-Pipelines {
 function Peek-Verbosity {
   [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
   param()
-  return [VerbosityLevel](Coalesce (Peek-Config).attributes.pwshake_verbosity, 'Default')
+  "Peek-Verbosity:In:`n$((Peek-Config).attributes | f-cty)" | f-wh-r -skip
+  return [VerbosityLevel](Coalesce (Peek-Config).attributes.pwshake_verbosity, (Peek-Context).options.pwshake_verbosity, 'Default')
 }
 function Peek-LogPath {
   [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
   param()
-  return (Coalesce (Peek-Config).attributes.pwshake_log_path, ("$PWD/pwshake.log" | f-cnvp))
+  return (Coalesce (Peek-Config).attributes.pwshake_log_path, ("$PWD\pwshake.log" | f-cnvp))
+}
+function Peek-Caller-Name {
+  [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
+  param([int]$deep=1,[int]$first=1)
+  return (Get-PSCallStack | Select-Object -Skip 1 -First $deep `
+    | ForEach-Object FunctionName | Reverse-Array | Select-Object -First $first) -join ':'
 }
 
 [scriptblock]${script:@next-stub} = {
@@ -105,6 +112,6 @@ function f-vars-cty {
   [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
   param([Parameter(ValueFromPipeline)][string]$var)
   begin   {$result=@()}
-  process {$result+=@{"$var"=(Invoke-Expression $var)}}
-  end     {,$result | f-cty}
+  process {$result+=@{$var=(Invoke-Expression $var)}}
+  end     {if ($result) {($result | f-cty).Trim()}}
 }

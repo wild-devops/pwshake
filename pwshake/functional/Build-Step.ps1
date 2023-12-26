@@ -7,8 +7,7 @@ function Build-Step {
         [object]$step
     )
     process {
-        $ErrorActionPreference = "Stop"
-        "Build-Step:In:`$_`n$(ConvertTo-Yaml $_)" | f-log-dbg
+        ":In:" | f-log-dbg '$_'
 
         if ($null -eq $step) {
             return $null
@@ -24,7 +23,7 @@ function Build-Step {
             } | Merge-Object -Strategy Override
         }
 
-        "Build-Step:Out:$(@{'$step'=$step} | ConvertTo-Yaml)" | f-log-dbg
+        ":Out:" | f-log-dbg '$step'
         return $step
     }
 }

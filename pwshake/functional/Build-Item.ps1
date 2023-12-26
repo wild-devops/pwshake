@@ -10,9 +10,7 @@ function Build-Item {
     [hashtable]$config = (Peek-Config)
   )
   process {
-    $ErrorActionPreference = "Stop"
-    "Build-Item:In:`$_:`n$(cty $_)" | f-log-dbg
-
+    ":In:" | f-log-dbg '$_'
     switch ($item) {
       {$null -eq $item} {
         return $null

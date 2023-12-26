@@ -7,7 +7,6 @@ function Interpolate-Attributes {
     [hashtable]$config
   )
   process {
-    $ErrorActionPreference = "Stop"
     $json = $config | ConvertTo-Json -Depth 99 -Compress
     $regex = [regex]'{{(?<subst>(?:(?!{{).)+?)}}'
     $counter = 0

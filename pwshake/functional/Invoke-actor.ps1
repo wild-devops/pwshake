@@ -23,7 +23,7 @@ function Invoke-actor {
     [switch]$DryRun
   )
   Begin {
-    "Invoke-actor:Begin:In:" | f-log-dbg
+    ":In:" | f-log-dbg -skip # <<< skipped because of ${global:actor-context} doesn't exist yet
     try {
       if (-not ${global:actor-context}) {
         ${global:actor-context} = (Build-Context)
@@ -43,25 +43,28 @@ function Invoke-actor {
     catch {
       $_ | f-log-err
     }
-    "Invoke-actor:Begin:Out:`nvariable:\$('Get-Variable -Name actor-context -Scope Global -ErrorAction SilentlyContinue' | f-wh-b -skip -passthru | Invoke-Expression | % Name) = ${global:actor-context}" | f-log-dbg
+    finally {
+      ":Out:" | f-log-dbg
+    }
   }
   Process {
-    "Invoke-actor:Process:In:" | f-log-dbg
+    ":In:" | f-log-dbg
     try {
       ${global:actor-context} | f-cty | Tee-Object -FilePath $PWD\actor-context.yaml `
-        | f-cfy | ForEach-Object { $_.Remove('parent'); $_ } | f-cty | f-wh-b
+        | f-cfy | ForEach-Object { $_.Remove('parent'); $_ } | % arguments | % ConfigPath | f-wh-b
       throw 'qu-qu'
     }
     catch {
+      ":catch:" | f-log-dbg
       $_ | f-log-err
     }
     finally {
+      ":Out:" | f-log-dbg
       ${global:actor-context} = ${global:actor-context}.parent
     }
-    "Invoke-actor:Process:Out:`nvariable:\$('Get-Variable -Name actor-context -Scope Global -ErrorAction SilentlyContinue' | f-wh-b -skip -passthru | Invoke-Expression | % Name) = ${global:actor-context}" | f-log-dbg
   }
   End {
-    "Invoke-actor:End:In:`nvariable:\$('Get-Variable -Name actor-context -Scope Global -ErrorAction SilentlyContinue' | f-wh-b -skip -passthru | Invoke-Expression | % Name) = ${global:actor-context}" | f-log-dbg
+    ":In:" | f-log-dbg -skip # <<< skipped because of ${global:actor-context} always contains 'Debug' mode
     try {
       if ($null -eq ${global:actor-context}.parent) {
         'Remove-Variable -Name actor-context -Scope Global -Force' | f-wh-b -skip -passthru | Invoke-Expression
@@ -70,6 +73,8 @@ function Invoke-actor {
     catch {
       $_ | f-log-err
     }
-    "Invoke-actor:End:Out:`nvariable:\$('Get-Variable -Name actor-context -Scope Global -ErrorAction SilentlyContinue' | f-wh-b -skip -passthru | Invoke-Expression | % Name) = ${global:actor-context}" | f-log-dbg
+    finally {
+      ":Out:" | f-log-dbg -skip # <<< skipped because of ${global:actor-context} already doesn't exist
+    }
   }
 }

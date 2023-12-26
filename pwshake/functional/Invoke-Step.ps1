@@ -13,9 +13,9 @@ function Invoke-Step {
     process {
         $ErrorActionPreference = "Continue" # to collect all ErrorMessage-s from stderr (2>&1)
         try {
-            "Invoke-Step:In:`n$(@{'$_'=$_} | ConvertTo-Yaml)" | f-log-dbg
+            ":In:" | f-log-dbg '$_'
             $step = $_ = $_ | Build-Step
-            "Invoke-Step:Build-Step:`n$(@{'$step'=$step} | ConvertTo-Yaml)" | f-log-dbg
+            ":Build-Step:" | f-log-dbg '$step'
 
             $caption = "Execute step: $($step.name)"
             $caption | f-teamcity-o | f-log-info
@@ -48,7 +48,7 @@ function Invoke-Step {
                 "`tBypassed because of -DryRun: $($config.attributes.pwshake_dry_run)" | f-log-info
                 return;
             }
-            "Invoke-Step:powershell: {`n$($step.powershell)}" | f-log-dbg
+            ":powershell:" | f-log-dbg '$step.powershell'
             &([scriptblock]::Create($step.powershell)) *>&1 -ErrorVariable log-Err | Tee-Object -Variable log-Out | f-log-min
             if (((-not $?) -or ($LASTEXITCODE -ne 0)) -and ($step.on_error -eq 'throw')) {
                 $lastErr = (${log-Err} + ${log-Out}) | Where-Object { $_ -is [Management.Automation.ErrorRecord] } | Select-Object -Last 1

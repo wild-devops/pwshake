@@ -10,8 +10,6 @@ function New-Context {
     [hashtable]$config
   )
   process {
-    $ErrorActionPreference = "Stop"
-
     $context = @{}
     Get-ChildItem -Path (Split-Path $PSScriptRoot -Parent) -Include *.yaml, *.yml, *.json -Exclude pwshake.yaml -Recurse -File | ForEach-Object FullName | Sort-Object -Unique | ForEach-Object {
       $context = $context, ($_ | Build-FromYaml) | Merge-Object -Strategy Override

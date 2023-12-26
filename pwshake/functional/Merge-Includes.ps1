@@ -12,7 +12,6 @@ function Merge-Includes {
     [int]$depth = 0
   )
   process {
-    $ErrorActionPreference = "Stop"
     if ($depth -gt (Peek-Options).max_depth) {
       throw "Circular reference detected for includes in: $yamlPath"
     }

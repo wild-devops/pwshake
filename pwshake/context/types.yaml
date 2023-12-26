@@ -1,20 +1,20 @@
 pwshake-context:
   types:
-  - type: |-
-      namespace PWSHAKE {
-        public enum VerbosityLevel {
-          Quiet,
-          Error,
-          Warning,
-          Minimal,
-          Information,
-          Verbose,
-          Debug,
-          Normal = Information,
-          Silent = Quiet,
-          Default = Verbose
-        }
-      }
+  # - type: |-
+  #     namespace PWSHAKE {
+  #       public enum VerbosityLevel {
+  #         Quiet,
+  #         Error,
+  #         Warning,
+  #         Minimal,
+  #         Information,
+  #         Verbose,
+  #         Debug,
+  #         Normal = Information,
+  #         Silent = Quiet,
+  #         Default = Verbose
+  #       }
+  #     }
 
   - type: |-
       using System;

@@ -19,8 +19,7 @@ function Interpolate-Evals {
     [string]$template_key = $null
   )
   process {
-    $ErrorActionPreference = "Stop"
-    "Interpolate-Evals:In:$(@{'$_'=$_;'$template_key'="$template_key"} | cty)" | f-log-dbg
+    ":In:" | f-log-dbg '$_', '$template_key'
 
     $context_tmp = $step['$context']
     if (-not $template_key) {
@@ -78,7 +77,7 @@ function Interpolate-Evals {
       if ($context_tmp) { $step['$context'] = $context_tmp }
     }
 
-    "Interpolate-Evals:Out:$(@{'$step'=$step} | cty)" | f-log-dbg
+    ":Out:" | f-log-dbg '$step'
     return $step
   }
 }

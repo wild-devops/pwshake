@@ -23,8 +23,8 @@ function Build-Config {
 
     $config.attributes.pwshake_path = "$(Split-Path $ConfigPath -Resolve)"
     $config.attributes.pwshake_log_path = Coalesce $config.attributes.pwshake_log_path, (Join-Path -Path $config.attributes.pwshake_path -ChildPath "$((Resolve-Path $ConfigPath | Get-Item).BaseName).log").ToString()
-    $config.attributes.pwshake_module_path = "$(${pwshake-context}.module.path)"
-    $config.attributes.pwshake_version = "$(${pwshake-context}.module.version)"
+    $config.attributes.pwshake_module_path = "$((Peek-Context).module.path)"
+    $config.attributes.pwshake_version = "$((Peek-Context).module.version)"
     $config.attributes.work_dir = Coalesce $config.attributes.work_dir, "$(Get-Location)"
     $config.attributes.pwshake_verbosity = Coalesce $config.attributes.pwshake_verbosity, $Verbosity
     if ($DryRun) {

@@ -17,10 +17,7 @@ function Interpolate-Item {
       @{'\[\[\.(?<eval>.*?)\]\]' = '$context.' })
   )
   process {
-    $ErrorActionPreference = "Stop"
-    "Interpolate-Item:In:$(@{'$_'=$_} | ConvertTo-Yaml)" | f-log-dbg
-    "Interpolate-Item:In:$(@{'$step'=$step} | ConvertTo-Yaml)" | f-log-dbg
-
+    ":In:" | f-log-dbg '$_', '$step'
     if (-not $item) {
       return $step
     }
@@ -38,15 +35,15 @@ function Interpolate-Item {
       $context = Merge-Hashtables $step $item
     }
     $context = $context | Interpolate-Evals
-    "Interpolate-Item:Eval-Context:$(@{'$context'=$context} | ConvertTo-Yaml)" | f-log-dbg
+    ":Eval-Context:$(@{'$context'=$context} | ConvertTo-Yaml)" | f-log-dbg
 
     try {
       $json = $context | ConvertTo-Json -Depth 99
-      "Interpolate-Item:Merge:`$json = $json" | f-log-dbg
+      ":Merge:`$json = $json" | f-log-dbg
       $counter = 0
       foreach ($regex in $rules.Keys) {
         while ($json -match $regex) {
-          "Interpolate-Item:$(@{'$matches'=$matches}  | ConvertTo-Yaml)" | f-log-dbg
+          ":$(@{'$matches'=$matches}  | ConvertTo-Yaml)" | f-log-dbg
           $subst = $matches.0
           $eval = $matches.eval
           if (-not $eval) {
@@ -64,16 +61,16 @@ function Interpolate-Item {
           if ($value -isnot [string]) {
             # assign complex values via json
             $value = $value | ConvertTo-Json -Depth 99
-            "Interpolate-Item:Out:ConvertTo-Json:`$value = $value" | f-log-dbg
+            ":Out:ConvertTo-Json:`$value = $value" | f-log-dbg
             # it might be former string, so:
             $json = $json.Replace("`"$subst`"", $value)
           }
           else {
             $value = $value | f-escape-json
           }
-          "Interpolate-Item:Replace:In:`n$(@{subst=`"$subst`";eval=`"$eval`";value=`"$value`"} | ConvertTo-Yaml)" | f-log-dbg
+          ":Replace:In:`n$(@{subst=`"$subst`";eval=`"$eval`";value=`"$value`"} | ConvertTo-Yaml)" | f-log-dbg
           $json = $json.Replace($subst, $value)
-          "Interpolate-Item:Replace:Out:$(@{'$json'=`"$json`"} | ConvertTo-Yaml)" | f-log-dbg
+          ":Replace:Out:$(@{'$json'=`"$json`"} | ConvertTo-Yaml)" | f-log-dbg
 
           if ($counter++ -ge (Peek-Options).max_depth) {
             throw "Circular reference detected for evaluations: $($regex.Matches($json) | Sort-Object -Property Value)"
@@ -82,7 +79,7 @@ function Interpolate-Item {
           $context = $json | ConvertFrom-Yaml
         }
       }
-      "Interpolate-Item:Loop-Out:$(@{'$context'=$context} | ConvertTo-Yaml)" | f-log-dbg
+      ":Loop-Out:" | f-log-dbg '$context'
     }
     finally {
       if ($context_tmp) { $context['$context'] = $context_tmp }
@@ -91,7 +88,7 @@ function Interpolate-Item {
       }
     }
 
-    "Interpolate-Item:Out:$(@{'$context'=$context} | ConvertTo-Yaml)" | f-log-dbg
+    ":Out:" | f-log-dbg '$context'
     return $context
   }
 }

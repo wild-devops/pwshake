@@ -1,23 +1,42 @@
-filter f-log-err {
+filter f-log-dbg { [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
+  param([string[]]$values, [ConsoleColor]$Color = 'DarkYellow', [switch]$Force, [switch]$PassThru, [switch]$Skip)
+  "$(Peek-Caller-Name 2 2):In:" | f-wh-g -skip
+  if ($Skip) { return }
+  if (("$(Peek-Verbosity)" -eq 'Debug') -or $force -or $values) {
+    @{ # for further 'Log-Output' usage
+      Value           = "DEBUG: $(Peek-Caller-Name 2)${_}$($values | ? {!!$_} | f-vars-cty | % { "`n$_" })";
+      ForegroundColor = $Color
+    } | ForEach-Object Value | f-wh -Color $Color
+    # } | Log-Output | ForEach-Object Value | ForEach-Object {
+    # }
+    "$(Peek-Caller-Name 2 2):Out" | f-wh-c -skip
+    if ($PassThru) { $_ }
+  }
+}
+
+filter f-log-err { [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]param()
+  ":In:" | f-log-dbg #'(Peek-Verbosity)', '$_'
   if ((Peek-Verbosity) -lt [VerbosityLevel]::Error) { return }
-  $Host.UI.WriteLine([ConsoleColor]'Red', [Console]::BackgroundColor, ($_ | f-error))
+  $Host.UI.WriteLine([ConsoleColor]::Red, [Console]::BackgroundColor, "$($_ | f-error)")
   if ((Peek-Verbosity) -eq [VerbosityLevel]::Debug) { 
     $_.ScriptStackTrace.Split([Environment]::NewLine) | Select-Object -First 5 | ForEach-Object {
       $Host.UI.WriteLine([ConsoleColor]::DarkYellow, [Console]::BackgroundColor, "TRACE: $_")
     }
   }
+  ":Out:" | f-log-dbg #'(Peek-Verbosity)'
 }
-filter tee-wh-yaml {
-  Write-Host "tee-wh-yaml:`n$($_ | f-cty)"; $_
-}
-filter f-error {
-  @"
+filter f-error { [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]param()
+@"
 ERROR: $_
 $($_.InvocationInfo.PositionMessage)
 + CategoryInfo : $($_.CategoryInfo.Category): ($($_.CategoryInfo.TargetName):$($_.CategoryInfo.TargetType)) [], $($_.CategoryInfo.Reason)
 + FullyQualifiedErrorId : $($_.FullyQualifiedErrorId)
 "@
 }
+
+##########################################
+############  UNCHECKED!!  ###############
+##########################################
 filter f-tmstmp {
   param($f = "$(Get-Date -format '[yyyy-MM-dd HH:mm:ss]') {0}", $skip = $false)
   $_ | Where-Object { !!$_ } | ForEach-Object { if (!$skip) { $f -f $_ } else { $_ } }
@@ -119,15 +138,6 @@ filter f-wh-y {
 }
 
 filter f-null { param($f = '{0}') $_ | Where-Object { !!$_ } | ForEach-Object { $f -f "$_" } }
-filter f-error {
-  $msg = @"
-ERROR: $_
-$($_.InvocationInfo.PositionMessage)
-+ CategoryInfo : $($_.CategoryInfo.Category): ($($_.CategoryInfo.TargetName):$($_.CategoryInfo.TargetType)) [], $($_.CategoryInfo.Reason)
-+ FullyQualifiedErrorId : $($_.FullyQualifiedErrorId)
-"@
-  $Host.UI.WriteLine([ConsoleColor]::DarkYellow, [Console]::BackgroundColor, ($msg))
-}
 
 filter f-mask-secured {
   param($mask = '**********')
@@ -151,20 +161,6 @@ filter f-build-context {
     $ret[$key] = $_.$($key)
   }
   return $ret
-}
-filter f-log-dbg {
-  param([ConsoleColor]$Color = 'DarkCyan', [switch]$Force, [switch]$PassThru)
-  # "f-log-dbg:In:`n$('$_' | f-vars-cty)" | f-wh-g
-  if (("$(Peek-Verbosity)" -eq 'Debug') -or $force) {
-    @{ # for further 'Log-Output' usage
-      Value           = "DEBUG: $_";
-      ForegroundColor = $Color
-    } | ForEach-Object Value | f-wh -Color $Color
-    # } | Log-Output | ForEach-Object Value | ForEach-Object {
-    #   "f-log-dbg:Out:`n$('$_' | f-vars-cty)" | f-wh-c
-    # }
-    if ($PassThru) { $_ }
-  }
 }
 filter f-cfy {
   $_ | psyml\ConvertFrom-Yaml -AsHashtable
@@ -191,4 +187,8 @@ function f-tag-c {
   param($context, $next)
   Write-Host "`$next:c={$next}"
   "<c>$(&$next $context)</c>"
+}
+
+filter tee-wh-yaml {
+  Write-Host "tee-wh-yaml:`n$($_ | f-cty)"; $_
 }

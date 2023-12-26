@@ -13,8 +13,6 @@ function Arrange-Tasks {
     [int]$depth = 0
   )
   process {
-    $ErrorActionPreference = "Stop"
-
     if ($depth -gt (Peek-Options).max_depth) {
       throw "Circular reference detected for dependant tasks in: $depends_on"
     }

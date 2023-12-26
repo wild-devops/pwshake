@@ -13,8 +13,7 @@ function Build-Template {
     [string]$template_key = $null
   )
   process {
-    $ErrorActionPreference = "Stop"
-    "Build-Template:$depth`:$template_key`:In:`n$(@{'$_'=$_} | cty)" | f-log-dbg
+    ":In:" | f-log-dbg '$depth', '$_'
 
     if ($depth -gt (Peek-Options).max_depth) {
       throw "Circular reference detected for template: $template_key"

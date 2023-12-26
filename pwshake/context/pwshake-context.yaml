@@ -10,6 +10,7 @@ pwshake-context:
     steps_count: 0
     tests_context:
     tests_verbosity: Error
+    pwshake_verbosity: Debug
     resources_verbosity: Minimal
     json_log_format: '@{"@timestamp"=(Get-Date).ToString("o");message=$_}'
 

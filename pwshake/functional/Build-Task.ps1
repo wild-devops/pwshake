@@ -10,8 +10,6 @@ function Build-Task {
     [object]$name = "task_$(++(Peek-Invocation).tasks_count | Write-Output)"
   )
   process {
-    $ErrorActionPreference = "Stop"
-
     if (-not $item) {
       return @{
         name       = $name;

@@ -7,7 +7,6 @@ function Build-FromYaml {
         [string]$path
     )
     process {
-        $ErrorActionPreference = "Stop"
         try {
             $path = Resolve-Path $path
             return Get-Content $path -Raw | psyml\ConvertFrom-Yaml -AsHashtable

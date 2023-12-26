@@ -7,11 +7,9 @@ function Override-Attributes {
     [hashtable]$config
   )
   process {
-    $ErrorActionPreference = "Stop"
-
     foreach ($item in $config.attributes_overrides) {
       $type = $item
-      "Override-Attributes:`n$(@{'$item'=$item;'$config.attributes.override_to'=$config.attributes.override_to} | ctj)" | f-log-dbg
+      ":foreach:" | f-log-dbg '$item', '$config.attributes.override_to'
       if ($item -is [hashtable]) {
         if ($item.Keys.Count -gt 1) {
           throw "Item of 'attributes_overrides:' can't contain $($item.Keys.Count) keys."
@@ -27,12 +25,12 @@ function Override-Attributes {
       $override = $path | Build-FromYaml
       $config.attributes = Merge-Hashtables $config.attributes $override
       if ($type -eq $config.attributes.override_to) {
-        "Override-Attributes:Break-On:`$type`: $type" | f-log-dbg
+        ":break:" | f-log-dbg '$type'
         break
       }
     }
 
-    "Override-Attributes:Out:`$config`:`n$($config | cty)" | f-log-dbg
+    ":Out:" | f-log-dbg '$config'
     return $config
   }
 }

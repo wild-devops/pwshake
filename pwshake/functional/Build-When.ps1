@@ -7,7 +7,6 @@ function Build-When {
     [object]$item
   )
   process {
-    $ErrorActionPreference = "Stop"
     $when = "`$true"
     if (-not $item) {
       return $when
