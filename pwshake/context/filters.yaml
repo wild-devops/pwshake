@@ -46,17 +46,6 @@ pwshake-context:
     f-dir-name: |-
       { [IO.Path]::GetDirectoryName($_) }
 
-    f-mask-secured: |-
-      { param($mask = '**********')
-        $message = $_
-        ${global:pwshake-context}.secured | ForEach-Object {
-          if ([Regex]::new($([Regex]::Escape($_)), 'IgnoreCase').Match($message).Success) {
-            $message = $message -replace "$([Regex]::Escape($_))", $mask
-          }
-        }
-        $message
-      }
-
     f-eval: |-
       { param([regex]$regex='\$\[\[(?<eval>.+?)\]\]')
         if ($_ -match $regex) { $_ -replace $regex, (Invoke-Expression $matches.eval) }
@@ -72,24 +61,24 @@ pwshake-context:
       { param($f = '{0}') $_ | Where-Object { !!$_ } | ForEach-Object { $f -f $_} }
 
     f-log-lvl: |-
-      { param([PWSHAKE.VerbosityLevel]$level)
+      { param([VerbosityLevel]$level)
         if ((Peek-verbosity) -ge $level) {
           $_ | Log-Output | sb-append
         }
       }
 
-    f-log-err: |-
-      {
-        if ((Peek-Verbosity) -lt [PWSHAKE.VerbosityLevel]::Error) { return }
-        $Host.UI.WriteLine([ConsoleColor]'Red',[Console]::BackgroundColor,($_ | f-error))
-        if ((Peek-Verbosity) -eq [PWSHAKE.VerbosityLevel]::Debug) { 
-          $_.ScriptStackTrace.Split("`n") | Select-Object -First 5 | ForEach-Object {
-            $Host.UI.WriteLine([ConsoleColor]::DarkYellow,[Console]::BackgroundColor,"TRACE: $_")
-          }
-        }
-        $_ | f-error | f-tmstmp | Add-Content -Path (Peek-Config).attributes.pwshake_log_path -Encoding UTF8
-        $_ | f-error | sb-append
-      }
+    # f-log-err: |-
+    #   {
+    #     if ((Peek-Verbosity) -lt [VerbosityLevel]::Error) { return }
+    #     $Host.UI.WriteLine([ConsoleColor]'Red',[Console]::BackgroundColor,($_ | f-error))
+    #     if ((Peek-Verbosity) -eq [VerbosityLevel]::Debug) {
+    #       $_.ScriptStackTrace.Split("`n") | Select-Object -First 5 | ForEach-Object {
+    #         $Host.UI.WriteLine([ConsoleColor]::DarkYellow,[Console]::BackgroundColor,"TRACE: $_")
+    #       }
+    #     }
+    #     $_ | f-error | f-tmstmp | Add-Content -Path (Peek-Config).attributes.pwshake_log_path -Encoding UTF8
+    #     $_ | f-error | sb-append
+    #   }
 
     f-log-warn: |-
       { $_ | f-log-lvl -level 'Warning' }
@@ -102,13 +91,6 @@ pwshake-context:
 
     f-log-verb: |-
       { $_ | f-log-lvl -level 'Verbose' }
-
-    f-log-dbg: |-
-      { param([switch]$force)
-        if (("$(Peek-verbosity)" -eq 'Debug') -or $force) {
-          "DEBUG: $_" | Log-Output -ForegroundColor Cyan | Out-Null
-        }
-      }
 
     f-escape-json: |-
       { ($_ | ConvertTo-Json -Compress).Trim('"') }

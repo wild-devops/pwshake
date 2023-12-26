@@ -1,0 +1,13 @@
+tasks:
+  dynamic_eval_test:
+  - echo: '{{$($some_really_dynamic_value)}}'
+  - skip_on: $some_really_dynamic_value
+    echo: "$some_really_dynamic_value is empty"
+  - pwsh: |
+      $script:some_really_dynamic_value = (Get-Date -Format o)
+    #  ^^^^^^ used 'script' scope since the 'pwsh:' step invoked in own scope
+  - echo: $[[$some_really_dynamic_value]]
+  - skip_on: $some_really_dynamic_value
+    pwsh: throw $some_really_dynamic_value
+invoke_tasks:
+- dynamic_eval_test

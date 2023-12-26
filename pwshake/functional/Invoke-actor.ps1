@@ -23,6 +23,7 @@ function Invoke-actor {
     [switch]$DryRun
   )
   Begin {
+    "Invoke-actor:Begin:In:" | f-log-dbg
     try {
       if (-not ${global:actor-context}) {
         ${global:actor-context} = (Build-Context)
@@ -34,33 +35,41 @@ function Invoke-actor {
         DryRun     = [bool]$DryRun
       }
       ${global:actor-context} = @{
-        arguments  = ($arguments + @{Tasks = $Tasks; WorkDir = "$(Get-Location)" })
-        config     = Build-Config @arguments
-        parent     = ${global:actor-context}
+        arguments = ($arguments + @{Tasks = $Tasks; WorkDir = "$(Get-Location)" })
+        config    = Build-Config @arguments
+        parent    = ${global:actor-context}
       }
     }
     catch {
       $_ | f-log-err
     }
+    "Invoke-actor:Begin:Out:`nvariable:\$('Get-Variable -Name actor-context -Scope Global -ErrorAction SilentlyContinue' | f-wh-b -skip -passthru | Invoke-Expression | % Name) = ${global:actor-context}" | f-log-dbg
   }
   Process {
+    "Invoke-actor:Process:In:" | f-log-dbg
     try {
       ${global:actor-context} | f-cty | Tee-Object -FilePath $PWD\actor-context.yaml `
-      | f-cfy | % { $_.Remove('parent'); $_ } | f-cty | f-wh-m
+        | f-cfy | ForEach-Object { $_.Remove('parent'); $_ } | f-cty | f-wh-b
+      throw 'qu-qu'
     }
     catch {
       $_ | f-log-err
     }
     finally {
-      try {
-        ${global:actor-context} = ${global:actor-context}.parent
-        if ($null -eq ${global:actor-context}.parent) {
-          Remove-Item variable:'actor-context' -Force
-        }
-      }
-      catch {
-        $_ | f-log-err
+      ${global:actor-context} = ${global:actor-context}.parent
+    }
+    "Invoke-actor:Process:Out:`nvariable:\$('Get-Variable -Name actor-context -Scope Global -ErrorAction SilentlyContinue' | f-wh-b -skip -passthru | Invoke-Expression | % Name) = ${global:actor-context}" | f-log-dbg
+  }
+  End {
+    "Invoke-actor:End:In:`nvariable:\$('Get-Variable -Name actor-context -Scope Global -ErrorAction SilentlyContinue' | f-wh-b -skip -passthru | Invoke-Expression | % Name) = ${global:actor-context}" | f-log-dbg
+    try {
+      if ($null -eq ${global:actor-context}.parent) {
+        'Remove-Variable -Name actor-context -Scope Global -Force' | f-wh-b -skip -passthru | Invoke-Expression
       }
     }
+    catch {
+      $_ | f-log-err
+    }
+    "Invoke-actor:End:Out:`nvariable:\$('Get-Variable -Name actor-context -Scope Global -ErrorAction SilentlyContinue' | f-wh-b -skip -passthru | Invoke-Expression | % Name) = ${global:actor-context}" | f-log-dbg
   }
 }

@@ -17,7 +17,7 @@ $composed = $fs | Merge-ScriptBlock
 
 $f_list = @('Start-Pipeline', 'Process-Step')
 
-$actor = Merge-PipeLine @(
+$pipeline = Merge-PipeLine @(
   (Get-Item function:$($f_list[0])).ScriptBlock,
   { param([Parameter(Mandatory, ValueFromPipeline)]$context, $next)
     Write-Line "Load resources"
@@ -93,10 +93,12 @@ $arguments = @{
   ConfigPath = '.\examples\1.hello\v1.5\my_pwshake.yaml'
   Tasks      = @()
   MetaData   = @{}
-  Verbosity  = 'Verbose'
+  Verbosity  = 'Debug'
   DryRun     = $false
 }
 
 $script:PSScriptRoot_ = '/workdir/pwshake'
-Invoke-actor @arguments
-'gci variable:actor*' | f-wh-iex
+Invoke-actor @arguments -ErrorAction Continue
+@(
+  'gci variable:actor*'
+) | f-wh-iex

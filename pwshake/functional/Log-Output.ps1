@@ -4,14 +4,13 @@ function Log-Output {
   param (
     [Parameter(Mandatory, ValueFromPipeline)]
     [hashtable]${@context},
-    [scriptblock]${@next}=${@next-stub}
+    [scriptblock]${@next}={[Parameter(Mandatory,ValueFromPipeline)]param($ctx) $ctx}
   )
   Process {
-    $ErrorActionPreference = "Stop"
     $message = ${@context}.Value
     $ForegroundColor = ${@context}.ForegroundColor
-    "@Log-Output:In:`n$('$message', '${@next}' | f-vars-cty)" | f-wh-y -s
-    if ((Peek-Verbosity) -eq [PWSHAKE.VerbosityLevel]::Quiet) { return }
+    "Log-Output:In:`n$('$message', '${@next}' | f-vars-cty)" | f-wh-y
+    if ((Peek-Verbosity) -eq [VerbosityLevel]::Quiet) { return }
 
     $message = "${message}" | f-mask-secured
     if ($_ -is [Management.Automation.ErrorRecord]) {
@@ -26,6 +25,6 @@ function Log-Output {
     foreach ($item in ${pwshake-context}.invocations) {
       $message | f-tmstmp | Add-Content -Path $item.config.attributes.pwshake_log_path
     }
-    $message | f-build-context | &${@next}
+    $message | f-wh-c -p | f-build-context | &${@next}
   }
 }

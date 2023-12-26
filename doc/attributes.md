@@ -33,7 +33,7 @@ This parameter should be of type **Powershell** `[hashtable]` that allows to **m
     ```
 * ## `attributes:` **merging**
 
-  The `pwshake.ps1` bootstrapper script can accept additional `-MetaData` parameter that merges given parameter value into the `attributes` element:
+  The `pwshake.ps1` bootstrapper script can accept additional `-MetaData` (or `-Attributes` alias) parameter that merges given parameter value into the `attributes:` element:
   ```
   PS>./pwshake.ps1 -MetaData "env_name=shake42"
   ```
@@ -49,7 +49,7 @@ This parameter should be of type **Powershell** `[hashtable]` that allows to **m
 
 * ## `attributes:` **interpolation**
   
-  Values of several attributes can be reused and/or composed by simple **interpolation** syntax: `{{key-to-be-interpolated}}`
+  Values of several attributes can be reused and/or composed by simple **interpolation** syntax: `{{key-to-be-interpolated}}`, for example:
   ```
   PS> cat ./pwshake.yaml
   attributes:
@@ -66,7 +66,7 @@ This parameter should be of type **Powershell** `[hashtable]` that allows to **m
     win_fqdn: shake42-windows.test
   ...
   ```
-  If `attributes:` has deep hierarchical structure it can be interpolated with dot syntax `{{key.to.be.interpolated}}`
+  If `attributes:` has deep hierarchical structure it can be interpolated with dot syntax `{{key.to.be.interpolated}}`, for example:
   ```
   PS> cat ./pwshake.yaml
   attributes:
@@ -86,7 +86,7 @@ This parameter should be of type **Powershell** `[hashtable]` that allows to **m
     e: d
   ...
   ```
-  If keys given by **interpolation** syntax are not present either in `attributes:` element or in `-MetaData` parameter value they are evaluated with empty string
+  If keys given by **interpolation** syntax are not present either in `attributes:` element or in `-MetaData` parameter value they are evaluated with empty string, for example:
   ```
   PS> cat ./pwshake.yaml
   attributes:
@@ -103,20 +103,20 @@ This parameter should be of type **Powershell** `[hashtable]` that allows to **m
   ```
   ## Evaluation of environment variables
 
-  **PWSHAKE** supports simple evaluation of environment variables in **interpolation** syntax similar to **Powershell** syntax `{{$env:COMPUTERNAME}}`
+  **PWSHAKE** supports simple evaluation of environment variables in **interpolation** syntax similar to **Powershell** syntax `{{$env:COMPUTERNAME}}`, for example:
   ```
-  PS>$env:SOME_VAL="fi1432"
+  PS>$env:SOME_VAL="fi42321"
   ```
   ```
   PS>./pwshake.ps1 -Metadata 'env_name={{$env:SOME_VAL}}-windows'
   PWSHAKE config:
   attributes:
     pwshake_path: /absolute/path/to/your/working/directory/MyRepo
-    env_name: fi1432-windows
+    env_name: fi42321-windows
   ...
   ```
 
-  ## Evaluation **Powershell** expressions
+  ## Evaluation of **Powershell** expressions
 
   If it's required to evaluate dynamic value of attribute, there is an ability to do this with general **Powershell** string interpolation syntax `"$(...)"`.
   
@@ -130,7 +130,39 @@ This parameter should be of type **Powershell** `[hashtable]` that allows to **m
   PS>./pwshake.ps1 -Metadata 'env_id={{$("env-$([System.Guid]::NewGuid())")}}'
   ...
   ```
+  All examples above are valid only for early stage of **PWSHAKE** engine processing (merging `-MetaData` and interpolate the `attributes:` element state that will not be changed in the further processing).
+
+  If You need to use dynamic evaluation in the later `tasks:` (`- step:`) processing stage, You can use a quite similar `templates:` evaluation syntax `$[[$some_really_dynamic_value]]`, for example:
+  ```
+  PS> cat ./dynamic_eval.yaml
+  tasks:
+    dynamic_eval_test:
+    - echo: '{{$($some_really_dynamic_value)}}'
+    - skip_on: $some_really_dynamic_value
+      echo: "$some_really_dynamic_value is empty"
+    - pwsh: |
+        $script:some_really_dynamic_value = (Get-Date -Format o)
+      #  ^^^^^^ used 'script' scope since the 'pwsh:' step invoked in it's own scope
+    - echo: $[[$some_really_dynamic_value]]
+    - skip_on: $some_really_dynamic_value
+      pwsh: throw $some_really_dynamic_value
+  invoke_tasks:
+  - dynamic_eval_test
+  ```
+
+  ```
+  PS> pwshake ./dynamic_eval.yaml -Verbosity Normal
+  Invoke task: dynamic_eval_test
+  Execute step: echo_1
+
+  Execute step: echo_2
+  $some_really_dynamic_value is empty
+  Execute step: pwsh_3
+  Execute step: echo_4
+  2008-10-31T13:56:50.6495398+00:00
+  Execute step: pwsh_5
+    Bypassed because of: [-not ($some_really_dynamic_value)] = False
+  ```
   
 * ## `attributes:` **overriding**
   [See more about `attributes_overrides:`](/doc/attributes_overrides.md) element
-

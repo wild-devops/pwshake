@@ -3,7 +3,7 @@ resources:
     $script:hello_to='PWSHAKE'
 
 attributes:
-  pwshake_verbosity: Normal
+  # pwshake_verbosity: Normal
   hello_to: '{{$($hello_to)}}'
   on_error: continue
   pwshake_log_to_json: true

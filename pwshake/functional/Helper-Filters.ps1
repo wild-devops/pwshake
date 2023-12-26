@@ -1,66 +1,16 @@
-function Peek-Invocation {
-  [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
-  param()
-  if (${pwshake-context}.invocations.Count -eq 0) {
-    return $null
-  }
-  return ${pwshake-context}.invocations.Peek()
-}
-
-function Peek-Context {
-  [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
-  param()
-  return (Peek-Invocation).context
-}
-
-function Peek-Config {
-  [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
-  param()
-  return (Peek-Invocation).config
-}
-
-function Peek-Data {
-  [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
-  param()
-  return (Peek-Context).data
-}
-
-function Peek-Options {
-  [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
-  param()
-  return (Peek-Context).options
-}
-
-function Peek-Pipelines {
-  [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
-  param()
-  return (Peek-Context).pipelines
-}
-
-function Peek-Verbosity {
-  [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
-  param()
-  return [PWSHAKE.VerbosityLevel](Coalesce (Peek-Config).attributes.pwshake_verbosity, 'Default')
-}
-function Peek-LogPath {
-  [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
-  param()
-  return (Coalesce (Peek-Config).attributes.pwshake_log_path, ("$PWD/pwshake.log" | f-cnvp))
-}
-
 filter f-log-err {
-  # if ((Peek-Verbosity) -lt [PWSHAKE.VerbosityLevel]::Error) { return }
+  if ((Peek-Verbosity) -lt [VerbosityLevel]::Error) { return }
   $Host.UI.WriteLine([ConsoleColor]'Red', [Console]::BackgroundColor, ($_ | f-error))
-  # if ((Peek-Verbosity) -eq [PWSHAKE.VerbosityLevel]::Debug) { 
-  $_.ScriptStackTrace.Split([Environment]::NewLine) | Select-Object -First 5 | ForEach-Object {
-    $Host.UI.WriteLine([ConsoleColor]::DarkYellow, [Console]::BackgroundColor, "TRACE: $_")
+  if ((Peek-Verbosity) -eq [VerbosityLevel]::Debug) { 
+    $_.ScriptStackTrace.Split([Environment]::NewLine) | Select-Object -First 5 | ForEach-Object {
+      $Host.UI.WriteLine([ConsoleColor]::DarkYellow, [Console]::BackgroundColor, "TRACE: $_")
+    }
   }
-  # }
 }
-filter script:tee-wh-yaml {
-  Write-Host "tee-wh-yaml:`n$(ConvertTo-Yaml $_)"; $_
+filter tee-wh-yaml {
+  Write-Host "tee-wh-yaml:`n$($_ | f-cty)"; $_
 }
-filter script:f-error {
+filter f-error {
   @"
 ERROR: $_
 $($_.InvocationInfo.PositionMessage)
@@ -68,17 +18,17 @@ $($_.InvocationInfo.PositionMessage)
 + FullyQualifiedErrorId : $($_.FullyQualifiedErrorId)
 "@
 }
-filter script:f-tmstmp {
+filter f-tmstmp {
   param($f = "$(Get-Date -format '[yyyy-MM-dd HH:mm:ss]') {0}", $skip = $false)
   $_ | Where-Object { !!$_ } | ForEach-Object { if (!$skip) { $f -f $_ } else { $_ } }
 }
-filter script:sb-append {
+filter sb-append {
   param([Text.StringBuilder]$sb = (Peek-Data).json_sb)
   if (!!$sb) {
     $sb.AppendLine("$_") | Out-Null
   }
 }
-filter script:f-cnvp {
+filter f-cnvp {
   Convert-Path $_ -ErrorAction 'Continue' 2>&1 | ForEach-Object {
     if ($_ -is [Management.Automation.ErrorRecord]) {
       $_.TargetObject
@@ -89,81 +39,87 @@ filter script:f-cnvp {
   }
 }
 
-filter script:f-template-key {
+filter f-template-key {
   param($add = @())
   Compare-Object (@() + $_.Keys) ($add + (Peek-Context).templates.Keys) `
     -PassThru -IncludeEqual -ExcludeDifferent # intersection
 }
 
-filter script:f-next-template-key {
+filter f-next-template-key {
   param($add = @(), $key)
   $clone = $_.Clone()
   $clone.Remove($key)
   $clone | f-template-key -a $add
 }
 
-filter script:f-is-list {
+filter f-is-list {
   ($_ -is [object[]]) -or ($_ -is [Collections.Generic.List[object]])
 }
 
-filter script:f-ps-creds {
+filter f-ps-creds {
   param([string]$user = 'token')
   [Management.Automation.PSCredential]::New($user, ("$_" | ConvertTo-SecureString -AsPlainText -Force))
 }
 
-filter script:f-wh-iex {
+filter f-wh-iex {
   Write-Host "$_"; &([scriptblock]::Create($_))
 }
 
-filter script:f-wh {
-  param([ConsoleColor]$c = 'Gray')
-  $Host.UI.WriteLine($c, [Console]::BackgroundColor, "$_")
+filter f-wh {
+  param([ConsoleColor]$Color = 'Gray')
+  $Host.UI.WriteLine($Color, [Console]::BackgroundColor, "$_")
 }
 
-filter global:f-wh-b {
+filter f-wh-b {
   param([switch]$skip, [switch]$passthru)
-  if ($skip) { return }
-  $_ | f-wh -c 'Blue'
+  if (-not $skip) {
+    $_ | f-wh -c 'DarkBlue'
+  }
   if ($passthru) { $_ }
 }
 
-filter global:f-wh-c {
+filter f-wh-c {
   param([switch]$skip, [switch]$passthru)
-  if ($skip) { return }
-  $_ | f-wh -c 'DarkCyan'
+  if (-not $skip) {
+    $_ | f-wh -c 'DarkCyan'
+  }
   if ($passthru) { $_ }
 }
 
-filter global:f-wh-g {
+filter f-wh-g {
   param([switch]$skip, [switch]$passthru)
-  if ($skip) { return }
-  $_ | f-wh -c 'DarkGreen'
+  if (-not $skip) {
+    $_ | f-wh -c 'DarkGreen'
+  }
   if ($passthru) { $_ }
 }
 
-filter global:f-wh-m {
+filter f-wh-m {
   param([switch]$skip, [switch]$passthru)
-  if ($skip) { return }
-  $_ | f-wh -c 'DarkMagenta'
+  if (-not $skip) {
+    $_ | f-wh -c 'DarkMagenta'
+  }
   if ($passthru) { $_ }
 }
 
-filter global:f-wh-r {
+filter f-wh-r {
   param([switch]$skip, [switch]$passthru)
-  if ($skip) { return }
-  $_ | f-wh -c 'DarkRed'
+  if (-not $skip) {
+    $_ | f-wh -c 'DarkRed'
+  }
   if ($passthru) { $_ }
 }
 
-filter global:f-wh-y {
+filter f-wh-y {
   param([switch]$skip, [switch]$passthru)
-  if ($skip) { return }
-  $_ | f-wh -c 'DarkYellow'
+  if (-not $skip) {
+    $_ | f-wh -c 'DarkYellow'
+  }
   if ($passthru) { $_ }
 }
 
 filter f-null { param($f = '{0}') $_ | Where-Object { !!$_ } | ForEach-Object { $f -f "$_" } }
-filter script:f-error {
+filter f-error {
   $msg = @"
 ERROR: $_
 $($_.InvocationInfo.PositionMessage)
@@ -173,10 +129,41 @@ $($_.InvocationInfo.PositionMessage)
   $Host.UI.WriteLine([ConsoleColor]::DarkYellow, [Console]::BackgroundColor, ($msg))
 }
 
+filter f-mask-secured {
+  param($mask = '**********')
+  $message = $_
+  (Peek-Context).secured | ForEach-Object {
+    if ([Regex]::new($([Regex]::Escape($_)), 'IgnoreCase').Match($message).Success) {
+      $message = $message -replace "$([Regex]::Escape($_))", $mask
+    }
+  }
+  $message
+}
+
+filter f-build-context {
+  # usage: @{output='blah-blah'} | f-build-context
+  "f-build-context:`n$('$_' | f-vars-cty)" | f-wh-m
+  $ret = @{}
+  if ($_ -isnot [hashtable]) {
+    $ret['Value'] = $_
+  }
+  foreach ($key in $_.Keys) {
+    $ret[$key] = $_.$($key)
+  }
+  return $ret
+}
 filter f-log-dbg {
-  param([switch]$force, [ConsoleColor]$color = 'DarkYellow')
-  if (("$(Peek-verbosity)" -eq 'Debug') -or $force) {
-    "DEBUG: $_" | Log-Output -ForegroundColor $color | Out-Null
+  param([ConsoleColor]$Color = 'DarkCyan', [switch]$Force, [switch]$PassThru)
+  # "f-log-dbg:In:`n$('$_' | f-vars-cty)" | f-wh-g
+  if (("$(Peek-Verbosity)" -eq 'Debug') -or $force) {
+    @{ # for further 'Log-Output' usage
+      Value           = "DEBUG: $_";
+      ForegroundColor = $Color
+    } | ForEach-Object Value | f-wh -Color $Color
+    # } | Log-Output | ForEach-Object Value | ForEach-Object {
+    #   "f-log-dbg:Out:`n$('$_' | f-vars-cty)" | f-wh-c
+    # }
+    if ($PassThru) { $_ }
   }
 }
 filter f-cfy {

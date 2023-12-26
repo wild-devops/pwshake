@@ -12,7 +12,7 @@ function Load-Resources {
 
         $verbosity = $config.attributes.pwshake_verbosity
         try {
-            if ((Peek-Verbosity) -gt [PWSHAKE.VerbosityLevel]((Peek-Options).resources_verbosity)) {
+            if ((Peek-Verbosity) -gt [VerbosityLevel]((Peek-Options).resources_verbosity)) {
                 $config.attributes.pwshake_verbosity = (Peek-Options).resources_verbosity
             }
             'pwshake resources:' | f-log-lvl -level (Peek-Options).resources_verbosity
