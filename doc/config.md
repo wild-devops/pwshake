@@ -60,7 +60,7 @@
             bash -c "$($cmd.text)" *>&1
           }
     ```
-    Contains named `yaml` structures that **PWSHAKE** engine substitutes in `[step:]` elements to short steps definitions or to reuse in frequent cases.
+    Contains named `yaml` structures that **PWSHAKE** engine substitutes in `[step:]` elements to shorten steps definitions or to reuse in frequent cases.
 
     [See more about `templates:`](/doc/templates.md)
     
@@ -76,18 +76,18 @@
     clean:
       only: (Test-Path ./results)
       steps:
-      - powershell: rm ./results -recurse -force
+      - pwsh: Remove-Item ./results -Recurse -Force
     build:
     - run_build_script
     test:
-    - powershell: dotnet test
+    - pwsh: dotnet test
     publish:
-    - cmd: |
-        python.exe ./tools/some_script.py --with long ^
-        --list of --options that --doesnt feet ^
+    - cmd: >
+        python.exe ./tools/some_script.py --with long
+        --list of --options that --doesnt feet
         --to single_line
   ```
-  Contains definition of composed and interdependent tasks that will be performed by **PWSHAKE** engine by executing `steps:` which are defined as `tasks:` items.
+  Contains definition of composed and interdependent tasks that will be performed by **PWSHAKE** engine by executing `steps:` which are defined as `tasks:` list items.
 
   [See more about `tasks:`](/doc/tasks.md)
 
@@ -116,7 +116,7 @@
     - tests
     - tools
     ```
-    Tells to **PWSHAKE** engine where to find scripts defined as items of the `tasks:` element.
+    Tells to **PWSHAKE** engine where to find scripts defined as list items of the `tasks:` element.
 
     [See more about `scripts_directories:`](/doc/scripts_directories.md)
 
@@ -167,7 +167,7 @@
     ```
     Tells to **PWSHAKE** engine to add small functions into the script execution context.
 
-    These functions will be used into the  **PWSHAKE** processing as attributes interpolators or helpers.
+    These functions will be used into the  **PWSHAKE** processing as attributes' interpolators or helpers.
 
     [See more about `filters:`](/doc/filters.md)
 

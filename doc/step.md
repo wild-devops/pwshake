@@ -4,14 +4,15 @@
 
 Contains definition of the full explicitly described structure that **PWSHAKE** engine uses to find, distinct, execute and log during the `pwshake.yaml` config processing.
 
-The internal representation of a single **step** looks like a following **Powershell** `[hashtable]`:
+The internal representation of a single **step** looks like the following **Powershell** `[hashtable]`:
 ```
 @{
-  name = $null;
-  when = "`$true";
-  work_dir = $null;
-  on_error = "throw";
+  name       = $null;
+  when       = "`$true";
+  work_dir   = $null;
+  on_error   = "throw";
   powershell = $null;
+  # ... any other additional [KeyValue] pairs
 }
 ```
 
@@ -25,15 +26,15 @@ So, the following part of the `pwshake.yaml` config file:
 will be transformed into the following structure:
 ```
 @{
-  name = "step name";
-  when = "`$true";
-  work_dir = $null;
-  on_error = "throw";
+  name       = "step name";
+  when       = "`$true";
+  work_dir   = $null;
+  on_error   = "throw";
   powershell = $null;
-  script = "script_name";
+  script     = "script_name";
 }
 ```
-Pay attention that the `step1` identifier itself does not bring any actual value to the executed structure and can be omitted via `yaml` syntax as shown below:
+Pay attention that the `step1` identifier itself does not bring any meaningful value to the executed structure and can be omitted via `yaml` syntax as shown below:
 ```
 - name: step name
   script: script_name
@@ -73,7 +74,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   - name: my_beauty_named_step
     script: your_ugly_named_script
   ```
-  This ability is useful for composing readable configs with many tasks of the similar type.
+  This ability is useful for composing readable configs with many steps of the similar type.
 
   Example:
   ```
@@ -86,23 +87,23 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   ```
 
 * ### - `[powershell|pwsh]:` element implicit shortenings
-  Since the `powershell:` (or `pwsh:` alias) element contains inline code that can be too long and\or complex to use it as the meaningful name, so the `name:` property for these shortenings is generated from the step type and incremented number suffix to distinct each other inline step in the **PWSHAKE** execution log.
+  Since the `powershell:` (or `pwsh:` alias) element contains inline code that can be too long and\or complex to use it as the meaningful name, so the `name:` property for these shortenings is generated from the step type and incremental number suffix to distinct each other inline step in the **PWSHAKE** execution log.
 
   Example:
   ```
-  - pwsh: rm ./ -recurse -force
+  - pwsh: Remove-Item ./ -Recurse -Force
   ```
   This is the same as:
   ```
   - name: pwsh_1
-    powershell: rm ./ -recurse -force
+    powershell: Remove-Item ./ -Recurse -Force
   ```
 
 * ### - `msbuild:` element implicit shortenings
   All things described above are eligible for the `msbuild:` element.
 
 
-  Since the actual payload of this element is the **MSBuild** project file name, so the shortening syntax use this value as a `project:` element value.
+  Since the meaningful payload of this element is the **MSBuild** project file name, so the shortening syntax use this value as the `project:` element value.
 
   Example:
   ```
@@ -121,12 +122,12 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
 
   Example:
   ```
-  - pwsh: rm ./ -recurse -force
+  - pwsh: Remove-Item ./ -Recurse -Force
   ```
   This is the same as:
   ```
   - name: pwsh_1
-    powershell: rm ./ -recurse -force
+    powershell: Remove-Item ./ -Recurse -Force
     when: '$true'
   ```
 
@@ -134,13 +135,13 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
   
   Example:
   ```
-  - pwsh: rm ./ -recurse -force
+  - pwsh: Remove-Item ./ -Recurse -Force
     skip_on: ($env:SOME_VALUE -eq '42')
   ```
   This is the same as:
   ```
   - name: pwsh_1
-    powershell: rm ./ -recurse -force
+    powershell: Remove-Item ./ -Recurse -Force
     when: "-not ($env:SOME_VALUE -eq '42')"
   ```
 
@@ -157,7 +158,7 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
     - test
     - deploy
   ```
-  This is useful for implementation of conditional scenarios inside tasks execution.
+  This is useful for implementation of conditional scenarios inside tasks execution process.
     
   Example:
   ```
@@ -175,4 +176,5 @@ In this case the `-` sign means that subsequent items in `yaml` hierarchy are ke
         - clean
         - build
         - test
+        - perform_deployment_script
   ```

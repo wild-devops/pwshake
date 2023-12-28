@@ -16,7 +16,7 @@ The above settings tells to **PWSHAKE** engine to look for files named `local.ya
 
 If such file exists **PWSHAKE** engine merge each of them content with the `attribites:` element value in order as listed.
 
-In results the `attribites:` element values will be overriden according to requirements of particular environment, role, host, instance, etc.
+In result the `attribites:` element values will be overriden according to requirements of particular environment, role, host, instance, etc.
 
 ## `override_to:` **attributes item**
 The `attribites:` element can contain a special named item `override_to:` which defines when to stop iterating the list of `attributes_overrides:` items to perform overriding.
@@ -30,7 +30,7 @@ env_name: lds
 ```
 ```
 PS>cat ./attributes_overrides/test.yaml
-env_name: fi1438
+env_name: fi42321
 ```
 ```
 PS>cat ./attributes_overrides/prod.yaml
@@ -70,7 +70,7 @@ Iterating stopped after the second override (`test.yaml`):
 PS>Invoke-pwshake -MetaData 'override_to=test'
 PWSHAKE config:
 attributes:
-  env_name: fi1438
+  env_name: fi42321
 ...
 ```
 Iterating stopped after the third override (`prod.yaml`) that is equivalent of the first example since the `-prod` is the last item in the `attributes_overrides:` list:

@@ -17,13 +17,13 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
         inline:
         powershell: |
           if ($_.python -is [string]) {
-            "python $($_.python)" | Cmd-Shell
+            "python3 $($_.python)" | Cmd-Shell
           } elseif ($python.inline) {
-            python -c $python.inline
+            python3 -c $python.inline
           } elseif ($python.options) {
-            "python $($python.options)" | Cmd-Shell
+            "python3 $($python.options)" | Cmd-Shell
           } else {
-            python --version
+            python3 --version
           }
     ```
     The given example can be used with regular `pwshake.yaml` config by including the template file `python.yaml` and using a new `python:` element as a regular step in `tasks:` definition.
@@ -62,16 +62,15 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     Execute step: All defaults
     Python 3.6.8
     Execute step: Give me a version please
-    bash: python --version
+    bash: python3 --version
     Python 3.6.8
     Execute step: Inline python
     Hello pwshake!
     Execute step: Explicit options
-    bash: python /workdir/examples/5.templates/v1.2/hello.py again
-
+    bash: python3 /workdir/examples/5.templates/v1.2/hello.py again
     Hello again!
     Execute step: Implicit options
-    bash: python /workdir/examples/5.templates/v1.2/hello.py twice
+    bash: python3 /workdir/examples/5.templates/v1.2/hello.py twice
     Hello twice!
     ```
 
@@ -88,22 +87,22 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
     tasks:
       # execute cmd.exe shell command on Windows host
       - cmd: 'dir /b'
-      # ensure that given directory exists in the current work_dir
+      # ensure that given directory exists in the current {{work_dir}}
       - directory: .test_results
-      # iterates items: elements and pass each of them to the action: as Powershell command or template call
+      # iterates 'items:' elements and pass each of them to the 'action:' as Powershell command or template call
       - each:
           items:
           - Hello
           - PWSHAKE
           action: echo $_
-      # writes text to stdout
+      # writes text to host output
       - echo: 'Hello PWSHAKE!'
-      # writes text to the given file by path:, content: and optionally encoding: values
+      # writes text to the given file by 'path:', 'content:' and optionally 'encoding:' values
       - file:
           path: 'test.json'
           content: '{"I":"m","a":"test"}'
           encoding: Ascii # default is UTF8
-      # performs git checkout from the given source: repo to the relational target: directory
+      # performs git checkout from the given 'source:' repo to the relational 'target:' directory
       - git:
           source: https://github.com/wild-devops/pwshake.git
           ref: v1.0.0
@@ -139,15 +138,16 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
           - Configuration=Release
           - SolutionDir=.
           options: /m
-      # run Powershell script with name tasks_to_execute.ps1 found in work_dir or scripts_directories: items
+      # run Powershell script with name tasks_to_execute.ps1 found in {{work_dir}} or 'scripts_directories:' items related to {{pwshake_path}}
       - script: tasks_to_execute
+      - tasks_to_execute # <<< this is shortened form 
       # execute bash shell command on Linux host
       - shell: 'ls .'
       # create symbolic links for each key of provided hashtable with target of its values
       - symlinks:
           link1: target1
           'link 2': target 2
-      # transform xml file by given path: and items of hashtables with XPath keys and [string] values to apply
+      # transform xml file by given 'path:' and items of hashtables with XPath keys and [string] values to apply
       - xml-file:
           path: test.xml
           # xmlns:
@@ -156,7 +156,7 @@ This tells to **PWSHAKE** engine how to substitute any structured `yaml` input i
           - '/xml': '<five six="seven"/>'
           - '/xml/five[1]': '<eight nine="wrong"/>'
           - '//one': 'count="zero"'
-          transforms:
+          updates:
           - '/xml/two/@three': 'four'
           - '//@nine': 'ten'
           deletes:

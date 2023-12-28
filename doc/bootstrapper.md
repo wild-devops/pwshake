@@ -2,7 +2,7 @@
 
 The `pwshake.ps1` bootstrapper script contains commands to load all required parts to install the **PWSHAKE** engine from the source of [PSGallery](https://www.powershellgallery.com/packages/pwshake).
 
-It imports **PWSHAKE** engine as a **Powershell** module (named `pwshake`, surprisingly) that exports a single function `Invoke-pwshake` and its alias `pwshake` as well.
+It imports **PWSHAKE** engine as a **Powershell** module (named `pwshake`, surprisingly) that exports a single function `Invoke-pwshake` and it's alias `pwshake` as well.
 
 Then it calls `Invoke-pwshake` command with all parameters passed to the bootstrapper.
 
@@ -37,7 +37,7 @@ All parameters are optional since they all have conventional default values:
 
   Tells to **PWSHAKE** engine which of `tasks:` element items from the given `yaml` config must be executed.
   
-  Actually if it's not an empty array, it strongly overrides the content of the `yaml` config's `invoke_tasks:` element.
+  Actually if it's not an empty array, it strongly replaces the content of the `yaml` config's `invoke_tasks:` element.
 
   Example (invokes the only `publish` task):
   ```
@@ -57,7 +57,7 @@ All parameters are optional since they all have conventional default values:
 
   Default is: `$null` - i.e. nothing to merge into the `yaml` config's `attributes:` element.
 
-  Gives **PWSHAKE** engine an ability to populate the `yaml` config's `attributes:` element with an external data (**metadata** as a term) passed from the outside world (CI server, cloud provider agent, canny developer, etc).
+  Gives **PWSHAKE** engine an ability to populate the `yaml` config's `attributes:` element with an external data (**metadata** as a term) passed from the outside world (CI server, cloud provider agent, canny developer, etc.).
 
   The `-MetaData` parameter can accept:
   * raw `json` string:
@@ -107,7 +107,6 @@ All parameters are optional since they all have conventional default values:
     attributes:
       env_name: "shake42"
       override_to: "test"
-      pwshake_path: /absolute/path/to/your/working/directory/MyRepo
     ...
     ```
 
@@ -118,13 +117,13 @@ All parameters are optional since they all have conventional default values:
   Default is: `Verbose` - for backward compatibility.
 
   Available values:
-  * `Quiet` - logs nothing, except **Powershell** host process exceptions, the olny way to check if run was successful - inspect if process (`powershell.exe` or `pwsh`) exit code was not 0;
+  * `Quiet` - logs nothing, except **Powershell** host process exceptions, the olny way to check if the run was successful - to inspect if process (`powershell.exe` or `pwsh`) exit code was not 0;
   * `Error` - logs only script exceptions and third party cli tools failures (exit code is not 0);
   * `Warning` - reserved for future;
-  * `Minimal` - logs only raw scripts and cli tools output passed to **stdout**, **stderr** and any **Powershell** streams;
+  * `Minimal` - logs only raw scripts and cli tools output passed to **stdout**, **stderr** and any other **Powershell** streams;
   * `Information` - additionally logs task and step captions before each task\step invocation;
-  * `Verbose` - additionally logs `Invoke-pwshake` call arguments and **PWSHAKE** config file content after all initialization stages performed by the **PWSHAKE** engine (merging metadata, attributes interpolation, etc)
-  * `Debug` - logs tons of tracing information about each action performed during the **PWSHAKE** config file processing;
+  * `Verbose` - additionally logs `Invoke-pwshake` call arguments and **PWSHAKE** config file content after all initialization stages performed by the **PWSHAKE** engine (merging metadata, attributes interpolation, etc.);
+  * `Debug` - logs tons of tracing information about each action performed during the **PWSHAKE** config file processing (be careful using this option to not beak your brain);
   * `Silent = Quiet` - alias;
   * `Normal = Information` - alias;
   * `Default = Verbose` - alias for backward compatibility.
@@ -136,6 +135,7 @@ All parameters are optional since they all have conventional default values:
   Default is: `$false` - i.e. normal execution.
 
   If it's passed as flag (`[switch]` in **Powershell** terms) the **PWSHAKE** engine does not execute any actual `steps:` listed in `pwshake.yaml` config, rather it only:
+  * **invokes** all steps listed in `resources:`
   * **includes** config data from files listed in `includes:`
   * **merges** `attributes:` with `-MetaData` input parameter value
   * **overrides** `attributes:` with data listed in `attributes_overrides:`
@@ -143,7 +143,12 @@ All parameters are optional since they all have conventional default values:
   * **arranges** `tasks:` according to their dependencies and order in `pwshake.yaml` config  
   * **invokes** `invoke_tasks:` items without actual `steps:` execution
 
-  This option is useful for developing complex `pwshake.yaml` configs with many interdependent `tasks:`, several `includes:` items and/or long chains of `{{}}` substitutions and `attributes_overrides:`
+  This option is useful for developing complex `pwshake.yaml` configs with many interdependent `tasks:`, several `includes:` items and/or long chains of `{{...}}` substitutions and `attributes_overrides:`
   ```
   PS>./pwshake.ps1 ./my_complex_pwshake.yaml -DryRun
+  ...
+  Invoke task: my_complex_pwshake
+  Execute step: echo_1
+      Bypassed because of -DryRun: True
+  ...
   ```

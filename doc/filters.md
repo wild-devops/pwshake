@@ -39,3 +39,12 @@ attributes:
 Note that if the filter name starts with `f-$` chars it could be used to interpolate attributes.
 
 In this case the text following of `:` is passed to the filter as the first argument and result of the filter execution is substituted as the attribute value.
+
+And yes, You are right, the default interpolator for environment variables `{{$env:SOME_ENV_VAR}}` is implemented as a filter in the global **PWSHAKE** context loaded on the early stage of **PWSHAKE** config processing:
+```
+pwshake-context:
+  filters:
+    f-$env: |-
+      { Get-Item Env:$_ -ErrorAction SilentlyContinue | % Value }
+...
+```

@@ -18,7 +18,7 @@ This tells to **PWSHAKE** engine to invoke a `clean:` item from the `tasks:` ele
 
 If the `invoke_tasks:` is omitted in `pwshake.yaml` config and isn't passed as a `-Tasks` parameter of the `pwshake.ps1` bootstrapper script (or `Invoke-pwshake` command), so **PWSHAKE** engine has nothing to do.
 
-The `-Tasks` parameter value of the `pwshake.ps1` bootstrapper script (or `Invoke-pwshake` command) has strong precedence above the `invoke_tasks:` in the `pwshake.yaml` config and totally overrides this element content.
+The `-Tasks` parameter value of the `pwshake.ps1` bootstrapper script (or `Invoke-pwshake` command) has strong precedence above the `invoke_tasks:` in the `pwshake.yaml` config and totally replaces this element content.
 
 Example:
 ```

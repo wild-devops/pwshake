@@ -11,6 +11,6 @@ scripts_directories:
 - test
 - tools
 ```
-This element can be totally omitted, in that case all `scripts:` will be looked for in the `pwshake_path:` directory.
+This element can be totally omitted, in that case all `scripts:` will be looked for in the `{{pwshake_path}}` directory.
 
 [See more about `tasks:`](/doc/tasks.md)

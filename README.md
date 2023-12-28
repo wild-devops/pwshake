@@ -14,17 +14,17 @@ As well it's a simple script executor based on **Powershell**.
 All executed scripts and\or inline **Powershell** commands are composed, instrumented with input data and structured by the `yaml` configuration.
 
 # What's this NOT?
-This is definitely not a piece of computer state\configuration management (aka **DSC**, **CM**, etc), despite it has basic concepts inspired by **Chef** (attributes, overrides, run lists\roles) and **Ansible** (`yaml` config).
+This is definitely not a piece of computer state\configuration management (aka **DSC**, **CM**, etc.), despite it has basic concepts inspired by **Chef** (attributes, overrides, run lists\roles) and **Ansible** (`yaml` config).
 
 # Why is this needed?
 This is a try to implement [Protected variations principle](https://en.wikipedia.org/wiki/GRASP_(object-oriented_design)#Protected_variations) in the CI/CD world.
 
-Since every CI-server (**GitLab**, **TeamCity**, **Circle**, **Travis**, etc) has its own definition for jobs, build configurations, dependencies, resources and artifacts, it makes sense to have some independent way doing the same in your own repository and using CI-servers only as entry points (starters) to your project's delivery pipeline.
+Since every CI-server (**GitLab**, **TeamCity**, **Circle**, **Travis**, etc.) has its own definition for jobs, build configurations, dependencies, resources and artifacts, it makes sense to have some independent way doing the same in your own repository and using CI-servers only as entry points (starters) to your project's delivery pipeline.
 
 # How do we use it in the real world?
 We have to instantiate and provision lots of Windows hosts in the **AWS** cloud.
 
-There are many roles that these hosts are performed (static\dynamic web sites, api hosts, windows services hosts, databases, etc).
+There are many roles that these hosts are performed (static\dynamic web sites, api hosts, windows services hosts, databases, etc.).
 
 Average time to live for most of them is during from 30 minutes (for auto-testing) to 1 week (for weekly production release, that recreates all prod instances from scratch).
 

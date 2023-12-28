@@ -4,7 +4,7 @@
 
 Aliases: **`run_lists:`**, **`roles:`**
 
-Contains named items that used by **PWSHAKE** engine as definitions of complex, composed and interdependent tasks.
+Contains named items that used by **PWSHAKE** engine as definitions of complex, composed and interdependent tasks (as well as simple, dumb and straightforward ones).
 
 The first level of items are task **names** (actually `keys` of `[hashtable]`), that can be used in other items and\or elements to reference a particular task for **reuse**, **compose** and **invoke**
 
@@ -49,7 +49,7 @@ Every named element of the `tasks:` can contain some definitions to provide more
   ...
   ```
 
-  Examples (aliased):
+  Examples of aliases:
   ```
   tasks:
     do_something:
@@ -68,21 +68,21 @@ Every named element of the `tasks:` can contain some definitions to provide more
 
   Alias: **`scripts:`**
 
-  Contains list of named items which are assumed as powershell script files without `.ps1` extension located in one of subdirectories determined by the `scripts_directories:` element.
+  Can contain list of strings which are assumed as names of powershell script files without `.ps1` extension located in one of subdirectories determined by the `scripts_directories:` element.
 
   Example:
   ```
   tasks:
     do_something:
-      scripts:
+      steps:
       - do_clean
       - do_build
       - do_format_disk_c
   ...
   ```
-  This is the single task named `do_something` which contains a list of scripts to execute in order, so **PWSHAKE** engine will look for files `./do_clean.ps1`, `./do_build.ps1`, `./do_format_disk_c.ps1` and will execute them all in a sequence.
+  Above is the single task named `do_something` which contains a list of scripts to execute in order, so **PWSHAKE** engine will look for files `./do_clean.ps1`, `./do_build.ps1`, `./do_format_disk_c.ps1` and will execute them all in a sequence.
 
-  Also this syntax can be shortened since the `steps:` element is a default payload for task named item:
+  Also this syntax can be shortened since the `steps:` element is a default payload for a task named item:
   ```
   tasks:
     do_something:
@@ -105,7 +105,7 @@ Every named element of the `tasks:` can contain some definitions to provide more
     ```
     tasks:
       clean:
-      - powershell: rm ./results -r -force
+      - powershell: Remove-Item ./results -Recurse -Force
       - pwsh: |
           Write-Host "this is example of" ` 
           + " multiline code"
@@ -147,9 +147,9 @@ Every named element of the `tasks:` can contain some definitions to provide more
       build:
       - step1:
           name: Clean work directory
-          powershell: rm ./work -recurse -force
+          powershell: Remove-Item ./work -Recurse -Force
       - name: This is step 2
-        cmd: echo 'step2'
+        cmd: echo 'executing step2'
       - step3:
           name: Do msbuild task
           msbuild:
@@ -157,7 +157,7 @@ Every named element of the `tasks:` can contain some definitions to provide more
             targets: TransformConfigs
             properties: Configuration=Debug
     ```
-    [See more about `[step]:` element](/doc/step.md)
+    [See more about `- [step]:` element](/doc/step.md)
 
 * ### `depends_on:` **element**
 
@@ -182,7 +182,7 @@ Every named element of the `tasks:` can contain some definitions to provide more
       steps:
       - do_publish
   ```
-  This is a list of 4 named tasks, 2 of which are dependent of other 2, and **PWSHAKE** engine invokes them according to these dependencies and order.
+  Above is the list of 4 named tasks, 2 of which are dependent of other 2, and **PWSHAKE** engine invokes them according to these dependencies and order.
 
   So, the execution order of the above tasks should be:
   ```
@@ -211,7 +211,7 @@ Every named element of the `tasks:` can contain some definitions to provide more
     depends_on: []
   ...
   ```
-  It gives to **PWSHAKE** engine an ability to invoke ordered chains of tasks and\or to run composed tasks for reusing complex scenarios:
+  It gives to **PWSHAKE** engine an ability to invoke ordered chains of tasks and\or to run composed tasks for reusing in complex scenarios:
 
   ```
   tasks:
