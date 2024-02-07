@@ -15,7 +15,7 @@ foreach ($script in $scripts) {
 [bool]${is-Windows} = ([System.Environment]::OSVersion.Platform -match 'Win')
 [bool]${is-Linux} = (-not ${is-Windows})
 
-$PSScriptRoot_ = $PSScriptRoot # to use inside Build-Context
+$_PSScriptRoot_ = $PSScriptRoot # to use inside Build-Context
 [hashtable]${global:pwshake-context} = Build-Context
 
 New-Alias -Name pwshake -Value Invoke-pwshake -Force

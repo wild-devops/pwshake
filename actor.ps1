@@ -100,7 +100,7 @@ $arguments = @{
   DryRun     = $false
 }
 
-$script:PSScriptRoot_ = '/workdir/pwshake'
+$script:_PSScriptRoot_ = "$PSScriptRoot/pwshake"
 Invoke-actor @arguments
 @(
   'gci variable:actor*'
