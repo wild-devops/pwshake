@@ -35,15 +35,15 @@ function Interpolate-Item {
       $context = Merge-Hashtables $step $item
     }
     $context = $context | Interpolate-Evals
-    ":Eval-Context:$(@{'$context'=$context} | ConvertTo-Yaml)" | f-log-dbg
+    ":Eval-Context:$(@{'$context'=$context} | f-cty)" | f-log-dbg
 
     try {
-      $json = $context | ConvertTo-Json -Depth 99
+      $json = $context | f-ctj
       ":Merge:`$json = $json" | f-log-dbg
       $counter = 0
       foreach ($regex in $rules.Keys) {
         while ($json -match $regex) {
-          ":$(@{'$matches'=$matches}  | ConvertTo-Yaml)" | f-log-dbg
+          ":$(@{'$matches'=$matches}  | f-cty)" | f-log-dbg
           $subst = $matches.0
           $eval = $matches.eval
           if (-not $eval) {
@@ -60,17 +60,17 @@ function Interpolate-Item {
           }
           if ($value -isnot [string]) {
             # assign complex values via json
-            $value = $value | ConvertTo-Json -Depth 99
-            ":Out:ConvertTo-Json:`$value = $value" | f-log-dbg
+            $value = $value | f-ctj
+            ":Out:f-ctj:`$value = $value" | f-log-dbg
             # it might be former string, so:
             $json = $json.Replace("`"$subst`"", $value)
           }
           else {
             $value = $value | f-escape-json
           }
-          ":Replace:In:`n$(@{subst=`"$subst`";eval=`"$eval`";value=`"$value`"} | ConvertTo-Yaml)" | f-log-dbg
+          ":Replace:In:`n$(@{subst=`"$subst`";eval=`"$eval`";value=`"$value`"} | f-cty)" | f-log-dbg
           $json = $json.Replace($subst, $value)
-          ":Replace:Out:$(@{'$json'=`"$json`"} | ConvertTo-Yaml)" | f-log-dbg
+          ":Replace:Out:$(@{'$json'=`"$json`"} | f-cty)" | f-log-dbg
 
           if ($counter++ -ge (Peek-Options).max_depth) {
             throw "Circular reference detected for evaluations: $($regex.Matches($json) | Sort-Object -Property Value)"

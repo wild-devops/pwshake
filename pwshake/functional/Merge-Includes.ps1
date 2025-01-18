@@ -2,17 +2,16 @@ function Merge-Includes {
   [CmdletBinding()]
   [OutputType([hashtable])]
   param (
-    [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
-    [hashtable]$config,
-
-    [Parameter(Position = 1, Mandatory = $false)]
-    [string]$yamlPath = (Peek-Invocation).arguments.ConfigPath,
-
-    [Parameter(Mandatory = $false)]
-    [int]$depth = 0
+    [Parameter(Mandatory, ValueFromPipeline)]
+    [hashtable]${@context},
+    [scriptblock]${@next}=${@next-stub}
   )
   process {
-    if ($depth -gt (Peek-Options).max_depth) {
+    [hashtable]$config = ${@context}.config
+    [string]$yamlPath = Coalesce ${@context}.yamlPath, ${global:actor-context}.arguments.ConfigPath
+    [int]$depth = Coalesce ${@context}.depth, 0
+    
+    if ($depth -gt ${global:actor-context}.options.max_depth) {
       throw "Circular reference detected for includes in: $yamlPath"
     }
 
@@ -24,20 +23,20 @@ function Merge-Includes {
         $config.attributes = Merge-Hashtables $attributes $config.attributes # set precedence current config over included one
       }
       else {
-        $include = $include_path | Build-FromYaml | Build-Config | Merge-Includes -yamlPath $include_path -depth ($depth + 1)
+        $include = $include_path | Build-FromYaml | Build-Config | % {@{config=$_;yamlPath=$include_path;depth=($depth+1)}} | Merge-Includes
         $config = Merge-Hashtables $include $config # set precedence current config over included one
       }
     }
 
     $config.templates.GetEnumerator() | ForEach-Object {
       # override context templates with config's ones
-      (Peek-Context).templates.$($_.Key) = $_.Value
+      ${global:actor-context}.templates.$($_.Key) = $_.Value
     }
 
     $config.filters.GetEnumerator() | ForEach-Object {
       Invoke-Expression "filter script:$($_.Key) $($_.Value)"
     }
 
-    return $config
+    return &${@next}(@{config=$config})
   }
 }

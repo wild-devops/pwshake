@@ -98,7 +98,7 @@ filter f-wh-b {
   if ($passthru) { $_ }
 }
 
-filter f-wh-c {
+filter global:f-wh-c {
   param([switch]$skip, [switch]$passthru)
   if (-not $skip) {
     $_ | f-wh -c 'DarkCyan'
@@ -143,7 +143,10 @@ filter f-null { param($f = '{0}') $_ | Where-Object { !!$_ } | ForEach-Object { 
 filter f-mask-secured {
   param($mask = '**********')
   $message = $_
-  (Peek-Context).secured | ForEach-Object {
+  if (-not ${global:actor-context}.secured) {
+    return $message
+  }
+  ${global:actor-context}.secured | ForEach-Object {
     if ([Regex]::new($([Regex]::Escape($_)), 'IgnoreCase').Match($message).Success) {
       $message = $message -replace "$([Regex]::Escape($_))", $mask
     }
@@ -153,7 +156,7 @@ filter f-mask-secured {
 
 filter f-build-context {
   # usage: @{output='blah-blah'} | f-build-context
-  "f-build-context:`n$('$_' | f-vars-cty)" | f-wh-m
+  "f-build-context:`n$(@{'$_'=$_} | f-cty)" | f-wh-m -s
   $ret = @{}
   if ($_ -isnot [hashtable]) {
     $ret['Value'] = $_
@@ -163,11 +166,12 @@ filter f-build-context {
   }
   return $ret
 }
-filter f-cfy {
+
+filter global:f-cfy {
   $_ | psyml\ConvertFrom-Yaml -AsHashtable
 }
 
-filter f-cty {
+filter global:f-cty {
   $_ | psyml\ConvertTo-Yaml 
 }
 

@@ -3,10 +3,13 @@ function Override-Attributes {
   [CmdletBinding()]
   [OutputType([hashtable])]
   param (
-    [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
-    [hashtable]$config
+    [Parameter(Mandatory, ValueFromPipeline)]
+    [hashtable]${@context},
+    [scriptblock]${@next}=${@next-stub}
   )
   process {
+    [hashtable]$config = ${@context}.config
+    
     foreach ($item in $config.attributes_overrides) {
       $type = $item
       ":foreach:" | f-log-dbg '$item', '$config.attributes.override_to'
@@ -31,6 +34,6 @@ function Override-Attributes {
     }
 
     ":Out:" | f-log-dbg '$config'
-    return $config
+    return &${@next}(@{config=$config})
   }
 }

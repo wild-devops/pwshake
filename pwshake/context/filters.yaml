@@ -29,8 +29,8 @@ pwshake-context:
 
     f-$secured: |-
       {
-        if ((!!$_) -and (${global:pwshake-context}.secured -notcontains $_)) {
-          ${global:pwshake-context}.secured += $_
+        if ((!!$_) -and (${global:actor-context}.secured -notcontains $_)) {
+          ${global:actor-context}.secured += $_
         }
         $_
       }
@@ -52,18 +52,15 @@ pwshake-context:
       }
 
     f-wh-iex: |-
-      {  Write-Host $_; Invoke-Expression $_ }
-
-    f-wh-cyan: |-
-      {  Write-Host $_ -ForegroundColor Cyan }
+      {  Write-Host $_; &([scriptblock]::Create($_)) }
 
     f-null: |-
       { param($f = '{0}') $_ | Where-Object { !!$_ } | ForEach-Object { $f -f $_} }
 
     f-log-lvl: |-
       { param([VerbosityLevel]$level)
-        if ((Peek-verbosity) -ge $level) {
-          $_ | Log-Output | sb-append
+        if ((Peek-Verbosity) -ge $level) {
+          @{Value=$_} | Log-Output | sb-append
         }
       }
 

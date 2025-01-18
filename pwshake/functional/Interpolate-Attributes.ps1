@@ -3,11 +3,13 @@ function Interpolate-Attributes {
   [CmdletBinding()]
   [OutputType([hashtable])]
   param (
-    [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
-    [hashtable]$config
+    [Parameter(Mandatory, ValueFromPipeline)]
+    [hashtable]${@context},
+    [scriptblock]${@next}=${@next-stub}
   )
   process {
-    $json = $config | ConvertTo-Json -Depth 99 -Compress
+    [hashtable]$config = ${@context}.config
+    $json = $config | f-ctj-c
     $regex = [regex]'{{(?<subst>(?:(?!{{).)+?)}}'
     $counter = 0
 
@@ -37,10 +39,11 @@ function Interpolate-Attributes {
         throw "Circular reference detected for substitutions: $($regex.Matches($json) | Sort-Object -Property Value)"
       }
       "Interpolate-Attributes:$($counter):`$json:`n$json" | f-log-dbg
-      $config = ConvertFrom-Yaml $json
-      $json = ConvertTo-Json $config -Depth 99 -Compress
+      $config = $json | f-cfj
+      $json = $config | f-ctj-c
     } while ($regex.Match($json).Success)
 
-    return ConvertFrom-Yaml $json
+    # "Interpolate-Attributes:Out:`$config:`n$($config | f-cty)" | f-log-dbg
+    return &${@next}($config)
   }
 }

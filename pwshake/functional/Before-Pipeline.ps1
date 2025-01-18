@@ -8,15 +8,10 @@ function Before-Pipeline {
     [scriptblock]${@next}=${@next-stub}
   )
   "Before-Pipeline:In: $(${@context} | f-ctj-c)" | f-log-dbg
-  ${@context}.tasks = &{
-    $tasks = @{}
-    foreach ($key in ${@context}.tasks.Keys) {
-      $tasks.$($key) = @{
-        name  = $key
-        steps = ${@context}.tasks.$($key)
-      }
-    }
-    $tasks
-  }
-  ${@context} | &${@next}
+  
+  "PWSHAKE arguments:`n$(${global:actor-context}.arguments | f-cty)" | f-log-verb
+  
+  "PWSHAKE config:`n$(${global:actor-context}.config | f-cty)" | f-log-verb
+
+  &${@next} ${@context}
 }

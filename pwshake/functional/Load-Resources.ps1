@@ -1,13 +1,18 @@
 function Load-Resources {
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
+  [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
   [CmdletBinding()]
   [OutputType([hashtable])]
   param (
-    [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
-    [hashtable]$config = (Peek-Config)
+    [Parameter(Mandatory, ValueFromPipeline)]
+    [hashtable]${@context},
+    [scriptblock]${@next}=${@next-stub}
   )
   process {
-    if (-not $config.resources) { return $config }
+    [hashtable]$config = ${@context}.config
+    
+    if (-not $config.resources) {
+      return &${@next}(@{config=$config})
+    }
 
     $verbosity = $config.attributes.pwshake_verbosity
     try {
@@ -23,6 +28,6 @@ function Load-Resources {
       $config.attributes.pwshake_verbosity = $verbosity
     }
 
-    return $config
+    return &${@next}(@{config=$config})
   }
 }

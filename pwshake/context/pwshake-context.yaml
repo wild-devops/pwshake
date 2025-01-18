@@ -8,9 +8,8 @@ pwshake-context:
     max_depth: 100
     tasks_count: 0
     steps_count: 0
-    tests_context:
     tests_verbosity: Error
-    pwshake_verbosity: Debug
+    pwshake_verbosity: Normal
     resources_verbosity: Minimal
     json_log_format: '@{"@timestamp"=(Get-Date).ToString("o");message=$_}'
 
@@ -21,18 +20,48 @@ pwshake-context:
     - Override-Attributes
     - Interpolate-Attributes
 
-  hooks:
-    invoke-step:
-      onEnter:
-        - Push-Location (Build-Path "$($step.work_dir)")
-        - '"Execute step: $($step.name)" | f-log-info'
-      onExit:
-        - Pop-Location
+  pipelines:
+    $begin-config:
+    - Before-Pipeline
+    $on-config-header:
+    $process-config:
+    $on-config-error:
+    $on-config-footer:
+    $end-config:
+    $begin-all-tasks:
+    $before-each-task:
+    $on-task-header:
+    $process-task:
+    $on-task-error:
+    $on-task-footer:
+    $after-each-task:
+    $end-all-tasks:
+    $begin-all-steps:
+    $before-each-step:
+    $on-step-header:
+    - $log-out-min
+    - $teamcity-block-opened
+    $process-step:
+    $on-step-error:
+    $on-step-footer:
+    - $teamcity-block-closed
+    $after-each-step:
+    $end-all-steps:
 
   plugins: {}
 
   secured: []
 
-  invocations: $[[New-Object Collections.Stack]]
+  types: []
+
+  functions: {}
+
+  filters: {}
+
+  templates: {}
+
+  arguments: {}
+
+  config: {}
 
   parent: null # DO NOT REMOVE!!!

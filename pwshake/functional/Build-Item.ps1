@@ -19,7 +19,7 @@ function Build-Item {
         return @{ name = $item; script = $item }
       }
       {($item -is [hashtable]) -and ($item.Keys.Count -eq 1)} {
-        $item = $item | f-cli-tool
+        # $item = $item | f-cli-tool
         $temlate_key = $item | f-template-key -add 'pwsh', 'powershell'
         "Build-Item:`$temlate_key`:$temlate_key" | f-log-dbg
         if ($null -eq $temlate_key) {
@@ -60,10 +60,10 @@ function Build-Item {
     }
 
     if (!$item.name) {
-      $item.name = "$(Coalesce $temlate_key, 'step')_$((++(Peek-Invocation).steps_count) | Write-Output)"
+      $item.name = "$(Coalesce $temlate_key, 'step')_$((++${global:actor-context}.options.steps_count) | Write-Output)"
     }
 
-    "Build-Item:Out:`$item:`n$($item | cty)" | f-log-dbg
+    "Build-Item:Out:`$item:`n$($item | f-cty)" | f-log-dbg
     return $item
   }
 }

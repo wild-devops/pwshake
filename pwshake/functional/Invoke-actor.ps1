@@ -23,7 +23,7 @@ function Invoke-actor {
     [switch]$DryRun
   )
   Begin {
-    ":In:" | f-log-dbg -skip # <<< skipped because of ${global:actor-context} doesn't exist yet
+    ":Begin:" | f-log-dbg -skip # <<< skipped because of ${global:actor-context} doesn't exist yet
     try {
       if (-not ${global:actor-context}) {
         ${global:actor-context} = (Build-Context)
@@ -34,11 +34,13 @@ function Invoke-actor {
         Verbosity  = $Verbosity
         DryRun     = [bool]$DryRun
       }
-      ${global:actor-context} = @{
+      ${global:actor-context} = Merge-Hashtables ${global:actor-context} @{
         arguments = ($arguments + @{Tasks = $Tasks; WorkDir = "$(Get-Location)" })
         config    = Build-Config @arguments
         parent    = ${global:actor-context}
       }
+
+      ${global:actor-context} | &(${global:actor-context}.pipelines['$begin-config'] | Build-Pipeline) | Out-Null
     }
     catch {
       $_ | f-log-err
@@ -50,15 +52,20 @@ function Invoke-actor {
   Process {
     ":In:" | f-log-dbg
     try {
-      ${global:actor-context} | % { $_.Remove('parent'); $_ } | % arguments | % ConfigPath | f-wh-c
-      throw 'qu-qu'
+
+      # $stages = (${global:actor-context}.stages | Build-Pipeline)
+      # ${global:actor-context}.config = &$stages(${global:actor-context})
+
+      # "stagesInvoked:`$config:`n$(${global:actor-context}.config | f-cty)" | f-log-dbg
+
+      # "$(@{secured=${global:actor-context}.secured} | f-cty)" | f-wh-c
     }
     catch {
       ":catch:" | f-log-dbg
       $_ | f-log-err
     }
     finally {
-      ":Out:" | f-log-dbg
+      # ":Out:`n$(${global:actor-context} | f-cty)" | f-log-dbg
       ${global:actor-context} = ${global:actor-context}.parent
     }
   }

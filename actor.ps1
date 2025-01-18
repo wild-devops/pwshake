@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param ([string]$Verbosity='Normal')
+param ([string]$Verbosity='Verbose')
 
 $ErrorActionPreference = "Stop"
 

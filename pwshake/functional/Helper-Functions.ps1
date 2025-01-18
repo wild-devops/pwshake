@@ -31,26 +31,26 @@ function Peek-Config {
 function Peek-Data {
   [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
   param()
-  return (Peek-Context).data
+  return ${global:actor-context}.data
 }
 
 function Peek-Options {
   [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
   param()
-  return (Peek-Context).options
+  return ${global:actor-context}.options
 }
 
 function Peek-Pipelines {
   [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
   param()
-  return (Peek-Context).pipelines
+  return ${global:actor-context}.pipelines
 }
 
 function Peek-Verbosity {
   [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
   param()
-  "Peek-Verbosity:In:`n$((Peek-Config).attributes | f-cty)" | f-wh-r -skip
-  return [VerbosityLevel](Coalesce (Peek-Config).attributes.pwshake_verbosity, (Peek-Context).options.pwshake_verbosity, 'Debug')
+  "Peek-Verbosity:In:`n$((Peek-Config).attributes | f-cty)" | f-wh-r -s
+  return [VerbosityLevel](Coalesce (Peek-Config).attributes.pwshake_verbosity, ${global:actor-context}.options.pwshake_verbosity, 'Debug')
 }
 function Peek-LogPath {
   [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
@@ -70,7 +70,7 @@ function Peek-Caller-Name {
     [hashtable]${@context},
     [scriptblock]${@next}
   )
-  "@next-stub:`n`${@context}:${@context}`n`${@next}:${@next}" | f-log-dbg;
+  "@next-stub:`n`${@context}:${@context}`n`${@next}:${@next}" | f-log-dbg
   if (${@next}) {&${@next} ${@context}} else {${@context}}
 }
 
@@ -112,6 +112,12 @@ function f-vars-cty {
   [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
   param([Parameter(ValueFromPipeline)][string]$var)
   begin   {$result=@()}
-  process {$result+=@{$var=(Invoke-Expression $var)}}
+  process {
+    $val = (Invoke-Expression $var)
+    if ($var -eq '$_') {
+      $val = $_ 
+    }
+    $result+=@{$var=$val}
+  }
   end     {if ($result) {($result | f-cty).Trim()}}
 }

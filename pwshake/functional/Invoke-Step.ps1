@@ -18,7 +18,8 @@ function Invoke-Step {
             ":Build-Step:" | f-log-dbg '$step'
 
             $caption = "Execute step: $($step.name)"
-            $caption | f-teamcity-o | f-log-info
+            # $caption | f-teamcity-o | f-log-info
+            $caption | f-log-info
 
             # skip step early
             if (-not (Invoke-Expression $step.when)) {
@@ -73,7 +74,8 @@ function Invoke-Step {
         }
         finally {
             Pop-Location
-            $caption | f-teamcity-c | f-log-info
+            # $caption | f-teamcity-c | f-log-info
+            $caption | f-log-info
         }
     }
 }

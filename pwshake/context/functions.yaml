@@ -4,7 +4,7 @@ pwshake-context:
       { param(
           [Parameter(Mandatory, ValueFromPipeline)]
           [hashtable]${@context},
-          [scriptblock]${@next}
+          [scriptblock]${@next}=${@next-stub}
         )
         $formatted = "##teamcity[blockOpened name='$(Escape-TeamCityText ${@context}.Value)']"
         "@teamcity-block-opened:`${is-teamcity}:${is-teamcity}`n`${@context}.Value:$(${@context}.Value)`n`${@next}:${@next}" | f-log-dbg
@@ -19,7 +19,7 @@ pwshake-context:
       { param(
           [Parameter(Mandatory, ValueFromPipeline)]
           [hashtable]${@context},
-          [scriptblock]${@next}
+          [scriptblock]${@next}=${@next-stub}
         )
         $formatted = "##teamcity[blockClosed name='$(Escape-TeamCityText ${@context}.Value)']"
         "@teamcity-block-closed:`${is-teamcity}:${is-teamcity}`n`${@context}.Value:$(${@context}.Value)`n`${@next}:${@next}" | f-log-dbg

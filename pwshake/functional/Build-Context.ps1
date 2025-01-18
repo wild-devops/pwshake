@@ -7,7 +7,7 @@ function Build-Context {
     $context = @{}
     $parent = (Split-Path $PSScriptRoot -Parent | Get-Item).FullName
     Get-ChildItem -Path $parent\context\*, $parent\templates\* -Include *.yaml, *.yml -File | ForEach-Object FullName | Sort-Object | ForEach-Object {
-      $context = $context, ($_ | Build-FromYaml) | Merge-Object -Strategy Override
+      $context = Merge-Hashtables $context ($_ | Build-FromYaml)
     }
     $context = $context | ForEach-Object 'pwshake-context'
 
